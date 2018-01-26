@@ -21,7 +21,7 @@ android {
             keyAlias 'MyAndroidKey'
             keyPassword 'keyaliaspass0'
             storeFile rootProject.file('android.jks')
-            storePassword 'keystoragepass0'
+            storePassword 'keystorepass0'
         }
     }
     compileSdkVersion 26
