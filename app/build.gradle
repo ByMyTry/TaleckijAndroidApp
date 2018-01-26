@@ -16,6 +16,14 @@ repositories {
 
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'MyAndroidKey'
+            keyPassword 'keyaliaspass0'
+            storeFile rootProject.file('android.jks')
+            storePassword 'keystoragepass0'
+        }
+    }
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.taleckij_anton.taleckijapp"
@@ -29,12 +37,13 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     testImplementation 'junit:junit:4.12'
