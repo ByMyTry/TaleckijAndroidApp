@@ -39,4 +39,8 @@ jobs:
           destination: apks
       - deploy:
           name: Deploy APK.
-          command: ./gradlew crashlyticsUploadDistributionRelease
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              bash ./scripts/deploy-hockey.sh
+              bash ./scripts/deploy-fabric.sh
+            fi

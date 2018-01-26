@@ -32,6 +32,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [HOCKEYAPP_APP_ID: "701ffe36001345eb94bb5b56aea3211a"]
     }
     buildTypes {
         release {
@@ -52,4 +53,5 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true;
     }
+    compile 'net.hockeyapp.android:HockeySDK:5.1.0'
 }
