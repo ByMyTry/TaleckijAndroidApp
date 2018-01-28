@@ -24,14 +24,14 @@ jobs:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - persist_to_workspace:
-        root: .
-        paths:
-          - ./*
+          root: .
+          paths:
+            - ./*
   tests:
     <<: *defaults
     steps:
       - attach_workspace:
-        at: .
+          at: .
       - run:
           name: Run Tests
           command: ./gradlew lint test
@@ -47,7 +47,7 @@ jobs:
     <<: *defaults
     steps:
       - attach_workspace:
-        at: .
+          at: .
       - run:
           name: Build
           command: ./gradlew assembleRelease
@@ -62,7 +62,7 @@ jobs:
     <<: *defaults
     steps:
       - attach_workspace:
-        at: .
+          at: .
       - deploy:
           name: Deploy APK.
           command: |
