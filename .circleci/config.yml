@@ -27,7 +27,7 @@ jobs:
           root: .
           paths:
             - ./*
-  tests:
+  test_lint:
     <<: *defaults
     steps:
       - attach_workspace:
@@ -35,6 +35,16 @@ jobs:
       - run:
           name: Run Tests
           command: ./gradlew lint test
+      - store_artifacts:
+          path: app/build/reports
+          destination: reports
+      - store_test_results:
+          path: app/build/test-results
+  unit_tests:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
       - run:
           name: Run Unit Tests
           command: ./gradlew test
@@ -74,12 +84,16 @@ workflows:
   integrate:
     jobs:
       - download_dependencies
-      - tests:
+      - test_lint:
+          requires:
+            - download_dependencies
+      - unit_tests:
           requires:
             - download_dependencies
       - build:
           requires:
-            - tests
+            - test_lint
+            - unit_tests
       - deploy:
           requires:
             - build
