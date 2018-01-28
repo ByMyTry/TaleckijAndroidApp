@@ -1,15 +1,11 @@
-defaults: &defaults
-  working_directory: ~/code
-      docker:
-        - image: circleci/android:api-25-alpha
-      environment:
-        JVM_OPTS: -Xmx3200m
-
 version: 2
-
 jobs:
-  download_dependencies:
-    <<: *defaults
+  build:
+    working_directory: ~/code
+    docker:
+      - image: circleci/android:api-25-alpha
+    environment:
+      JVM_OPTS: -Xmx3200m
     steps:
       - checkout
       - restore_cache:
@@ -24,16 +20,6 @@ jobs:
           paths:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
-      - persist_to_workspace:
-        root: .
-        paths:
-          - ./*
-
-  tests:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-        at: .
       - run:
           name: Run Tests
           command: ./gradlew lint test
@@ -45,49 +31,16 @@ jobs:
           destination: reports
       - store_test_results:
           path: app/build/test-results
-
-  build:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-        at: .
       - run:
           name: Build
           command: ./gradlew assembleRelease
       - store_artifacts:
           path: app/build/outputs/apk/
           destination: apks
-      - persist_to_workspace:
-          root: .
-          paths:
-            - ./*
-
-  deploy:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-        at: .
       - deploy:
           name: Deploy APK.
           command: |
-            bash ./scripts/deploy-hockey.sh
-            bash ./scripts/deploy-fabric.sh
-
-workflows:
-  version: 2
-  build:
-    jobs:
-      - download_dependencies
-      - tests
-        requires:
-          - download_dependencies
-      - build
-        requires:
-          - tests
-      - deploy
-        requires:
-          - build
-        filters:
-          branches:
-            only:
-              - master
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              bash ./scripts/deploy-hockey.sh
+              bash ./scripts/deploy-fabric.sh
+            fi
