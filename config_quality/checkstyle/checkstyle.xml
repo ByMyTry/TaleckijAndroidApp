@@ -1,25 +1,13 @@
-<?xml version="1.0"?><!DOCTYPE module PUBLIC
-    "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
-    "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
-<module name="Checker">
-    <module name="FileTabCharacter"/>
-    <module name="TreeWalker"/>
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
+    "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
 
-        <!-- Checks for Naming Conventions                            -->
-        <!-- See http://checkstyle.sourceforge.net/config_naming.html -->
-        <module name="MethodName"/>
-        <module name="ConstantName"/>
-
-        <!-- Checks for Imports                                 -->
-        <!-- See http://checkstyle.sourceforge.net/config_imports.html-->
-        <module name="AvoidStarImport"/>
-        <module name="UnusedImports"/>
-
-        <!-- Checks for Size                                          -->
-        <!-- See http://checkstyle.sourceforge.net/config_sizes       -->
-        <module name="ParameterNumber">
-            <property name="max" value="6"/>
+<module name = "Checker">
+    <module name="TreeWalker">
+        <module name="OperatorWrap">
+            <property name="option" value="nl"/>
+            <property name="tokens" value="METHOD_REF"/>
         </module>
-
-        <!-- other rules ignored for brevity -->
+    </module>
 </module>
