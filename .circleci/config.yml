@@ -27,7 +27,6 @@ jobs:
         root: .
         paths:
           - ./*
-
   tests:
     <<: *defaults
     steps:
@@ -44,7 +43,6 @@ jobs:
           destination: reports
       - store_test_results:
           path: app/build/test-results
-
   build:
     <<: *defaults
     steps:
@@ -60,7 +58,6 @@ jobs:
           root: .
           paths:
             - ./*
-
   deploy:
     <<: *defaults
     steps:
@@ -74,19 +71,19 @@ jobs:
 
 workflows:
   version: 2
-  integration:
+  integrate:
     jobs:
       - download_dependencies
-      - tests
-        requires:
-          - download_dependencies
-      - build
-        requires:
-          - tests
-      - deploy
-        requires:
-          - build
-        filters:
-          branches:
-            only:
-              - master
+      - tests:
+          requires:
+            - download_dependencies
+      - build:
+          requires:
+            - tests
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - master
