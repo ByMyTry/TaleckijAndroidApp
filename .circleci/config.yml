@@ -33,8 +33,21 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Run Lint Tests
+          name: Run Lint
           command: ./gradlew lint
+      - store_artifacts:
+          path: app/build/reports
+          destination: reports
+      - store_test_results:
+          path: app/build/test-results
+  test_checkstyle:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Run CheckStyle
+          command: ./gradlew checkstyle
       - store_artifacts:
           path: app/build/reports
           destination: reports
@@ -46,8 +59,21 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Run FindBugs Tests
+          name: Run FindBugs
           command: ./gradlew findbugs
+      - store_artifacts:
+          path: app/build/reports
+          destination: reports
+      - store_test_results:
+          path: app/build/test-results
+  test_pmd:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Run PMD
+          command: ./gradlew pmd
       - store_artifacts:
           path: app/build/reports
           destination: reports
@@ -100,7 +126,13 @@ workflows:
       - test_lint:
           requires:
             - download_dependencies
+      - test_checkstyle:
+          requires:
+            - download_dependencies
       - test_findbugs:
+          requires:
+            - download_dependencies
+      - test_pmd:
           requires:
             - download_dependencies
       - unit_tests:
@@ -109,7 +141,9 @@ workflows:
       - build_apk:
           requires:
             - test_lint
+            - test_checkstyle
             - test_findbugs
+            - test_pmd
             - unit_tests
       - deploy:
           requires:
