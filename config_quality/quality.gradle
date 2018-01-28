@@ -1,9 +1,39 @@
+apply plugin: 'checkstyle'
 apply plugin: 'findbugs'
+apply plugin: 'pmd'
 
 def configDir = "${project.rootDir}/config_quality"
 def reportsDir = "${project.buildDir}/reports"
 
-task findbugs(type: FindBugs, dependsOn: "assembleDebug") {
+checkstyle {
+    toolVersion "8.7"
+}
+
+task checkstyle(type: Checkstyle) {
+    group 'verification'
+
+    configFile = new File("$configDir/checkstyle/checkstyle.xml")
+    source = fileTree('src/main/java')
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    classpath = files()
+    reports {
+        xml.enabled = true
+        html.enabled = true
+        xml {
+            destination new File("$project.buildDir/reports/checkstyle/checkstyle.xml")
+        }
+        html {
+            destination new File("$project.buildDir/reports/checkstyle/checkstyle.html")
+        }
+    }
+}
+
+task findbugs(type: FindBugs) {
+    group 'verification'
+
     ignoreFailures = false
     effort = "max"
     reportLevel = "high"
@@ -26,4 +56,27 @@ task findbugs(type: FindBugs, dependsOn: "assembleDebug") {
     }
 
     classpath = files()
+}
+
+task pmd (type: Pmd) {
+
+    description 'Run pmd'
+    group 'verification'
+
+    ruleSetFiles = files("${project.rootDir}/config_quality/pmd/pmd-ruleset.xml")
+
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+        xml {
+            destination new File("$project.buildDir/reports/pmd/pmd.xml")
+        }
+        html {
+            destination new File("$project.buildDir/reports/pmd/pmd.html")
+        }
+    }
 }

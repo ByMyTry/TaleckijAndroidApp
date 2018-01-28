@@ -14,7 +14,7 @@ import net.hockeyapp.android.UpdateManager;
 
 public class AboutMeActivity extends AppCompatActivity {
 
-    private final String GITHUB_URL = "https://github.com/ByMyTry/TaleckijAndroidApp";
+    private final static String GITHUB_URL = "https://github.com/ByMyTry/TaleckijAndroidApp";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
