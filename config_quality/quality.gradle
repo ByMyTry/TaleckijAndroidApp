@@ -31,7 +31,7 @@ task checkstyle(type: Checkstyle) {
     }
 }
 
-task findbugs(type: FindBugs) {
+task findbugs(type: FindBugs, dependsOn: "assembleDebug") {
     group 'verification'
 
     ignoreFailures = false
