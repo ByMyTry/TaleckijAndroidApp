@@ -17,7 +17,7 @@ task checkstyle(type: Checkstyle, dependsOn: "assembleDebug") {
     ignoreFailures = false
 }
 
-task findbugs(type: FindBugs, dependsOn: "assembleDebug") {
+task findbugs(type: FindBugs) {
     ignoreFailures = false
     effort = "max"
     reportLevel = "high"
@@ -47,7 +47,7 @@ task pmd (type: Pmd) {
     description 'Run pmd'
     group 'verification'
 
-    ruleSets = ["basic", "braces", "strings", "design", "unusedcode"]
+    ruleSetFiles = files("${project.rootDir}/config_quality/pmd/pmd-ruleset.xml")
 
     source 'src'
     include '**/*.java'
@@ -57,10 +57,10 @@ task pmd (type: Pmd) {
         xml.enabled = true
         html.enabled = true
         xml {
-            destination new File("$reportsDir/findbugs/findbugs.xml")
+            destination new File("$project.buildDir/reports/pmd/pmd.xml")
         }
         html {
-            destination new File("$reportsDir/findbugs/findbugs.html")
+            destination new File("$project.buildDir/reports/pmd/pmd.html")
         }
     }
 }
