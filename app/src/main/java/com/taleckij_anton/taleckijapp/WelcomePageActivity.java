@@ -26,7 +26,7 @@ public class WelcomePageActivity extends AppCompatActivity {
             R.layout.wp_views_count_choice
     ));
 
-    private int mCurrentFragmentIndex;
+    int mCurrentFragmentIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +54,8 @@ public class WelcomePageActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             }
+
+            public int getWelcomePageActivity
         });
 
         checkForUpdates();
