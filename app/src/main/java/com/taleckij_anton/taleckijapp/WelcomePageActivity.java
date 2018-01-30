@@ -54,8 +54,6 @@ public class WelcomePageActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             }
-
-            public int getWelcomePageActivity
         });
 
         checkForUpdates();
