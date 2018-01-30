@@ -125,7 +125,7 @@ workflows:
       - test_checkstyle
       - test_pmd
       - test_lint
-      - download_dependencies
+      - download_dependencies:
           requires:
             - test_lint
             - test_checkstyle
