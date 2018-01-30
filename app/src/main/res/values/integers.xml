@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="port_views_count">4</integer>
+    <integer name="land_views_count">6</integer>
+    <integer name="compact_port_views_count">5</integer>
+    <integer name="compact_land_views_count">7</integer>
+</resources>

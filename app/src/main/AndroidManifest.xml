@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.taleckij_anton.taleckijapp">
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -10,18 +11,30 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AboutMeActivity">
+        <activity android:name=".WelcomePageActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".LauncherActivity"
+            android:parentActivityName=".AboutMeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".AboutMeActivity" />
+        </activity>
+        <activity android:name=".AboutMeActivity">
+
+        </activity>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="33ba89c584b5247d522d3409ee88470ee2598eca" />
         <meta-data
             android:name="net.hockeyapp.android.appIdentifier"
             android:value="${HOCKEYAPP_APP_ID}" />
+
     </application>
+
 </manifest>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin">18dp</dimen>
+    <dimen name="icon_diameter">172dp</dimen>
+    <dimen name="app_name_text_size">22sp</dimen>
+    <dimen name="hello_text_size">18sp</dimen>
+    <dimen name="app_desc_text_size">18sp</dimen>
+    <dimen name="about_theme_text_size">26sp</dimen>
+    <dimen name="views_name_text_size">20sp</dimen>
+    <dimen name="views_desc_text_size">16sp</dimen>
+</resources>

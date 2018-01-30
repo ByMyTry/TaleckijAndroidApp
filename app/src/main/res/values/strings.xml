@@ -1,4 +1,20 @@
 <resources>
-    <string name="app_name">TaleckijApp</string>
+    <string name="app_name">Taleckij.Launcher</string>
     <string name="my_name">Anton Taleckij</string>
+    <string name="hello_message">Hello. Welcome. Glad to see you!</string>
+    <string name="next_button_text">next</string>
+    <string name="app_description">It is the simple launcher app</string>
+
+    <string name="light_theme_text">Light Theme</string>
+    <string name="dark_theme_text">Dark Theme</string>
+
+    <string name="usual_layout_name_text">Usual Layout</string>
+    <string name="compact_layout_name_text">Compact Layout</string>
+    <string name="portrait_text">Portrait: %1$d views per row</string>
+    <string name="landscape_text">Landscape: %1$d views per row</string>
+    <string name="portrait_usual_text">Portrait: 4 views per row</string>
+    <string name="landscape_usual_text">Landscape: 6 views per row</string>
+    <string name="portrait_compact_text">Portrait: 5 views per row</string>
+    <string name="landscape_compact_text">Landscape: 7 views per row</string>
+    <string name="views_per_row_text">views per row</string>
 </resources>
