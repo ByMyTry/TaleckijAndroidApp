@@ -122,15 +122,17 @@ workflows:
   version: 2
   integrate:
     jobs:
-      - test_checkstyle
-      - test_pmd
-      - test_lint
-      - download_dependencies:
+      - download_dependencies
+      - test_lint:
           requires:
-            - test_lint
-            - test_checkstyle
-            - test_pmd
+            - download_dependencies
+      - test_checkstyle:
+          requires:
+            - download_dependencies
       - test_findbugs:
+          requires:
+            - download_dependencies
+      - test_pmd:
           requires:
             - download_dependencies
       - unit_tests:
@@ -138,7 +140,10 @@ workflows:
             - download_dependencies
       - build_apk:
           requires:
+            - test_lint
+            - test_checkstyle
             - test_findbugs
+            - test_pmd
             - unit_tests
       - deploy:
           requires:
