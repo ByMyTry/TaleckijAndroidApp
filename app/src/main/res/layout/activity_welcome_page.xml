@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="bottom|center"
+    tools:context="com.taleckij_anton.taleckijapp.WelcomePageActivity">
+    <FrameLayout
+        android:id="@+id/wp_fragment_place"
+        android:layout_width="match_parent"
+        android:layout_height="410dp"/>
+    <Button
+        android:id="@+id/button_next"
+        android:layout_margin="@dimen/margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/next_button_text"
+
+        style="@style/Widget.AppCompat.Button.Colored"/>
+</LinearLayout>

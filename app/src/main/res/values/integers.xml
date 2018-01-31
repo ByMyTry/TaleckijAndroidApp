@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="views_count">4</integer>
+    <integer name="compact_views_count">5</integer>
+    <integer name="snackbar_duration_millis">5000</integer>
+</resources>
