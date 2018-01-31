@@ -19,11 +19,11 @@ import io.fabric.sdk.android.Fabric;
 
 public class WelcomePageActivity extends AppCompatActivity {
 
-    private final ArrayList<Integer> mWpFragmentsLayoutsIds = new ArrayList<>(Arrays.<Integer>asList(
-            R.layout.wp_hello_fragment,
-            R.layout.wp_about_app_fragment,
-            R.layout.wp_theme_color_choice,
-            R.layout.wp_views_count_choice
+    final ArrayList<Integer> mWpFragmentsLayoutsIds = new ArrayList<>(Arrays.<Integer>asList(
+            R.layout.fragment_wp_hello,
+            R.layout.fragment_wp_about_app,
+            R.layout.fragment_wp_theme_choice,
+            R.layout.fragment_wp_density_choice
     ));
 
     int mCurrentFragmentIndex;
@@ -76,22 +76,6 @@ public class WelcomePageActivity extends AppCompatActivity {
     }
 
     public void onRadioClick(View view){
-        /*final View.OnClickListener viewListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                RadioButton thisRadioButton, anotherRadioButton;
-                if(view.getId() == R.id.layout_radio_one){
-                    thisRadioButton = findViewById(R.id.radio_one);
-                    anotherRadioButton = findViewById(R.id.radio_two);
-                } else {
-                    thisRadioButton = findViewById(R.id.radio_two);
-                    anotherRadioButton= findViewById(R.id.radio_one);
-                }
-                thisRadioButton.setChecked(true);
-                anotherRadioButton.setChecked(false);
-            }
-        };
-        viewListener.onClick(view);*/
         final RadioButton thisRadioButton, anotherRadioButton;
         if(view.getId() == R.id.layout_radio_one){
             thisRadioButton = findViewById(R.id.radio_one);

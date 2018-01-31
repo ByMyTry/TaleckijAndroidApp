@@ -19,7 +19,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".LauncherActivity"
-            android:parentActivityName=".AboutMeActivity">
+            android:parentActivityName=".AboutMeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".AboutMeActivity" />

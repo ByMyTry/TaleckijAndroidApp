@@ -59,6 +59,7 @@ task findbugs(type: FindBugs, dependsOn: "assembleDebug") {
 }
 
 task pmd (type: Pmd) {
+    ignoreFailures = true
 
     description 'Run pmd'
     group 'verification'
