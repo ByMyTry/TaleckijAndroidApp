@@ -37,7 +37,8 @@
             android:layout_margin="@dimen/margin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"/>
+            android:layout_gravity="bottom|end"
+            android:src="@drawable/ic_add_white_48dp"/>
     </android.support.design.widget.CoordinatorLayout>
     <android.support.design.widget.NavigationView
         android:id="@+id/launcher_nav_view"

@@ -23,4 +23,11 @@
 
     <string name="launcher_drawer_open_desc">launcher_drawer_open_desc</string>
     <string name="launcher_drawer_close_desc">launcher_drawer_close_desc</string>
+
+    <string name="theme_preference_key">theme_preference_key</string>
+    <string name="theme_preference_title">Theme Dark</string>
+    <string name="theme_preference_summ">Use dark theme for this app</string>
+    <string name="compact_layout_preference_key">compact_layout_preference_key</string>
+    <string name="compact_layout_preference_title">Compact Layout</string>
+    <string name="compact_layout_preference_summ">Use layout with more views count in row</string>
 </resources>

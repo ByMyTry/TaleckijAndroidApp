@@ -1,7 +1,9 @@
 package com.taleckij_anton.taleckijapp;
 
 import android.app.Fragment;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -38,16 +40,12 @@ public class LauncherGridFragment extends Fragment {
         final RecyclerView.LayoutManager layoutManager;
         final LauncherRecyclerAdapter launcherRecyclerAdapter;
         if(getArguments().getString(LAYOUT_TYPE).equals(GRID)) {
-            final int spanCount = getResources().getInteger(R.integer.views_count);
+            final int spanCount = getGridSpanCount();
             layoutManager = new GridLayoutManager(getActivity(), spanCount);
             launcherRecyclerAdapter = new LauncherRecyclerAdapter(R.layout.grid_item_launcher) ;
-            //recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), spanCount));
-            //recyclerView.setAdapter(new LauncherRecyclerAdapter(R.layout.grid_item_launcher));
         } else {
             layoutManager = new LinearLayoutManager(getActivity());
             launcherRecyclerAdapter = new LauncherRecyclerAdapter(R.layout.linear_item_launcher);
-            //recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            //recyclerView.setAdapter(new LauncherRecyclerAdapter(R.layout.linear_item_launcher));
         }
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(launcherRecyclerAdapter);
@@ -57,7 +55,8 @@ public class LauncherGridFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 mItems.add(0, "Some new String");
-                launcherRecyclerAdapter.notifyDataSetChanged();
+                layoutManager.scrollToPosition(0);
+                launcherRecyclerAdapter.notifyItemInserted(0);
             }
         });
 
@@ -70,6 +69,15 @@ public class LauncherGridFragment extends Fragment {
             items.add("Some string" + i);
         }
         return items;
+    }
+
+    private int getGridSpanCount(){
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        final String compactPrefKey = getResources().getString(R.string.compact_layout_preference_key);
+        final boolean isCompact = sharedPreferences.getBoolean(compactPrefKey, false);
+        return isCompact ?
+                getResources().getInteger(R.integer.compact_views_count) :
+                getResources().getInteger(R.integer.views_count);
     }
 
     private Snackbar createSnackbarWithAction(View.OnClickListener snackbarOnClickListener){

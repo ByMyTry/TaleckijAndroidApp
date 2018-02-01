@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:key="@string/theme_preference_key"
+        android:title="@string/theme_preference_title"
+        android:summary="@string/theme_preference_summ"
+        android:defaultValue="false"/>
+    <CheckBoxPreference
+        android:key="@string/compact_layout_preference_key"
+        android:title="@string/compact_layout_preference_title"
+        android:summary="@string/compact_layout_preference_summ"
+        android:defaultValue="false"/>
+</PreferenceScreen>

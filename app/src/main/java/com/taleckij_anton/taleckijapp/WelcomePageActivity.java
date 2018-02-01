@@ -1,5 +1,6 @@
 package com.taleckij_anton.taleckijapp;
 
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -19,14 +20,28 @@ import io.fabric.sdk.android.Fabric;
 
 public class WelcomePageActivity extends AppCompatActivity {
 
-    final ArrayList<Integer> mWpFragmentsLayoutsIds = new ArrayList<>(Arrays.<Integer>asList(
-            R.layout.fragment_wp_hello,
-            R.layout.fragment_wp_about_app,
-            R.layout.fragment_wp_theme_choice,
-            R.layout.fragment_wp_density_choice
+    private final static String SIMPLE_WP_FRAGMENT = "SIMPLE_WP_FRAGMENT";
+    private final static String SETTINGS_WP_FRAGMENT = "SETTINGS_WP_FRAGMENT";
+
+    final ArrayList<WpFragmentInfo> mWpFragmentsInfo = new ArrayList<>(Arrays.<WpFragmentInfo>asList(
+            new WpFragmentInfo(R.layout.fragment_wp_hello, SIMPLE_WP_FRAGMENT),
+            new WpFragmentInfo(R.layout.fragment_wp_about_app, SIMPLE_WP_FRAGMENT),
+            new WpFragmentInfo(R.layout.fragment_wp_theme_choice, SETTINGS_WP_FRAGMENT),
+            new WpFragmentInfo(R.layout.fragment_wp_density_choice, SETTINGS_WP_FRAGMENT)
     ));
 
+    private class WpFragmentInfo{
+        public final Integer wpFragmentLayoutId;
+        public final String wpFragmentType;
+
+        WpFragmentInfo(Integer wpFragmentLayoutId, String wpFragmentType){
+            this.wpFragmentLayoutId = wpFragmentLayoutId;
+            this.wpFragmentType = wpFragmentType;
+        }
+    }
+
     int mCurrentFragmentIndex;
+    WpFragment lastFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,18 +51,19 @@ public class WelcomePageActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
         mCurrentFragmentIndex = 0;
-        int currentFragmentLayoutId = mWpFragmentsLayoutsIds.get(mCurrentFragmentIndex);
-        replaceWpFragmentBy(currentFragmentLayoutId);
+        final WpFragmentInfo wpFragmentInfo = mWpFragmentsInfo.get(mCurrentFragmentIndex);
+        lastFragment = replaceWpFragmentBy(wpFragmentInfo);
 
         final View nextButtton = findViewById(R.id.button_next);
         nextButtton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                if(mCurrentFragmentIndex < mWpFragmentsLayoutsIds.size() - 1){
+                if(mCurrentFragmentIndex < mWpFragmentsInfo.size() - 1){
                     mCurrentFragmentIndex++;
-                    int currentFragmentLayoutId = mWpFragmentsLayoutsIds.get(mCurrentFragmentIndex);
-                    replaceWpFragmentBy(currentFragmentLayoutId);
+                    final WpFragmentInfo wpFragmentInfo = mWpFragmentsInfo.get(mCurrentFragmentIndex);
+                    lastFragment = replaceWpFragmentBy(wpFragmentInfo);
                 } else {
+                    removeWpFragment(lastFragment);
                     mCurrentFragmentIndex = -1;
                     final Intent intent = new Intent();
                     intent.setClass(v.getContext(), LauncherActivity.class);
@@ -59,25 +75,41 @@ public class WelcomePageActivity extends AppCompatActivity {
         checkForUpdates();
     }
 
-    private void replaceWpFragmentBy(int fragmentlayoutId){
+    private WpFragment replaceWpFragmentBy(WpFragmentInfo wpFragmentInfo){
+        final WpFragment currWpFragment = wpFragmentWithId(wpFragmentInfo);
         getFragmentManager().beginTransaction()
-                .replace(R.id.wp_fragment_place, simpleFragmentWithId(fragmentlayoutId))
+                .replace(R.id.wp_fragment_place, currWpFragment)
                 .addToBackStack(null)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
+        return currWpFragment;
     }
 
-    private SimpleFragment simpleFragmentWithId(int fragmentlayoutId){
-        Bundle bundle = new Bundle();
-        bundle.putInt(SimpleFragment.FRAGMENT_LAYOUT_ID, fragmentlayoutId);
-        SimpleFragment simpleFragment = new SimpleFragment();
-        simpleFragment.setArguments(bundle);
-        return simpleFragment;
+    private void removeWpFragment(WpFragment wpFragment){
+        getFragmentManager().beginTransaction()
+                .remove(wpFragment)
+                .addToBackStack(null)
+                //.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .commit();
+    }
+
+    private WpFragment wpFragmentWithId(WpFragmentInfo wpFragmentInfo){
+        final Bundle bundle = new Bundle();
+        bundle.putInt(SimpleWpFragment.FRAGMENT_LAYOUT_ID, wpFragmentInfo.wpFragmentLayoutId);
+        final WpFragment wpFragment;
+        if(wpFragmentInfo.wpFragmentType.equals(SIMPLE_WP_FRAGMENT)){
+            wpFragment = new SimpleWpFragment();
+        }else{
+            wpFragment = new SettingsWpFragment();
+        }
+        wpFragment.setArguments(bundle);
+        return wpFragment;
     }
 
     public void onRadioClick(View view){
         final RadioButton thisRadioButton, anotherRadioButton;
-        if(view.getId() == R.id.layout_radio_one){
+        if(view.getId() == R.id.layout_radio_one
+                || view.getId() == R.id.radio_one){
             thisRadioButton = findViewById(R.id.radio_one);
             anotherRadioButton = findViewById(R.id.radio_two);
         } else {
