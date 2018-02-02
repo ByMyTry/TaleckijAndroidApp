@@ -1,4 +1,4 @@
-package com.taleckij_anton.taleckijapp.welcope_page;
+package com.taleckij_anton.taleckijapp.welcome_page;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.RadioButton;
 
 import com.taleckij_anton.taleckijapp.R;
-import com.taleckij_anton.taleckijapp.welcope_page.WpFragment;
 
 //import static com.taleckij_anton.taleckijapp.welcope_page.SimpleWpFragment.FRAGMENT_LAYOUT_ID;
 

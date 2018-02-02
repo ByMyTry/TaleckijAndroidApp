@@ -10,4 +10,9 @@
         android:title="@string/compact_layout_preference_title"
         android:summary="@string/compact_layout_preference_summ"
         android:defaultValue="false"/>
+    <CheckBoxPreference
+        android:key="@string/launch_wp_pref_key"
+        android:title="@string/launch_wp_pref_title"
+        android:summary="@string/launch_wp_pref_summ"
+        android:defaultValue="false"/>
 </PreferenceScreen>

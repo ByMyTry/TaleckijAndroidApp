@@ -19,9 +19,14 @@ import com.taleckij_anton.taleckijapp.launcher.LauncherGridFragment;
 import com.taleckij_anton.taleckijapp.launcher.SettingsFragment;
 
 public class LauncherActivity extends AppCompatActivity{
+    public static final String LAUNCH_FROM_WELCOME_PAGE = "LAUNCH_FROM_WELCOME_PAGE";
+
+    private final String CHANGE_THEME_FROM_SETTINGS = "CHANGE_THEME_FROM_SETTINGS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        launchWelcomePageIfNecessary();
+
         if(isDarkTheme()) {
             //getApplication().setTheme(R.style.AppTheme_Dark);
             setTheme(R.style.AppTheme_Dark_NoActionBar);
@@ -49,6 +54,34 @@ public class LauncherActivity extends AppCompatActivity{
         myPhotoHeaderNavView.setOnClickListener(onHeaderPhotoClickListener);
 
         replaceRecyclerFragment(LauncherGridFragment.GRID);
+    }
+
+    private void launchWelcomePageIfNecessary(){
+        final String themePrefKey = getResources().getString(R.string.theme_preference_key);
+        final String layoutPrefKey = getResources().getString(R.string.compact_layout_preference_key);
+        final String launchWpPrefKey = getResources().getString(R.string.launch_wp_pref_key);
+        if(!thisIsNotFirstRunning(themePrefKey, layoutPrefKey)
+                || (launchWpOncePrefIsTrue(launchWpPrefKey)
+                 && !getIntent().getBooleanExtra(CHANGE_THEME_FROM_SETTINGS,false)
+                && !getIntent().getBooleanExtra(LAUNCH_FROM_WELCOME_PAGE,false))
+                ){
+            Log.i("thisIsNotFirstRunning", ""+!thisIsNotFirstRunning(themePrefKey, layoutPrefKey));
+            Intent intent = new Intent();
+            intent.putExtra(WelcomePageActivity.LAUNCH_FROM_LAUNCHER, true);
+            intent.setClass(this, WelcomePageActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    private boolean thisIsNotFirstRunning(String themePrefKey, String layoutPrefKey){
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPreferences.contains(themePrefKey) && sharedPreferences.contains(layoutPrefKey);
+    }
+
+    private boolean launchWpOncePrefIsTrue(String launchWpPrefKey){
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        final boolean launchWpOnce = sharedPreferences.getBoolean(launchWpPrefKey, false);
+        return launchWpOnce;
     }
 
     public boolean isDarkTheme(){
@@ -136,6 +169,7 @@ public class LauncherActivity extends AppCompatActivity{
                     if(themePrefKey.equals(key)){
                         LauncherActivity.this.finish();
                         final Intent intent = LauncherActivity.this.getIntent();
+                        intent.putExtra(CHANGE_THEME_FROM_SETTINGS,true);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         LauncherActivity.this.startActivity(intent);
                     }

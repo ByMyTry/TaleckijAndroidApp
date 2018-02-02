@@ -31,4 +31,7 @@
     <string name="compact_layout_preference_key">compact_layout_preference_key</string>
     <string name="compact_layout_preference_title">Compact Layout</string>
     <string name="compact_layout_preference_summ">Use layout with more views count in row</string>
+    <string name="launch_wp_pref_key">launch_wp_pref_key</string>
+    <string name="launch_wp_pref_title">Launch Welcome Page</string>
+    <string name="launch_wp_pref_summ">Launch the welcome page when the app next run(only once)</string>
 </resources>

@@ -2,6 +2,8 @@ package com.taleckij_anton.taleckijapp;
 
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,9 +11,9 @@ import android.view.View;
 import android.widget.RadioButton;
 
 import com.crashlytics.android.Crashlytics;
-import com.taleckij_anton.taleckijapp.welcope_page.SettingsWpFragment;
-import com.taleckij_anton.taleckijapp.welcope_page.SimpleWpFragment;
-import com.taleckij_anton.taleckijapp.welcope_page.WpFragment;
+import com.taleckij_anton.taleckijapp.welcome_page.SettingsWpFragment;
+import com.taleckij_anton.taleckijapp.welcome_page.SimpleWpFragment;
+import com.taleckij_anton.taleckijapp.welcome_page.WpFragment;
 
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.UpdateManager;
@@ -22,6 +24,7 @@ import java.util.Arrays;
 import io.fabric.sdk.android.Fabric;
 
 public class WelcomePageActivity extends AppCompatActivity {
+    public final static String LAUNCH_FROM_LAUNCHER = "LAUNCH_FROM_LAUNCHER";
 
     private final static String SIMPLE_WP_FRAGMENT = "SIMPLE_WP_FRAGMENT";
     private final static String SETTINGS_WP_FRAGMENT = "SETTINGS_WP_FRAGMENT";
@@ -54,32 +57,51 @@ public class WelcomePageActivity extends AppCompatActivity {
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_welcome_page);
 
+        final String launchWpPrefKey = getResources().getString(R.string.launch_wp_pref_key);
+        ifWpOnceTrueSetFalse(launchWpPrefKey);
+
         mCurrentFragmentIndex = 0;
         final WpFragmentInfo wpFragmentInfo = mWpFragmentsInfo.get(mCurrentFragmentIndex);
         lastFragment = replaceWpFragmentBy(wpFragmentInfo);
 
         final View nextButtton = findViewById(R.id.button_next);
-        nextButtton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                Log.i("nextButtton", String.valueOf(mCurrentFragmentIndex));
-                if(mCurrentFragmentIndex < mWpFragmentsInfo.size() - 1){
-                    mCurrentFragmentIndex++;
-                    final WpFragmentInfo wpFragmentInfo = mWpFragmentsInfo.get(mCurrentFragmentIndex);
-                    lastFragment = replaceWpFragmentBy(wpFragmentInfo);
-                } else {
-                    //TODO пределать, без ремува, новая активити создается раньше, чем преференсы сохраняются
-                    removeWpFragment(lastFragment);
-                    //mCurrentFragmentIndex = -1;
-                    final Intent intent = new Intent();
-                    intent.setClass(v.getContext(), LauncherActivity.class);
-                    startActivity(intent);
-                }
-            }
-        });
+        nextButtton.setOnClickListener(mNextButtonOnClick);
 
         checkForUpdates();
     }
+
+    private void ifWpOnceTrueSetFalse(String launchWpPrefKey){
+        if(getIntent().getBooleanExtra(LAUNCH_FROM_LAUNCHER, false)) {
+            final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            final boolean launchWpOnce = sharedPreferences.getBoolean(launchWpPrefKey, false);
+            if (launchWpOnce) {
+                sharedPreferences.edit()
+                        .putBoolean(launchWpPrefKey, false)
+                        .apply();
+            }
+        }
+    }
+
+    private final View.OnClickListener
+            mNextButtonOnClick = new View.OnClickListener() {
+        @Override
+        public void onClick(final View v) {
+            Log.i("nextButtton", String.valueOf(mCurrentFragmentIndex));
+            if(mCurrentFragmentIndex < mWpFragmentsInfo.size() - 1){
+                mCurrentFragmentIndex++;
+                final WpFragmentInfo wpFragmentInfo = mWpFragmentsInfo.get(mCurrentFragmentIndex);
+                lastFragment = replaceWpFragmentBy(wpFragmentInfo);
+            } else {
+                //TODO пределать, без ремува; новая активити создается раньше, чем преференсы сохраняются
+                removeWpFragment(lastFragment);
+                //mCurrentFragmentIndex = -1;
+                final Intent intent = new Intent();
+                intent.putExtra(LauncherActivity.LAUNCH_FROM_WELCOME_PAGE, true);
+                intent.setClass(v.getContext(), LauncherActivity.class);
+                startActivity(intent);
+            }
+        }
+    };
 
     private WpFragment replaceWpFragmentBy(WpFragmentInfo wpFragmentInfo){
         final WpFragment currWpFragment = wpFragmentWithId(wpFragmentInfo);
