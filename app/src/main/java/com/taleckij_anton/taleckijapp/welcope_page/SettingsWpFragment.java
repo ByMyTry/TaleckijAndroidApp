@@ -1,6 +1,5 @@
-package com.taleckij_anton.taleckijapp;
+package com.taleckij_anton.taleckijapp.welcope_page;
 
-import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -11,7 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 
-//import static com.taleckij_anton.taleckijapp.SimpleWpFragment.FRAGMENT_LAYOUT_ID;
+import com.taleckij_anton.taleckijapp.R;
+import com.taleckij_anton.taleckijapp.welcope_page.WpFragment;
+
+//import static com.taleckij_anton.taleckijapp.welcope_page.SimpleWpFragment.FRAGMENT_LAYOUT_ID;
 
 /**
  * Created by Lenovo on 01.02.2018.
@@ -26,7 +28,7 @@ public class SettingsWpFragment extends WpFragment {
         fragmentLayoutId = getArguments().getInt(FRAGMENT_LAYOUT_ID);
         final View view = inflater.inflate(fragmentLayoutId, container, false);
 
-        setCurrentRadio(view);
+        setCurrentRadioFromSp(view);
 
         return view;
     }
@@ -35,7 +37,7 @@ public class SettingsWpFragment extends WpFragment {
         return R.layout.fragment_wp_theme_choice == fragmentLayoutId;
     }
 
-    private void setCurrentRadio(View view){
+    private void setCurrentRadioFromSp(View view){
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         if(isThemeLayout()){
             final String themeDarkPrefKey = getResources().getString(R.string.theme_preference_key);
@@ -62,23 +64,43 @@ public class SettingsWpFragment extends WpFragment {
         }
     }
 
-
     @Override
-    public void onDestroyView() {
-        Log.i("onDestroyView", String.valueOf(isThemeLayout()));
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        final SharedPreferences.Editor editor = sharedPreferences.edit();
+    public void onStop() {
+        Log.i("onStop", String.valueOf(isThemeLayout()));
         if(isThemeLayout()) {
             final RadioButton darkThemeRadio = getActivity().findViewById(R.id.radio_two);
-            final String themeDarkPrefKey = getResources().getString(R.string.theme_preference_key);
-            editor.putBoolean(themeDarkPrefKey, darkThemeRadio.isChecked())
-                    .apply();
+            applyPrefToSharedPref(R.string.theme_preference_key, darkThemeRadio.isChecked());
+            //final String themeDarkPrefKey = getResources().getString(R.string.theme_preference_key);
+            //editor.putBoolean(themeDarkPrefKey, darkThemeRadio.isChecked())
+            //        .apply();
         }else{
             final RadioButton compactLayoutRadio = getActivity().findViewById(R.id.radio_two);
-            final String compactLayoutPrefKey = getResources().getString(R.string.compact_layout_preference_key);
-            editor.putBoolean(compactLayoutPrefKey, compactLayoutRadio.isChecked())
-                    .apply();
+            applyPrefToSharedPref(R.string.compact_layout_preference_key, compactLayoutRadio.isChecked());
+        }
+        super.onStop();
+    }
+
+    /*@Override
+    public void onDestroyView() {
+        Log.i("onDestroyView", String.valueOf(isThemeLayout()));
+        if(isThemeLayout()) {
+            final RadioButton darkThemeRadio = getActivity().findViewById(R.id.radio_two);
+            applyPrefToSharedPref(R.string.theme_preference_key, darkThemeRadio.isChecked());
+            //final String themeDarkPrefKey = getResources().getString(R.string.theme_preference_key);
+            //editor.putBoolean(themeDarkPrefKey, darkThemeRadio.isChecked())
+            //       .apply();
+        }else{
+            final RadioButton compactLayoutRadio = getActivity().findViewById(R.id.radio_two);
+            applyPrefToSharedPref(R.string.compact_layout_preference_key, compactLayoutRadio.isChecked());
         }
         super.onDestroyView();
+    }*/
+
+    private void applyPrefToSharedPref(int prefKeyResId, Boolean value){
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        final SharedPreferences.Editor spEditor = sharedPreferences.edit();
+        final String prefKey = getResources().getString(prefKeyResId);
+        spEditor.putBoolean(prefKey, value)
+                .apply();
     }
 }

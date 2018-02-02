@@ -1,4 +1,4 @@
-package com.taleckij_anton.taleckijapp;
+package com.taleckij_anton.taleckijapp.welcope_page;
 
 import android.app.Fragment;
 import android.os.Bundle;

@@ -1,14 +1,17 @@
 package com.taleckij_anton.taleckijapp;
 
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.RadioButton;
 
 import com.crashlytics.android.Crashlytics;
+import com.taleckij_anton.taleckijapp.welcope_page.SettingsWpFragment;
+import com.taleckij_anton.taleckijapp.welcope_page.SimpleWpFragment;
+import com.taleckij_anton.taleckijapp.welcope_page.WpFragment;
 
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.UpdateManager;
@@ -31,8 +34,8 @@ public class WelcomePageActivity extends AppCompatActivity {
     ));
 
     private class WpFragmentInfo{
-        public final Integer wpFragmentLayoutId;
-        public final String wpFragmentType;
+        final Integer wpFragmentLayoutId;
+        final String wpFragmentType;
 
         WpFragmentInfo(Integer wpFragmentLayoutId, String wpFragmentType){
             this.wpFragmentLayoutId = wpFragmentLayoutId;
@@ -45,10 +48,11 @@ public class WelcomePageActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //setTheme(R.style.AppTheme_Dark_NoActionBar);
+
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_welcome_page);
-        getSupportActionBar().hide();
 
         mCurrentFragmentIndex = 0;
         final WpFragmentInfo wpFragmentInfo = mWpFragmentsInfo.get(mCurrentFragmentIndex);
@@ -58,13 +62,15 @@ public class WelcomePageActivity extends AppCompatActivity {
         nextButtton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+                Log.i("nextButtton", String.valueOf(mCurrentFragmentIndex));
                 if(mCurrentFragmentIndex < mWpFragmentsInfo.size() - 1){
                     mCurrentFragmentIndex++;
                     final WpFragmentInfo wpFragmentInfo = mWpFragmentsInfo.get(mCurrentFragmentIndex);
                     lastFragment = replaceWpFragmentBy(wpFragmentInfo);
                 } else {
+                    //TODO пределать, без ремува, новая активити создается раньше, чем преференсы сохраняются
                     removeWpFragment(lastFragment);
-                    mCurrentFragmentIndex = -1;
+                    //mCurrentFragmentIndex = -1;
                     final Intent intent = new Intent();
                     intent.setClass(v.getContext(), LauncherActivity.class);
                     startActivity(intent);

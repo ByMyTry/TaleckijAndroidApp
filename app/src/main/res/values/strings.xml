@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Taleckij.Launcher</string>
     <string name="my_name">Anton Taleckij</string>
+    <string name="my_email">anton.taleckij.job@gmail.com</string>
     <string name="hello_message">Hello. Welcome. Glad to see you!</string>
     <string name="next_button_text">next</string>
     <string name="app_description">It is the simple launcher app</string>
