@@ -122,15 +122,12 @@ public class WelcomePageActivity extends AppCompatActivity {
     }
 
     private WpFragment wpFragmentWithId(WpFragmentInfo wpFragmentInfo){
-        final Bundle bundle = new Bundle();
-        bundle.putInt(SimpleWpFragment.FRAGMENT_LAYOUT_ID, wpFragmentInfo.wpFragmentLayoutId);
         final WpFragment wpFragment;
         if(wpFragmentInfo.wpFragmentType.equals(SIMPLE_WP_FRAGMENT)){
-            wpFragment = new SimpleWpFragment();
+            wpFragment = SimpleWpFragment.getInstance(wpFragmentInfo.wpFragmentLayoutId);
         }else{
-            wpFragment = new SettingsWpFragment();
+            wpFragment = SettingsWpFragment.getInstance(wpFragmentInfo.wpFragmentLayoutId);
         }
-        wpFragment.setArguments(bundle);
         return wpFragment;
     }
 

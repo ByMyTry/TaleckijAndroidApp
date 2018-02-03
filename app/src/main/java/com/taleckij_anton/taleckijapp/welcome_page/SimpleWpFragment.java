@@ -19,4 +19,12 @@ public class SimpleWpFragment extends WpFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         return super.onCreateView(inflater, container, savedInstanceState);
     }
+
+    public static SimpleWpFragment getInstance(int wpFragmentLayoutId){
+        final Bundle bundle = new Bundle();
+        bundle.putInt(FRAGMENT_LAYOUT_ID, wpFragmentLayoutId);
+        SimpleWpFragment wpFragment = new SimpleWpFragment();
+        wpFragment.setArguments(bundle);
+        return wpFragment;
+    }
 }

@@ -11,10 +11,12 @@
         android:id="@+id/coordinator_parent_recycler"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
         android:orientation="vertical">
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
             android:theme="@style/AppTheme.AppBarOverlay">
             <android.support.design.widget.CollapsingToolbarLayout
                 android:layout_width="wrap_content"
@@ -31,14 +33,16 @@
             android:id="@+id/list_fragment_place"
             android:layout_marginTop="60dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_launcher"
-            android:layout_margin="@dimen/margin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:src="@drawable/ic_add_white_48dp"/>
+            android:layout_height="match_parent">
+            <!--<android.support.design.widget.FloatingActionButton-->
+                <!--android:id="@+id/fab_launcher"-->
+                <!--android:layout_margin="@dimen/margin"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--app:layout_anchor="@id/list_fragment_place"-->
+                <!--app:layout_anchorGravity="bottom|end"-->
+                <!--android:src="@drawable/ic_add_white_48dp"/>-->
+        </FrameLayout>
     </android.support.design.widget.CoordinatorLayout>
     <android.support.design.widget.NavigationView
         android:id="@+id/launcher_nav_view"

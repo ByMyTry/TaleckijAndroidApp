@@ -102,4 +102,12 @@ public class SettingsWpFragment extends WpFragment {
         spEditor.putBoolean(prefKey, value)
                 .apply();
     }
+
+    public static SettingsWpFragment getInstance(int wpFragmentLayoutId){
+        final Bundle bundle = new Bundle();
+        bundle.putInt(FRAGMENT_LAYOUT_ID, wpFragmentLayoutId);
+        SettingsWpFragment wpFragment = new SettingsWpFragment();
+        wpFragment.setArguments(bundle);
+        return wpFragment;
+    }
 }

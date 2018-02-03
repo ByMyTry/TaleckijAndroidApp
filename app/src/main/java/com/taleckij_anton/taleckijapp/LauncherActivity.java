@@ -15,7 +15,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.taleckij_anton.taleckijapp.launcher.LauncherGridFragment;
+import com.taleckij_anton.taleckijapp.launcher.LauncherRecyclerFragment;
 import com.taleckij_anton.taleckijapp.launcher.SettingsFragment;
 
 public class LauncherActivity extends AppCompatActivity{
@@ -53,7 +53,7 @@ public class LauncherActivity extends AppCompatActivity{
                                                             .findViewById(R.id.nav_header_my_photo);
         myPhotoHeaderNavView.setOnClickListener(onHeaderPhotoClickListener);
 
-        replaceRecyclerFragment(LauncherGridFragment.GRID);
+        replaceRecyclerFragment(LauncherRecyclerFragment.GRID);
     }
 
     private void launchWelcomePageIfNecessary(){
@@ -107,9 +107,9 @@ public class LauncherActivity extends AppCompatActivity{
                     int menuItemId = item.getItemId();
 
                     if(menuItemId == R.id.grid_layout_menu_item){
-                        replaceRecyclerFragment(LauncherGridFragment.GRID);
+                        replaceRecyclerFragment(LauncherRecyclerFragment.GRID);
                     } else if(menuItemId == R.id.linear_layout_menu_item){
-                        replaceRecyclerFragment(LauncherGridFragment.LINEAR);
+                        replaceRecyclerFragment(LauncherRecyclerFragment.LINEAR);
                     } else if(menuItemId == R.id.settings_menu_item) {
                         replaceSettingsFragment();
                     }
@@ -131,9 +131,9 @@ public class LauncherActivity extends AppCompatActivity{
             };
 
     private void replaceRecyclerFragment(String fragmentType){
-        final LauncherGridFragment launcherFragment = new LauncherGridFragment();
+        final LauncherRecyclerFragment launcherFragment = new LauncherRecyclerFragment();
         final Bundle arguments = new Bundle();
-        arguments.putString(LauncherGridFragment.LAYOUT_TYPE, fragmentType);
+        arguments.putString(LauncherRecyclerFragment.LAYOUT_TYPE, fragmentType);
         launcherFragment.setArguments(arguments);
 
         getFragmentManager().beginTransaction()
