@@ -15,4 +15,10 @@
         android:title="@string/launch_wp_pref_title"
         android:summary="@string/launch_wp_pref_summ"
         android:defaultValue="false"/>
+    <ListPreference
+        android:key="@string/sorttype_apps_pref_key"
+        android:title="@string/sorttype_apps_pref_title"
+        android:summary="@string/sorttype_apps_pref_summ"
+        android:entries="@array/sorttype_apps_pref_entries"
+        android:entryValues="@array/sorttype_apps_pref_entryvalues"/>
 </PreferenceScreen>

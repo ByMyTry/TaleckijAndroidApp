@@ -14,14 +14,35 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 
-import com.taleckij_anton.taleckijapp.launcher.LauncherRecyclerFragment;
+import com.crashlytics.android.Crashlytics;
+import com.taleckij_anton.taleckijapp.launcher.recycler_training.LauncherRecyclerFragment;
 import com.taleckij_anton.taleckijapp.launcher.SettingsFragment;
+
+import net.hockeyapp.android.CrashManager;
+import net.hockeyapp.android.UpdateManager;
+
+import io.fabric.sdk.android.Fabric;
 
 public class LauncherActivity extends AppCompatActivity{
     public static final String LAUNCH_FROM_WELCOME_PAGE = "LAUNCH_FROM_WELCOME_PAGE";
 
     private final String CHANGE_THEME_FROM_SETTINGS = "CHANGE_THEME_FROM_SETTINGS";
+    private final SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener =
+            new SharedPreferences.OnSharedPreferenceChangeListener(){
+                @Override
+                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key){
+                    final String themePrefKey = getResources().getString(R.string.theme_preference_key);
+                    if(themePrefKey.equals(key)){
+                        LauncherActivity.this.finish();
+                        final Intent intent = LauncherActivity.this.getIntent();
+                        intent.putExtra(CHANGE_THEME_FROM_SETTINGS,true);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        LauncherActivity.this.startActivity(intent);
+                    }
+                }
+            };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,27 +54,42 @@ public class LauncherActivity extends AppCompatActivity{
         }
 
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_launcher);
 
         final Toolbar toolbar = findViewById(R.id.launcher_toolbar);
         setSupportActionBar(toolbar);
-
         final DrawerLayout drawerLayout = findViewById(R.id.launcher);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar,
                 R.string.launcher_drawer_open_desc, R.string.launcher_drawer_close_desc
-        );
+        ){
+            //http://thetechnocafe.com/slide-content-to-side-in-drawer-layout-android/
+            private float scaleFactor = 6f;
+            private FrameLayout content = findViewById(R.id.list_fragment_place);
+
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+                float slideX = drawerView.getWidth() * slideOffset;
+                content.setTranslationX(slideX);
+                content.setScaleX(1 - (slideOffset / scaleFactor));
+                content.setScaleY(1 - (slideOffset / scaleFactor));
+            }
+        };
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
         final NavigationView navigationView = findViewById(R.id.launcher_nav_view);
         navigationView.setNavigationItemSelectedListener(onNavigationItemSelectedListener);
 
-        final View myPhotoHeaderNavView = navigationView.getHeaderView(0)
-                                                            .findViewById(R.id.nav_header_my_photo);
+        final View myPhotoHeaderNavView = navigationView
+                .getHeaderView(0).findViewById(R.id.nav_header_my_photo);
         myPhotoHeaderNavView.setOnClickListener(onHeaderPhotoClickListener);
 
         replaceRecyclerFragment(LauncherRecyclerFragment.GRID);
+
+        checkForUpdates();
     }
 
     private void launchWelcomePageIfNecessary(){
@@ -152,6 +188,8 @@ public class LauncherActivity extends AppCompatActivity{
         super.onResume();
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
+
+        checkForCrashes();
     }
 
     @Override
@@ -159,21 +197,27 @@ public class LauncherActivity extends AppCompatActivity{
         super.onPause();
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
+
+        unregisterManagers();
     }
 
-    private final SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener =
-            new SharedPreferences.OnSharedPreferenceChangeListener(){
-                @Override
-                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key){
-                    final String themePrefKey = getResources().getString(R.string.theme_preference_key);
-                    if(themePrefKey.equals(key)){
-                        LauncherActivity.this.finish();
-                        final Intent intent = LauncherActivity.this.getIntent();
-                        intent.putExtra(CHANGE_THEME_FROM_SETTINGS,true);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        LauncherActivity.this.startActivity(intent);
-                    }
-                }
-            };
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterManagers();
+    }
+
+    private void checkForCrashes() {
+        CrashManager.register(this);
+    }
+
+    private void checkForUpdates() {
+        // Remove this for store builds!
+        UpdateManager.register(this);
+    }
+
+    private void unregisterManagers() {
+        UpdateManager.unregister();
+    }
 }
 

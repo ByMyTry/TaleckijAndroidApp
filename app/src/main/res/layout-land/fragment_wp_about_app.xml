@@ -11,7 +11,7 @@
         android:id="@+id/my_photo_view"
         android:layout_height="@dimen/icon_diameter"
         android:layout_width="@dimen/icon_diameter"
-        android:src="@mipmap/ic_launcher_round"
+        android:src="@drawable/takeckij_launcher_logo_round"
         android:layout_marginRight="@dimen/margin">
     </ImageView>
     <LinearLayout

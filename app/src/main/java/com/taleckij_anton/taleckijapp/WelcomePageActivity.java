@@ -54,7 +54,6 @@ public class WelcomePageActivity extends AppCompatActivity {
         //setTheme(R.style.AppTheme_Dark_NoActionBar);
 
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_welcome_page);
 
         final String launchWpPrefKey = getResources().getString(R.string.launch_wp_pref_key);
@@ -66,8 +65,6 @@ public class WelcomePageActivity extends AppCompatActivity {
 
         final View nextButtton = findViewById(R.id.button_next);
         nextButtton.setOnClickListener(mNextButtonOnClick);
-
-        checkForUpdates();
     }
 
     private void ifWpOnceTrueSetFalse(String launchWpPrefKey){
@@ -143,37 +140,5 @@ public class WelcomePageActivity extends AppCompatActivity {
         }
         thisRadioButton.setChecked(true);
         anotherRadioButton.setChecked(false);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // ... your own onResume implementation
-        checkForCrashes();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        unregisterManagers();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        unregisterManagers();
-    }
-
-    private void checkForCrashes() {
-        CrashManager.register(this);
-    }
-
-    private void checkForUpdates() {
-        // Remove this for store builds!
-        UpdateManager.register(this);
-    }
-
-    private void unregisterManagers() {
-        UpdateManager.unregister();
     }
 }

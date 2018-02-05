@@ -5,7 +5,7 @@
     android:layout_margin="@dimen/margin_grid_item"
     android:orientation="vertical">
     <!--android:background="@color/colorAccent"-->
-    <com.taleckij_anton.taleckijapp.launcher.SquareView
+    <com.taleckij_anton.taleckijapp.launcher.recycler_training.SquareView
         android:id="@+id/launcher_item_icon"
         android:layout_width="match_parent"
         android:layout_height="1dp" />

@@ -1,4 +1,4 @@
-package com.taleckij_anton.taleckijapp.launcher;
+package com.taleckij_anton.taleckijapp.launcher.recycler_training;
 
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;

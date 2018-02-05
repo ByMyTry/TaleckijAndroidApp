@@ -23,7 +23,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".AboutMeActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:parentActivityName=".LauncherActivity">
+            <!--android:theme="@style/AppTheme.NoActionBar"-->
         </activity>
 
         <meta-data
