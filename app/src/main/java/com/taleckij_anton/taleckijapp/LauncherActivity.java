@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.crashlytics.android.Crashlytics;
+import com.taleckij_anton.taleckijapp.launcher.applications.AppsFragment;
 import com.taleckij_anton.taleckijapp.launcher.recycler_training.LauncherRecyclerFragment;
 import com.taleckij_anton.taleckijapp.launcher.SettingsFragment;
 
@@ -178,8 +179,11 @@ public class LauncherActivity extends AppCompatActivity{
     }
 
     private void replaceSettingsFragment(){
-        getFragmentManager().beginTransaction()
+        /*getFragmentManager().beginTransaction()
                 .replace(R.id.list_fragment_place, new SettingsFragment())
+                .commit();*/
+        getFragmentManager().beginTransaction()
+                .replace(R.id.list_fragment_place, new AppsFragment())
                 .commit();
     }
 
