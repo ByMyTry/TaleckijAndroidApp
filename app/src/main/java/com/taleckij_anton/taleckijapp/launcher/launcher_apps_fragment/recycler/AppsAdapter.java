@@ -61,14 +61,14 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder>{
             return new Comparator<LaunchAppInfoModel>() {
                 @Override
                 public int compare(LaunchAppInfoModel o1, LaunchAppInfoModel o2) {
-                    return ((Integer)o2.getLaunchCount()).compareTo(o1.getLaunchCount());
+                    return Integer.compare(o2.getLaunchCount(), o1.getLaunchCount());
                 }
             };
         } else { //SORT_FIRST_INSTALL_TIME
             return new Comparator<LaunchAppInfoModel>() {
                 @Override
                 public int compare(LaunchAppInfoModel o1, LaunchAppInfoModel o2) {
-                    return ((Long)o1.getFirstInstallTime()).compareTo(o2.getFirstInstallTime());
+                    return Long.compare(o1.getFirstInstallTime(), o2.getFirstInstallTime());
                 }
             };
         }
