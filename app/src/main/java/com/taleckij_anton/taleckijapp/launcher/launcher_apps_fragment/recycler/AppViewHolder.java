@@ -1,4 +1,4 @@
-package com.taleckij_anton.taleckijapp.launcher.applications.recycler;
+package com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.recycler;
 
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;

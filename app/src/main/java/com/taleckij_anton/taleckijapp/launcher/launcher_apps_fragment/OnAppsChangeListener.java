@@ -1,4 +1,4 @@
-package com.taleckij_anton.taleckijapp.launcher.applications;
+package com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment;
 
 /**
  * Created by Lenovo on 06.02.2018.

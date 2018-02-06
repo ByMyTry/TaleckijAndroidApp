@@ -1,4 +1,4 @@
-package com.taleckij_anton.taleckijapp.launcher.applications.db;
+package com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,8 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 
 public class AppsLaunchDbHelper extends SQLiteOpenHelper {
-    static final int VERSION = 1;
-    static final String DB_NAME = "apps_launch.db";
+    private static final int VERSION = 1;
+    private static final String DB_NAME = "apps_launch.db";
 
     public AppsLaunchDbHelper(Context context){
         super(context, DB_NAME, null, VERSION);

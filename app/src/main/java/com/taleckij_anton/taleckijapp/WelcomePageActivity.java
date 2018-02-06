@@ -51,7 +51,9 @@ public class WelcomePageActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //setTheme(R.style.AppTheme_Dark_NoActionBar);
+        if(isDarkTheme()) {
+            setTheme(R.style.AppTheme_Dark_NoActionBar);
+        }
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome_page);
@@ -65,6 +67,13 @@ public class WelcomePageActivity extends AppCompatActivity {
 
         final View nextButtton = findViewById(R.id.button_next);
         nextButtton.setOnClickListener(mNextButtonOnClick);
+    }
+
+    public boolean isDarkTheme(){
+        final SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        final String themePrefKey = getResources().getString(R.string.theme_preference_key);
+        return sharedPreferences.getBoolean(themePrefKey, false);
     }
 
     private void ifWpOnceTrueSetFalse(String launchWpPrefKey){

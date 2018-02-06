@@ -1,4 +1,4 @@
-package com.taleckij_anton.taleckijapp.launcher.applications;
+package com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

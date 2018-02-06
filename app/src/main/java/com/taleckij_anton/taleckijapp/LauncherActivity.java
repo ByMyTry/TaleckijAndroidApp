@@ -17,7 +17,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.crashlytics.android.Crashlytics;
-import com.taleckij_anton.taleckijapp.launcher.applications.AppsFragment;
+import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.AppsFragment;
 import com.taleckij_anton.taleckijapp.launcher.recycler_training.LauncherRecyclerFragment;
 import com.taleckij_anton.taleckijapp.launcher.SettingsFragment;
 
@@ -88,7 +88,8 @@ public class LauncherActivity extends AppCompatActivity{
                 .getHeaderView(0).findViewById(R.id.nav_header_my_photo);
         myPhotoHeaderNavView.setOnClickListener(onHeaderPhotoClickListener);
 
-        replaceRecyclerFragment(LauncherRecyclerFragment.GRID);
+        replaceAppsFragment();
+        //replaceRecyclerFragment(LauncherRecyclerFragment.GRID);
 
         checkForUpdates();
     }
@@ -116,13 +117,15 @@ public class LauncherActivity extends AppCompatActivity{
     }
 
     private boolean launchWpOncePrefIsTrue(String launchWpPrefKey){
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
         final boolean launchWpOnce = sharedPreferences.getBoolean(launchWpPrefKey, false);
         return launchWpOnce;
     }
 
     public boolean isDarkTheme(){
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
         final String themePrefKey = getResources().getString(R.string.theme_preference_key);
         return sharedPreferences.getBoolean(themePrefKey, false);
     }
@@ -143,7 +146,9 @@ public class LauncherActivity extends AppCompatActivity{
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     int menuItemId = item.getItemId();
 
-                    if(menuItemId == R.id.grid_layout_menu_item){
+                    if(menuItemId == R.id.launcher_menu_item){
+                        replaceAppsFragment();
+                    }else if (menuItemId == R.id.grid_layout_menu_item){
                         replaceRecyclerFragment(LauncherRecyclerFragment.GRID);
                     } else if(menuItemId == R.id.linear_layout_menu_item){
                         replaceRecyclerFragment(LauncherRecyclerFragment.LINEAR);
@@ -167,23 +172,26 @@ public class LauncherActivity extends AppCompatActivity{
                 }
             };
 
-    private void replaceRecyclerFragment(String fragmentType){
-        final LauncherRecyclerFragment launcherFragment = new LauncherRecyclerFragment();
-        final Bundle arguments = new Bundle();
-        arguments.putString(LauncherRecyclerFragment.LAYOUT_TYPE, fragmentType);
-        launcherFragment.setArguments(arguments);
+    private void replaceAppsFragment(){
+        AppsFragment appsFragment = AppsFragment.getInstance();
 
         getFragmentManager().beginTransaction()
-                .replace(R.id.list_fragment_place, launcherFragment)
+                .replace(R.id.list_fragment_place, appsFragment)
+                .commit();
+    }
+
+    private void replaceRecyclerFragment(String fragmentType){
+       final LauncherRecyclerFragment launcherRecyclerFragment
+               = LauncherRecyclerFragment.getInstance(fragmentType);
+
+        getFragmentManager().beginTransaction()
+                .replace(R.id.list_fragment_place, launcherRecyclerFragment)
                 .commit();
     }
 
     private void replaceSettingsFragment(){
-        /*getFragmentManager().beginTransaction()
-                .replace(R.id.list_fragment_place, new SettingsFragment())
-                .commit();*/
         getFragmentManager().beginTransaction()
-                .replace(R.id.list_fragment_place, new AppsFragment())
+                .replace(R.id.list_fragment_place, new SettingsFragment())
                 .commit();
     }
 

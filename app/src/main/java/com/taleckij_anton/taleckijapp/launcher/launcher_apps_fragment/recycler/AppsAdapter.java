@@ -1,4 +1,4 @@
-package com.taleckij_anton.taleckijapp.launcher.applications.recycler;
+package com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.recycler;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,8 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.taleckij_anton.taleckijapp.R;
-import com.taleckij_anton.taleckijapp.launcher.applications.LaunchAppInfoModel;
-import com.taleckij_anton.taleckijapp.launcher.applications.OnRecyclerViewGestureActioner;
+import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.LaunchAppInfoModel;
+import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.OnRecyclerViewGestureActioner;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,10 +21,10 @@ import java.util.List;
 
 public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder>{
     public static final String WITHOUT_SORT = "0";
-    public static  final String SORT_AZ = "1";
-    public static  final String SORT_ZA = "2";
-    public static  final String SORT_LAUNCH_COUNT = "3";
-    public static  final String SORT_FIRST_DATE = "4";
+    public static final String SORT_AZ = "1";
+    public static final String SORT_ZA = "2";
+    public static final String SORT_FIRST_INSTALL_TIME = "3";
+    public static final String SORT_LAUNCH_COUNT = "4";
 
 
     private final List<LaunchAppInfoModel> mAppsData;
@@ -64,7 +64,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder>{
                     return ((Integer)o2.getLaunchCount()).compareTo(o1.getLaunchCount());
                 }
             };
-        } else { //SORT_FIRST_DATE
+        } else { //SORT_FIRST_INSTALL_TIME
             return new Comparator<LaunchAppInfoModel>() {
                 @Override
                 public int compare(LaunchAppInfoModel o1, LaunchAppInfoModel o2) {

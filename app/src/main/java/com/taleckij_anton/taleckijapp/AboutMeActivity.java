@@ -1,6 +1,8 @@
 package com.taleckij_anton.taleckijapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -16,6 +18,10 @@ public class AboutMeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if(isDarkTheme()) {
+            setTheme(R.style.AppTheme_Dark_NoActionBar);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_me);
 
@@ -32,6 +38,13 @@ public class AboutMeActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    public boolean isDarkTheme(){
+        final SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        final String themePrefKey = getResources().getString(R.string.theme_preference_key);
+        return sharedPreferences.getBoolean(themePrefKey, false);
     }
 
     private void makeGithubLink(TextView textView, String github_url){

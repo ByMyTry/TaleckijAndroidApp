@@ -55,6 +55,14 @@ public class LauncherRecyclerFragment extends Fragment {
     RecyclerView.LayoutManager layoutManager;
     LauncherRecyclerAdapter launcherRecyclerAdapter;
 
+    public static LauncherRecyclerFragment getInstance(String fragmentType){
+        final LauncherRecyclerFragment launcherFragment = new LauncherRecyclerFragment();
+        final Bundle arguments = new Bundle();
+        arguments.putString(LauncherRecyclerFragment.LAYOUT_TYPE, fragmentType);
+        launcherFragment.setArguments(arguments);
+        return launcherFragment;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {

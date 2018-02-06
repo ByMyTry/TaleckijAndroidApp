@@ -1,4 +1,4 @@
-package com.taleckij_anton.taleckijapp.launcher.applications;
+package com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment;
 
 import android.app.Fragment;
 import android.content.ComponentName;
@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
 import android.database.Cursor;
@@ -15,6 +16,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.UserHandle;
 import android.os.UserManager;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -26,9 +28,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.taleckij_anton.taleckijapp.R;
-import com.taleckij_anton.taleckijapp.launcher.applications.db.AppsLaunchCountDb;
-import com.taleckij_anton.taleckijapp.launcher.applications.db.AppsLaunchDbHelper;
-import com.taleckij_anton.taleckijapp.launcher.applications.recycler.AppsAdapter;
+import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.db.AppsLaunchCountDb;
+import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.db.AppsLaunchDbHelper;
+import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.recycler.AppsAdapter;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -66,6 +68,10 @@ public class AppsFragment extends Fragment {
         }
     };
 
+    public static AppsFragment getInstance(){
+        return new AppsFragment();
+    }
+
     private List<LaunchAppInfoModel> getAddedAppsModelsByUid(List<LauncherActivityInfo> appsData,
                                                              int uid){
         LinkedList<LaunchAppInfoModel> addedAppsModels = new LinkedList<>();
@@ -86,8 +92,8 @@ public class AppsFragment extends Fragment {
                 ContentValues values = new ContentValues();
                 values.put(AppsLaunchCountDb.Columns.FIELD_APP_LAUNCH_COUNT,
                         appModel.getLaunchCount());
-                values.put(AppsLaunchCountDb.Columns.FIELD_APP_PACKAGE_NAME,
-                        appModel.getPackageName());
+                //values.put(AppsLaunchCountDb.Columns.FIELD_APP_PACKAGE_NAME,
+                //        appModel.getPackageName());
                 values.put(AppsLaunchCountDb.Columns.FILED_APP_FULL_NAME,
                         appModel.getFullName());
                 db.insert(AppsLaunchCountDb.APPS_LUNCH_COUNT_TABLE, null, values);
@@ -138,7 +144,9 @@ public class AppsFragment extends Fragment {
 
         //Log.i("DB","COUNT " +  applicationInfos.size() + " " + appsModels.size());
 
-        createRecyclerView(appsModels, 4, AppsAdapter.SORT_LAUNCH_COUNT);
+        int spanCount = getRecyclerSpanCount();
+        String sortType = getRecyclerSortType();
+        createRecyclerView(appsModels, spanCount, sortType);
 
         mAppsChangeReceiver = new AppsChangeReceiver(onAppsChangeListener);
         registerAppsChangeReceiver(
@@ -150,6 +158,27 @@ public class AppsFragment extends Fragment {
         );
 
         return mRecyclerView;
+    }
+
+    private int getRecyclerSpanCount(){
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(mRecyclerView.getContext());
+        String compactLayoutPrefKey =
+                getResources().getString(R.string.compact_layout_preference_key);
+        boolean isCompact = sharedPreferences.getBoolean(compactLayoutPrefKey, false);
+        if(isCompact){
+            return getResources().getInteger(R.integer.compact_views_count);
+        } else {
+            return getResources().getInteger(R.integer.views_count);
+        }
+    }
+
+    private String getRecyclerSortType(){
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(mRecyclerView.getContext());
+        String sortTypePrefKey =
+                getResources().getString(R.string.sorttype_apps_pref_key);
+        return sharedPreferences.getString(sortTypePrefKey, "0");
     }
 
     private void clearData() {
@@ -191,8 +220,8 @@ public class AppsFragment extends Fragment {
                     ContentValues values = new ContentValues();
                     values.put(AppsLaunchCountDb.Columns.FIELD_APP_LAUNCH_COUNT,
                             appModel.getLaunchCount());
-                    values.put(AppsLaunchCountDb.Columns.FIELD_APP_PACKAGE_NAME,
-                            appModel.getPackageName());
+                    //values.put(AppsLaunchCountDb.Columns.FIELD_APP_PACKAGE_NAME,
+                    //        appModel.getPackageName());
                     values.put(AppsLaunchCountDb.Columns.FILED_APP_FULL_NAME,
                             appModel.getFullName());
                     db.insert(AppsLaunchCountDb.APPS_LUNCH_COUNT_TABLE, null, values);
