@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -73,7 +74,11 @@ public class LauncherActivity extends AppCompatActivity{
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
                 float slideX = drawerView.getWidth() * slideOffset;
-                content.setTranslationX(slideX);
+                if(ViewCompat.getLayoutDirection(drawerView) == ViewCompat.LAYOUT_DIRECTION_LTR) {
+                    content.setTranslationX(slideX);
+                } else{
+                    content.setTranslationX(-slideX);
+                }
                 content.setScaleX(1 - (slideOffset / scaleFactor));
                 content.setScaleY(1 - (slideOffset / scaleFactor));
             }
