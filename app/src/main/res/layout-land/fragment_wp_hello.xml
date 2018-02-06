@@ -12,10 +12,9 @@
         android:id="@+id/my_photo_card"
         android:layout_width="@dimen/icon_diameter"
         android:layout_height="@dimen/icon_diameter"
-        android:layout_marginRight="@dimen/margin"
+        android:layout_marginStart="@dimen/margin"
         android:elevation="12dp"
         app:cardCornerRadius="86dp"
-        android:layout_centerHorizontal="true"
         android:innerRadius="0dp"
         android:shape="ring"
         android:thicknessRatio="1.9">
@@ -43,6 +42,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin"
+            android:layout_marginEnd="@dimen/margin"
+            android:textAlignment="center"
             android:textSize="@dimen/hello_text_size"
             android:layout_marginBottom="@dimen/margin"
             android:text="@string/hello_message"/>

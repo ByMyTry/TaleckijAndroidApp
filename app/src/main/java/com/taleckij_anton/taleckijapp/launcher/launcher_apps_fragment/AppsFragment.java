@@ -226,8 +226,6 @@ public class AppsFragment extends Fragment {
                             appModel.getFullName());
                     db.insert(AppsLaunchCountDb.APPS_LUNCH_COUNT_TABLE, null, values);
                 }
-                Log.i("DB",appModel.getFullName() + " " +
-                        appModel.getLaunchCount());
                 currentAppsModels.add(appModel);
             }
         } catch (SQLiteException e) {
@@ -279,7 +277,8 @@ public class AppsFragment extends Fragment {
                                 appModel));
                         popupMenu.inflate(R.menu.apps_popup_menu);
                         MenuItem item = popupMenu.getMenu().getItem(0);
-                        item.setTitle("count: " + appModel.getLaunchCount());
+                        CharSequence curTitle = item.getTitle();
+                        item.setTitle(curTitle + ": " + appModel.getLaunchCount());
                         popupMenu.show();
                     }
                 };

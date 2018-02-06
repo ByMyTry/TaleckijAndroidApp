@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="usual_layout_name_text">Обычный \nмакет</string>
+    <string name="compact_layout_name_text">Компактный \nмакет</string>
+</resources>

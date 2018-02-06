@@ -50,7 +50,8 @@ public class AboutMeActivity extends AppCompatActivity {
     private void makeGithubLink(TextView textView, String github_url){
         textView.setClickable(true);
         textView.setMovementMethod(LinkMovementMethod.getInstance());
-        String text = "<a href='" + github_url + "'>my github</a>";
+        String locale_my = getResources().getString(R.string.locale_my);
+        String text = "<a href='" + github_url + "'>" + locale_my + " github</a>";
         textView.setText(Html.fromHtml(text));
     }
 }

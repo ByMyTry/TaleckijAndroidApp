@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="sorttype_apps_pref_entries">
-        <item>Without sort</item>
-        <item>By names A-Z</item>
-        <item>By names Z-A</item>
-        <item>First install</item>
-        <item>Launch count</item>
+        <item>Без сортировки</item>
+        <item>По названиям А-Я</item>
+        <item>По названиям Я-А</item>
+        <item>Первая установка</item>
+        <item>Число запусков</item>
     </string-array>
 
     <string-array name="sorttype_apps_pref_entryvalues">
