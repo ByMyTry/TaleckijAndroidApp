@@ -29,7 +29,7 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.Dark.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <!--<style name="AppTheme.Dark.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />-->
 
-    <style name="AppTheme.Dark.PopupOverlay" parent="ThemeOverlay.AppCompat" />
+    <!--<style name="AppTheme.Dark.PopupOverlay" parent="ThemeOverlay.AppCompat" />-->
 </resources>

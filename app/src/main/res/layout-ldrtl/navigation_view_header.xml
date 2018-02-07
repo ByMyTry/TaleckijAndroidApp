@@ -7,7 +7,8 @@
     android:paddingEnd="@dimen/padding_nav_view"
     android:orientation="vertical"
     android:gravity="bottom|start"
-    android:background="@drawable/header_nav_view_image">
+    android:background="@drawable/header_nav_view_image"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
     <android.support.v7.widget.CardView
         android:layout_width="64dp"
         android:layout_height="64dp"

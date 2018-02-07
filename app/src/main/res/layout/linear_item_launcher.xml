@@ -13,7 +13,6 @@
     android:layout_height="48dp"
     android:elevation="12dp"
     app:cardCornerRadius="24dp"
-    android:layout_centerHorizontal="true"
     android:innerRadius="0dp"
     android:shape="ring"
     android:thicknessRatio="1.9">

@@ -19,7 +19,6 @@
     <string name="landscape_usual_text">Ландшафт: 6 элементов в строке</string>
     <string name="portrait_compact_text">Портрет: 5 элементов в строке</string>
     <string name="landscape_compact_text">Ландшафт: 7 элементов в строке</string>
-    <string name="views_per_row_text">views per row</string>
 
     <string name="snackbar_delete_message">Удалить этот элемент</string>
     <string name="snackbar_action_text">ДА</string>
