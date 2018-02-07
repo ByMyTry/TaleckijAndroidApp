@@ -22,7 +22,7 @@
             android:id="@+id/my_photo_view"
             android:layout_height="@dimen/icon_diameter"
             android:layout_width="@dimen/icon_diameter"
-            android:src="@drawable/takeckij_launcher_logo"
+            android:src="@drawable/my_photo"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true">
         </ImageView>

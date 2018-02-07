@@ -49,4 +49,10 @@
     <string name="popup_count_default_title">Launch count</string>
     <string name="popup_delete_title">Delete</string>
     <string name="popup_info_title">Info</string>
+
+    <string name="profile_name_sign">Name</string>
+    <string name="profile_phone">(123) 456–7890</string>
+    <string name="profile_phone_sign">Work</string>
+    <string name="profile_github_sign">Github</string>
+    <string name="profile_github_url">github.com/ByMyTry/TaleckijAndroidApp</string>
 </resources>

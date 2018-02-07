@@ -29,6 +29,7 @@ import io.fabric.sdk.android.Fabric;
 
 public class LauncherActivity extends AppCompatActivity{
     public static final String LAUNCH_FROM_WELCOME_PAGE = "LAUNCH_FROM_WELCOME_PAGE";
+    public static final String LAUNCH_FROM_PROFILE = "LAUNCH_FROM_PROFILE";
 
     private final String CHANGE_THEME_FROM_SETTINGS = "CHANGE_THEME_FROM_SETTINGS";
     private final SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener =
@@ -106,7 +107,8 @@ public class LauncherActivity extends AppCompatActivity{
         if(!thisIsNotFirstRunning(themePrefKey, layoutPrefKey)
                 || (launchWpOncePrefIsTrue(launchWpPrefKey)
                  && !getIntent().getBooleanExtra(CHANGE_THEME_FROM_SETTINGS,false)
-                && !getIntent().getBooleanExtra(LAUNCH_FROM_WELCOME_PAGE,false))
+                && !getIntent().getBooleanExtra(LAUNCH_FROM_WELCOME_PAGE,false)
+                && !getIntent().getBooleanExtra(LAUNCH_FROM_PROFILE, false))
                 ){
             Log.i("thisIsNotFirstRunning", ""+!thisIsNotFirstRunning(themePrefKey, layoutPrefKey));
             Intent intent = new Intent();

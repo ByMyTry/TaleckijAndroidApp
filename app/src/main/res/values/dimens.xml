@@ -18,4 +18,5 @@
     <dimen name="padding_nav_view">16dp</dimen>
     <dimen name="height_head_nav_view">164dp</dimen>
     <dimen name="height_head_subtitle_nav_view">56dp</dimen>
+    <dimen name="profile_app_bar_height">180dp</dimen>
 </resources>

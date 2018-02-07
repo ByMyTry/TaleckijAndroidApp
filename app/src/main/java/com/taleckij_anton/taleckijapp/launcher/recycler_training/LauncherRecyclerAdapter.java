@@ -25,18 +25,26 @@ public class LauncherRecyclerAdapter extends RecyclerView.Adapter<LauncherItemHo
     }
 
     @Override
-    public LauncherItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public LauncherItemHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(
                 mItemLayoutId, parent, false);
         final LauncherItemHolder launcherItemHolder = new LauncherItemHolder(view);
+
+        return launcherItemHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(final LauncherItemHolder launcherItemHolder, int position) {
+        LauncherRecyclerFragment.RecyclerItem item = mItems.get(position);
+        launcherItemHolder.bind(item.text, item.color);
 
         launcherItemHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                     /*Toast.makeText(getActivity(), launcherItemHolder.getText(), Toast.LENGTH_SHORT)
                             .show();*/
-                createSnackbarWithAction(snackbarOnClickListener, view)
-                        .show();
+                Snackbar snackbar = createSnackbarWithAction(snackbarOnClickListener, view);
+                snackbar.show();
                 return true;
             }
 
@@ -53,21 +61,15 @@ public class LauncherRecyclerAdapter extends RecyclerView.Adapter<LauncherItemHo
             }
 
             View.OnClickListener snackbarOnClickListener = new View.OnClickListener(){
+                final int pos = launcherItemHolder.getAdapterPosition();
+
                 @Override
                 public void onClick(View view) {
-                    mItems.remove(launcherItemHolder.getAdapterPosition());
-                    notifyItemRemoved(launcherItemHolder.getAdapterPosition());
+                    mItems.remove(pos);
+                    notifyItemRemoved(pos);
                 }
             };
         });
-
-        return launcherItemHolder;
-    }
-
-    @Override
-    public void onBindViewHolder(final LauncherItemHolder launcherItemHolder, int position) {
-        LauncherRecyclerFragment.RecyclerItem item = mItems.get(position);
-        launcherItemHolder.bind(item.text, item.color);
     }
 
     @Override

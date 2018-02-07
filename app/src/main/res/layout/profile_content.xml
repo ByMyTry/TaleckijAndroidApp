@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="@dimen/margin">
+
+            <ImageView
+                android:id="@+id/ivContactItem0"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/margin"
+                android:src="@drawable/ic_add_white_48dp" />
+
+            <TextView
+                android:id="@+id/tvNumber0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin"
+                android:layout_toEndOf="@id/ivContactItem0"
+                android:text="@string/my_name"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="#212121" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvNumber0"
+                android:layout_marginStart="@dimen/margin"
+                android:layout_marginTop="8dp"
+                android:layout_toEndOf="@id/ivContactItem0"
+                android:text="@string/profile_name_sign"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="#727272" />
+
+            <!--<ToggleButton-->
+            <!--android:id="@+id/chkState1"-->
+            <!--android:layout_width="24dp"-->
+            <!--android:layout_height="24dp"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_marginStart="@dimen/margin"-->
+            <!--android:background="@drawable/toggle_selector"-->
+            <!--android:checked="true"-->
+            <!--android:padding="6dp"-->
+            <!--android:textOff=""-->
+            <!--android:textOn="" />-->
+
+        </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="#B6B6B6" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="@dimen/margin">
+
+            <ImageView
+                android:id="@+id/ivContactItem1"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/margin"
+                android:src="@drawable/ic_add_white_48dp" />
+
+            <TextView
+                android:id="@+id/tvNumber1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin"
+                android:layout_toEndOf="@id/ivContactItem1"
+                android:text="@string/profile_phone"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="#212121" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvNumber1"
+                android:layout_marginStart="@dimen/margin"
+                android:layout_marginTop="8dp"
+                android:layout_toEndOf="@id/ivContactItem1"
+                android:text="@string/profile_phone_sign"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="#727272" />
+
+            <!--<ToggleButton-->
+            <!--android:id="@+id/chkState1"-->
+            <!--android:layout_width="24dp"-->
+            <!--android:layout_height="24dp"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_marginStart="@dimen/margin"-->
+            <!--android:background="@drawable/toggle_selector"-->
+            <!--android:checked="true"-->
+            <!--android:padding="6dp"-->
+            <!--android:textOff=""-->
+            <!--android:textOn="" />-->
+
+        </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="#B6B6B6" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="@dimen/margin">
+
+            <ImageView
+                android:id="@+id/ivContactItem2"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/margin"
+                android:src="@drawable/ic_add_white_48dp" />
+
+            <TextView
+                android:id="@+id/tvNumber2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin"
+                android:layout_toEndOf="@id/ivContactItem2"
+                android:text="@string/profile_github_url"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="#212121" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvNumber2"
+                android:layout_marginStart="@dimen/margin"
+                android:layout_marginTop="8dp"
+                android:layout_toEndOf="@id/ivContactItem2"
+                android:text="@string/profile_github_sign"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="#727272" />
+
+            <!--<ToggleButton-->
+            <!--android:id="@+id/chkState1"-->
+            <!--android:layout_width="24dp"-->
+            <!--android:layout_height="24dp"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_marginStart="@dimen/margin"-->
+            <!--android:background="@drawable/toggle_selector"-->
+            <!--android:checked="true"-->
+            <!--android:padding="6dp"-->
+            <!--android:textOff=""-->
+            <!--android:textOn="" />-->
+
+        </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="#B6B6B6" />
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

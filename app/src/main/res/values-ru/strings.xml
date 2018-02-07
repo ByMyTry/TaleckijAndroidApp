@@ -49,4 +49,10 @@
     <string name="popup_count_default_title">Кол-во запусков</string>
     <string name="popup_delete_title">Удалить</string>
     <string name="popup_info_title">Инфо</string>
+
+    <string name="profile_name_sign">Имя</string>
+    <string name="profile_phone">(123) 456–7890</string>
+    <string name="profile_phone_sign">Рабочий</string>
+    <string name="profile_github_sign">Github</string>
+    <string name="profile_github_url">github.com/ByMyTry/TaleckijAndroidApp</string>
 </resources>

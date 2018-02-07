@@ -63,7 +63,7 @@ public class WelcomePageActivity extends AppCompatActivity {
 
         mCurrentFragmentIndex = 0;
         final WpFragmentInfo wpFragmentInfo = mWpFragmentsInfo.get(mCurrentFragmentIndex);
-        lastFragment = addFirstWpFragmentBy(wpFragmentInfo);
+        lastFragment = replaceWpFragmentBy(wpFragmentInfo);
 
         final View nextButtton = findViewById(R.id.button_next);
         nextButtton.setOnClickListener(mNextButtonOnClick);
@@ -108,15 +108,6 @@ public class WelcomePageActivity extends AppCompatActivity {
             }
         }
     };
-
-    private WpFragment addFirstWpFragmentBy(WpFragmentInfo wpFragmentInfo){
-        final WpFragment currWpFragment = wpFragmentWithId(wpFragmentInfo);
-        getFragmentManager().beginTransaction()
-                .add(R.id.wp_fragment_place, currWpFragment)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
-        return currWpFragment;
-    }
 
     private WpFragment replaceWpFragmentBy(WpFragmentInfo wpFragmentInfo){
         final WpFragment currWpFragment = wpFragmentWithId(wpFragmentInfo);
