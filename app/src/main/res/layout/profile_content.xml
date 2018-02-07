@@ -23,7 +23,7 @@
                 android:layout_height="24dp"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/margin"
-                android:src="@drawable/ic_add_white_48dp" />
+                android:src="@drawable/ic_person" />
 
             <TextView
                 android:id="@+id/tvNumber0"
@@ -82,7 +82,7 @@
                 android:layout_height="24dp"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/margin"
-                android:src="@drawable/ic_add_white_48dp" />
+                android:src="@drawable/ic_phone" />
 
             <TextView
                 android:id="@+id/tvNumber1"
@@ -140,7 +140,7 @@
                 android:layout_height="24dp"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="@dimen/margin"
-                android:src="@drawable/ic_add_white_48dp" />
+                android:src="@drawable/ic_web" />
 
             <TextView
                 android:id="@+id/tvNumber2"

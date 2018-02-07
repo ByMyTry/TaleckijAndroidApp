@@ -7,10 +7,4 @@
     <color name="darkColorPrimary">#311b92</color>
     <color name="darkColorPrimaryDark">#000063</color>
     <color name="darkColorAccent">#ad1457</color>
-
-    <color name="myColorPrimary">#333</color>
-    <color name="myColorPrimaryDark">#666</color>
-    <color name="myColorAccent">#684</color>
-    <color name="colorPrrimaryDark">#303F9F</color>
-    <color name="colorAcccent">#FF4081</color>
 </resources>

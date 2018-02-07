@@ -9,10 +9,6 @@
     <dimen name="views_name_text_size">20sp</dimen>
     <dimen name="views_desc_text_size">16sp</dimen>
     
-    <dimen name="snackbar_height">48dp</dimen>
-    <dimen name="snackbar_margin_horizontal">24dp</dimen>
-    <dimen name="snackbar_margin_vertical">14dp</dimen>
-
     <dimen name="margin_grid_item">8dp</dimen>
 
     <dimen name="padding_nav_view">16dp</dimen>
