@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Талецкий.Лончер</string>
+    <string name="my_name">Антон Талецкий</string>
+    <string name="locale_my">Мой</string>
+    <string name="my_email">anton.taleckij.job@gmail.com</string>
+    <string name="hello_message">Привет. Добро пожаловать. Рады вам!</string>
+    <string name="next_button_text">Далее</string>
+    <string name="app_description">Это простой лончер</string>
+
+    <string name="light_theme_text">Светлая тема</string>
+    <string name="dark_theme_text">Темная тема</string>
+
+    <string name="usual_layout_name_text">Обычный макет</string>
+    <string name="compact_layout_name_text">Компактный макет</string>
+    <!--<string name="portrait_text">Portrait: %1$d views per row</string>-->
+    <!--<string name="landscape_text">Landscape: %1$d views per row</string>-->
+    <string name="portrait_usual_text">Портрет: 4 элементов в строке</string>
+    <string name="landscape_usual_text">Ландшафт: 6 элементов в строке</string>
+    <string name="portrait_compact_text">Портрет: 5 элементов в строке</string>
+    <string name="landscape_compact_text">Ландшафт: 7 элементов в строке</string>
+
+    <string name="snackbar_delete_message">Удалить этот элемент</string>
+    <string name="snackbar_action_text">ДА</string>
+
+    <string name="launcher_drawer_open_desc">launcher_drawer_open_desc</string>
+    <string name="launcher_drawer_close_desc">launcher_drawer_close_desc</string>
+
+    <string name="theme_preference_key">theme_preference_key</string>
+    <string name="theme_preference_title">Темная тема</string>
+    <string name="theme_preference_summ">Использовать темную тему для этого приложения</string>
+    <string name="compact_layout_preference_key">compact_layout_preference_key</string>
+    <string name="compact_layout_preference_title">Компактный макет</string>
+    <string name="compact_layout_preference_summ">Использовать макет с большим количеством элементов в строке</string>
+    <string name="launch_wp_pref_key">launch_wp_pref_key</string>
+    <string name="launch_wp_pref_title">Показать welcome page</string>
+    <string name="launch_wp_pref_summ">Показать welcome page при следующем запуске лончера (один раз)</string>
+
+    <string name="sorttype_apps_pref_key">sorttype_apps_pref_key</string>
+    <string name="sorttype_apps_pref_title">Порядок приложений</string>
+    <string name="sorttype_apps_pref_summ">Выбрать однин из доступных способов сортировки для порядка приложений в лончере</string>
+
+    <string name="launcher_nav_title">Лончер</string>
+    <string name="_nav_title">Сетка recycler</string>
+    <string name="linear_recycler_nav_title">Линейный recycler</string>
+    <string name="settings_nav_title">Настройки</string>
+
+    <string name="popup_count_default_title">Кол-во запусков</string>
+    <string name="popup_delete_title">Удалить</string>
+    <string name="popup_info_title">Инфо</string>
+
+    <string name="profile_name_sign">Имя</string>
+    <string name="profile_phone">(123) 456–7890</string>
+    <string name="profile_phone_sign">Рабочий</string>
+    <string name="profile_github_sign">Github</string>
+    <string name="profile_github_url">github.com/ByMyTry/TaleckijAndroidApp</string>
+</resources>

@@ -9,9 +9,8 @@
     android:id="@+id/launcher">
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/coordinator_parent_recycler"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,13 +30,16 @@
             android:id="@+id/list_fragment_place"
             android:layout_marginTop="60dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_launcher"
-            android:layout_margin="@dimen/margin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"/>
+            android:layout_height="match_parent">
+            <!--<android.support.design.widget.FloatingActionButton-->
+                <!--android:id="@+id/fab_launcher"-->
+                <!--android:layout_margin="@dimen/margin"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--app:layout_anchor="@id/list_fragment_place"-->
+                <!--app:layout_anchorGravity="bottom|end"-->
+                <!--android:src="@drawable/ic_add_white_48dp"/>-->
+        </FrameLayout>
     </android.support.design.widget.CoordinatorLayout>
     <android.support.design.widget.NavigationView
         android:id="@+id/launcher_nav_view"
@@ -46,6 +48,5 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/navigation_view_header"
-        app:menu="@menu/navigation_view_menu"
-        />
+        app:menu="@menu/navigation_view_menu"/>
 </android.support.v4.widget.DrawerLayout>

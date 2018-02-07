@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Taleckij.Launcher</string>
+    <string name="locale_my">שֶׁלִי</string>
+    <string name="my_name">Anton Taleckij</string>
+    <string name="my_email">anton.taleckij.job@gmail.com</string>
+    <string name="hello_message">שלום. ברוך הבא. שמח לראות אותך!</string>
+    <string name="next_button_text">הַבָּא</string>
+    <string name="app_description">זהו היישום פשוט משגר</string>
+
+    <string name="light_theme_text">נושא קל</string>
+    <string name="dark_theme_text">ערכת נושא כהה</string>
+
+    <string name="usual_layout_name_text">פריסה רגילה</string>
+    <string name="compact_layout_name_text">פריסה קומפקטית</string>
+    <!--<string name="portrait_text">Portrait: %1$d views per row</string>-->
+    <!--<string name="landscape_text">Landscape: %1$d views per row</string>-->
+    <string name="portrait_usual_text">דיוקן: 4 צפיות בכל שורה</string>
+    <string name="landscape_usual_text">נוף: 6 צפיות בכל שורה</string>
+    <string name="portrait_compact_text">דיוקן: 5 צפיות בכל שורה</string>
+    <string name="landscape_compact_text">נוף: 7 צפיות בכל שורה</string>
+
+    <string name="snackbar_delete_message">מחק פריט זה</string>
+    <string name="snackbar_action_text">כן</string>
+
+    <string name="launcher_drawer_open_desc">launcher_drawer_open_desc</string>
+    <string name="launcher_drawer_close_desc">launcher_drawer_close_desc</string>
+
+    <string name="theme_preference_key">theme_preference_key</string>
+    <string name="theme_preference_title">נושא כהה</string>
+    <string name="theme_preference_summ">השתמש בנושא כהה עבור אפליקציה זו</string>
+    <string name="compact_layout_preference_key">compact_layout_preference_key</string>
+    <string name="compact_layout_preference_title">פריסה קומפקטית</string>
+    <string name="compact_layout_preference_summ">השתמש בפריסה עם מספר צפיות נוסף בשורה</string>
+    <string name="launch_wp_pref_key">launch_wp_pref_key</string>
+    <string name="launch_wp_pref_title">הפעל את דף הפתיחה</string>
+    <string name="launch_wp_pref_summ">הפעל את דף הפתיחה כאשר היישום הבא יפעל (רק פעם אחת)</string>
+
+    <string name="sorttype_apps_pref_key">sorttype_apps_pref_key</string>
+    <string name="sorttype_apps_pref_title">הזמנת יישומים</string>
+    <string name="sorttype_apps_pref_summ">בחר באחד מסוגי המיון הזמינים עבור סדר היישומים במפעיל</string>
+
+    <string name="launcher_nav_title">Launcher</string>
+    <string name="_nav_title">רֶשֶׁת recycler</string>
+    <string name="linear_recycler_nav_title">ליניארי recycler</string>
+    <string name="settings_nav_title">הגדרות</string>
+
+    <string name="popup_count_default_title">מספר ההשקה</string>
+    <string name="popup_delete_title">לִמְחוֹק</string>
+    <string name="popup_info_title">מידע</string>
+
+    <string name="profile_name_sign">שֵׁם</string>
+    <string name="profile_phone">(123) 456–7890</string>
+    <string name="profile_phone_sign">עֲבוֹדָה</string>
+    <string name="profile_github_sign">Github</string>
+    <string name="profile_github_url">github.com/ByMyTry/TaleckijAndroidApp</string>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/popup_count"
+        android:title="@string/popup_count_default_title"
+        android:checkable="false"/>
+    <item android:id="@+id/popup_delete"
+        android:title="@string/popup_delete_title"/>
+    <item  android:id="@+id/popup_info"
+        android:title="@string/popup_info_title"/>
+</menu>

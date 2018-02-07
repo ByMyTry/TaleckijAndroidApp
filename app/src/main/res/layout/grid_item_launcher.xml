@@ -2,13 +2,14 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/margin"
+    android:layout_margin="@dimen/margin_grid_item"
     android:orientation="vertical">
     <!--android:background="@color/colorAccent"-->
-    <ImageView
+    <com.taleckij_anton.taleckijapp.launcher.recycler_training.SquareView
+        android:id="@+id/launcher_item_icon"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher_round"/>
+        android:layout_height="1dp" />
+    <!--android:src="@mipmap/ic_launcher_round"-->
     <TextView
         android:id="@+id/launcher_item_text"
         android:layout_width="match_parent"

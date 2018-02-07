@@ -1,26 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Taleckij.Launcher</string>
+    <string name="locale_my">My</string>
     <string name="my_name">Anton Taleckij</string>
+    <string name="my_email">anton.taleckij.job@gmail.com</string>
     <string name="hello_message">Hello. Welcome. Glad to see you!</string>
-    <string name="next_button_text">next</string>
+    <string name="next_button_text">Next</string>
     <string name="app_description">It is the simple launcher app</string>
 
-    <string name="light_theme_text">Light Theme</string>
-    <string name="dark_theme_text">Dark Theme</string>
+    <string name="light_theme_text">Light theme</string>
+    <string name="dark_theme_text">Dark theme</string>
 
-    <string name="usual_layout_name_text">Usual Layout</string>
-    <string name="compact_layout_name_text">Compact Layout</string>
-    <string name="portrait_text">Portrait: %1$d views per row</string>
-    <string name="landscape_text">Landscape: %1$d views per row</string>
+    <string name="usual_layout_name_text">Usual layout</string>
+    <string name="compact_layout_name_text">Compact layout</string>
+    <!--<string name="portrait_text">Portrait: %1$d views per row</string>-->
+    <!--<string name="landscape_text">Landscape: %1$d views per row</string>-->
     <string name="portrait_usual_text">Portrait: 4 views per row</string>
     <string name="landscape_usual_text">Landscape: 6 views per row</string>
     <string name="portrait_compact_text">Portrait: 5 views per row</string>
     <string name="landscape_compact_text">Landscape: 7 views per row</string>
-    <string name="views_per_row_text">views per row</string>
 
     <string name="snackbar_delete_message">Delete this item</string>
     <string name="snackbar_action_text">YES</string>
 
     <string name="launcher_drawer_open_desc">launcher_drawer_open_desc</string>
     <string name="launcher_drawer_close_desc">launcher_drawer_close_desc</string>
+
+    <string name="theme_preference_key">theme_preference_key</string>
+    <string name="theme_preference_title">Theme dark</string>
+    <string name="theme_preference_summ">Use dark theme for this app</string>
+    <string name="compact_layout_preference_key">compact_layout_preference_key</string>
+    <string name="compact_layout_preference_title">Compact Layout</string>
+    <string name="compact_layout_preference_summ">Use layout with more views count in row</string>
+    <string name="launch_wp_pref_key">launch_wp_pref_key</string>
+    <string name="launch_wp_pref_title">Launch welcome page</string>
+    <string name="launch_wp_pref_summ">Launch the welcome page when the app next run(only once)</string>
+
+    <string name="sorttype_apps_pref_key">sorttype_apps_pref_key</string>
+    <string name="sorttype_apps_pref_title">Applications order</string>
+    <string name="sorttype_apps_pref_summ">Select one of the available sort types for the order of applications in launcher</string>
+
+    <string name="launcher_nav_title">Launcher</string>
+    <string name="_nav_title">Grid recycler</string>
+    <string name="linear_recycler_nav_title">Linear recycler</string>
+    <string name="settings_nav_title">Settings</string>
+
+    <string name="popup_count_default_title">Launch count</string>
+    <string name="popup_delete_title">Delete</string>
+    <string name="popup_info_title">Info</string>
+
+    <string name="profile_name_sign">Name</string>
+    <string name="profile_phone">(123) 456–7890</string>
+    <string name="profile_phone_sign">Work</string>
+    <string name="profile_github_sign">Github</string>
+    <string name="profile_github_url">github.com/ByMyTry/TaleckijAndroidApp</string>
 </resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sorttype_apps_pref_entries">
+        <item>ללא מיון</item>
+        <item>בשמות A-Z</item>
+        <item>בשמות Z-A</item>
+        <item>ראשית להתקין</item>
+        <item>מספר ההשקה</item>
+    </string-array>
+
+    <string-array name="sorttype_apps_pref_entryvalues">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+</resources>
