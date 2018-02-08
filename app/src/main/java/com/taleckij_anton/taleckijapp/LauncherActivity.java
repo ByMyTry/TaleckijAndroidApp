@@ -31,6 +31,8 @@ public class LauncherActivity extends AppCompatActivity{
     public static final String LAUNCH_FROM_WELCOME_PAGE = "LAUNCH_FROM_WELCOME_PAGE";
     public static final String LAUNCH_FROM_PROFILE = "LAUNCH_FROM_PROFILE";
 
+    private static int mCurrentMenuItemId = -1;
+    private final String CURRENT_MENU_ITEM_ID ="CURRENT_MENU_ITEM_ID";
     private final String CHANGE_THEME_FROM_SETTINGS = "CHANGE_THEME_FROM_SETTINGS";
     private final SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener =
             new SharedPreferences.OnSharedPreferenceChangeListener(){
@@ -42,6 +44,7 @@ public class LauncherActivity extends AppCompatActivity{
                         final Intent intent = LauncherActivity.this.getIntent();
                         intent.putExtra(CHANGE_THEME_FROM_SETTINGS,true);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.putExtra(CURRENT_MENU_ITEM_ID, mCurrentMenuItemId);
                         LauncherActivity.this.startActivity(intent);
                     }
                 }
@@ -94,7 +97,7 @@ public class LauncherActivity extends AppCompatActivity{
                 .getHeaderView(0).findViewById(R.id.nav_header_my_photo);
         myPhotoHeaderNavView.setOnClickListener(onHeaderPhotoClickListener);
 
-        replaceAppsFragment();
+        replaceFragment(savedInstanceState);
         //replaceRecyclerFragment(LauncherRecyclerFragment.GRID);
 
         checkForUpdates();
@@ -152,22 +155,26 @@ public class LauncherActivity extends AppCompatActivity{
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     int menuItemId = item.getItemId();
-
-                    if(menuItemId == R.id.launcher_menu_item){
-                        replaceAppsFragment();
-                    }else if (menuItemId == R.id.grid_layout_menu_item){
-                        replaceRecyclerFragment(LauncherRecyclerFragment.GRID);
-                    } else if(menuItemId == R.id.linear_layout_menu_item){
-                        replaceRecyclerFragment(LauncherRecyclerFragment.LINEAR);
-                    } else if(menuItemId == R.id.settings_menu_item) {
-                        replaceSettingsFragment();
-                    }
+                    mCurrentMenuItemId = menuItemId;
+                    replaceFragmentByItemId(menuItemId);
 
                     DrawerLayout drawerLayout = findViewById(R.id.launcher);
                     drawerLayout.closeDrawer(GravityCompat.START);
                     return true;
                 }
             };
+
+    private void replaceFragmentByItemId(int menuItemId){
+        if(menuItemId == R.id.launcher_menu_item){
+            replaceAppsFragment();
+        }else if (menuItemId == R.id.grid_layout_menu_item){
+            replaceRecyclerFragment(LauncherRecyclerFragment.GRID);
+        } else if(menuItemId == R.id.linear_layout_menu_item){
+            replaceRecyclerFragment(LauncherRecyclerFragment.LINEAR);
+        } else if(menuItemId == R.id.settings_menu_item) {
+            replaceSettingsFragment();
+        }
+    }
 
     private final View.OnClickListener
             onHeaderPhotoClickListener = new View.OnClickListener(){
@@ -200,6 +207,36 @@ public class LauncherActivity extends AppCompatActivity{
         getFragmentManager().beginTransaction()
                 .replace(R.id.list_fragment_place, new SettingsFragment())
                 .commit();
+    }
+
+    private void replaceFragment(Bundle savedInstanceState) {
+        if(savedInstanceState != null){
+            int currentMenuItemId = savedInstanceState.getInt(CURRENT_MENU_ITEM_ID, mCurrentMenuItemId);
+            if(currentMenuItemId != -1){
+                mCurrentMenuItemId = currentMenuItemId;
+                replaceFragmentByItemId(currentMenuItemId);
+            } else {
+                replaceAppsFragment();
+            }
+        } else if(getIntent() != null){
+            int currentMenuItemId = getIntent().getIntExtra(CURRENT_MENU_ITEM_ID, mCurrentMenuItemId);
+            if(currentMenuItemId != -1){
+                mCurrentMenuItemId = currentMenuItemId;
+                replaceFragmentByItemId(currentMenuItemId);
+            } else {
+                replaceAppsFragment();
+            }
+        } else {
+            replaceAppsFragment();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (mCurrentMenuItemId != -1) {
+            outState.putInt(CURRENT_MENU_ITEM_ID, mCurrentMenuItemId);
+        }
+        super.onSaveInstanceState(outState);
     }
 
     @Override
