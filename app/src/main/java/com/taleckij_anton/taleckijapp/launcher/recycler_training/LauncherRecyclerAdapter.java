@@ -16,9 +16,9 @@ import java.util.ArrayList;
 
 public class LauncherRecyclerAdapter extends RecyclerView.Adapter<LauncherItemHolder>{
     private final int mItemLayoutId;
-    private final ArrayList<LauncherRecyclerFragment.RecyclerItem> mItems;
+    private final ArrayList<RecyclerItem> mItems;
 
-    LauncherRecyclerAdapter(int itemLayoutId,ArrayList<LauncherRecyclerFragment.RecyclerItem> items){
+    LauncherRecyclerAdapter(int itemLayoutId,ArrayList<RecyclerItem> items){
         super();
         mItemLayoutId = itemLayoutId;
         mItems = items;
@@ -35,8 +35,8 @@ public class LauncherRecyclerAdapter extends RecyclerView.Adapter<LauncherItemHo
 
     @Override
     public void onBindViewHolder(final LauncherItemHolder launcherItemHolder, int position) {
-        LauncherRecyclerFragment.RecyclerItem item = mItems.get(position);
-        launcherItemHolder.bind(item.text, item.color);
+        RecyclerItem item = mItems.get(position);
+        launcherItemHolder.bind(item);
 
         launcherItemHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -61,12 +61,14 @@ public class LauncherRecyclerAdapter extends RecyclerView.Adapter<LauncherItemHo
             }
 
             View.OnClickListener snackbarOnClickListener = new View.OnClickListener(){
-                final int pos = launcherItemHolder.getAdapterPosition();
-
                 @Override
                 public void onClick(View view) {
-                    mItems.remove(pos);
-                    notifyItemRemoved(pos);
+                    int pos = launcherItemHolder.getAdapterPosition();
+                    if(pos != -1) {
+                        mItems.remove(pos);
+                        notifyItemRemoved(pos);
+                    }
+                    LauncherRecyclerAdapter.this.getItemViewType(pos);
                 }
             };
         });

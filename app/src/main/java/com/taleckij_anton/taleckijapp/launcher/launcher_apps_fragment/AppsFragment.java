@@ -140,13 +140,14 @@ public class AppsFragment extends Fragment {
         mAppsLaunchDbHelper = new AppsLaunchDbHelper(mRecyclerView.getContext());
         //clearData();
         final List<LauncherActivityInfo> applicationInfos = getApplicationInfos(mUser);
-        final List<LaunchAppInfoModel> appsModels = synchronizeWithDb(applicationInfos);
+        final List<LaunchAppInfoModel> appModels = synchronizeWithDb(applicationInfos);
+        final List<AppViewModel> appViewModels = getAppsViewModels(appModels.size());
 
         //Log.i("DB","COUNT " +  applicationInfos.size() + " " + appsModels.size());
 
         int spanCount = getRecyclerSpanCount();
         String sortType = getRecyclerSortType();
-        createRecyclerView(appsModels, spanCount, sortType);
+        createRecyclerView(appViewModels, appModels, spanCount, sortType);
 
         mAppsChangeReceiver = new AppsChangeReceiver(onAppsChangeListener);
         registerAppsChangeReceiver(
@@ -236,6 +237,14 @@ public class AppsFragment extends Fragment {
         return new ArrayList<>(currentAppsModels);
     }
 
+    private List<AppViewModel>  getAppsViewModels(int size){
+        LinkedList<AppViewModel> appViewModels = new LinkedList<>();
+        for (int i = 0; i < size; i++) {
+            appViewModels.add(new AppViewModel(null, null));
+        }
+        return appViewModels;
+    }
+
     private @Nullable List<UserHandle> getUserHandles(){
         final UserManager userManager = (UserManager)
                 mRecyclerView.getContext().getSystemService(Context.USER_SERVICE);
@@ -251,7 +260,8 @@ public class AppsFragment extends Fragment {
         return applicationInfos;
     }
 
-    private void createRecyclerView(List<LaunchAppInfoModel> appsModels,
+    private void createRecyclerView(List<AppViewModel> appViewModels,
+                                    List<LaunchAppInfoModel> appModels,
                                     int spanCount, String sortType){
         // = findViewById(R.id.recycler_apps);
         mRecyclerView.setLayoutManager(new GridLayoutManager(mRecyclerView.getContext(), spanCount));
@@ -282,7 +292,8 @@ public class AppsFragment extends Fragment {
                         popupMenu.show();
                     }
                 };
-        AppsAdapter adapter = new AppsAdapter(appsModels, onRecyclerViewGestureActioner, sortType);
+        AppsAdapter adapter = new AppsAdapter(appViewModels, appModels,
+                onRecyclerViewGestureActioner, sortType);
         mRecyclerView.setAdapter(adapter);
     }
 

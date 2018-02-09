@@ -13,7 +13,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +31,6 @@ public class LauncherRecyclerFragment extends Fragment {
     public final static String GRID = "GRID";
     public final static String LAYOUT_TYPE = "LAYOUT_TYPE";
 
-    private final int RGB_CANALS_COUNT = 255;
     private final ArrayList<RecyclerItem> mItems = generateFakeData(1000);
     private final View.OnClickListener mFabOnClick = new View.OnClickListener() {
         final Random random = new Random();
@@ -41,11 +39,7 @@ public class LauncherRecyclerFragment extends Fragment {
         public void onClick(View view) {
             mItems.add(0, new RecyclerItem(
                     "Some new String",
-                    Color.argb(RGB_CANALS_COUNT,
-                            random.nextInt(RGB_CANALS_COUNT),
-                            random.nextInt(RGB_CANALS_COUNT),
-                            random.nextInt(RGB_CANALS_COUNT)
-                    ))
+                    null)
             );
             layoutManager.scrollToPosition(0);
             launcherRecyclerAdapter.notifyItemInserted(0);
@@ -66,7 +60,6 @@ public class LauncherRecyclerFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        Log.i("onCreateView", "+++++++++++++++++++++++++++++++++++++++++++"+getGridSpanCount());
         View view = inflater.inflate(
                 R.layout.fragment_recycler_launcher, container, false);
 
@@ -93,30 +86,14 @@ public class LauncherRecyclerFragment extends Fragment {
 
     private ArrayList<RecyclerItem> generateFakeData(int itemCount){
         final ArrayList<RecyclerItem> items = new ArrayList<>();
-        Random random = new Random();
-        int rgbCanalsCount = 255;
         for (int i = 0; i < itemCount; i++) {
             RecyclerItem item = new RecyclerItem(
                     "Some string" + i,
-                        Color.argb(rgbCanalsCount,
-                                random.nextInt(rgbCanalsCount),
-                                random.nextInt(rgbCanalsCount),
-                                random.nextInt(rgbCanalsCount)
-                        )
+                        null
             );
             items.add(item);
         }
         return items;
-    }
-
-    public class RecyclerItem{
-        public final String text;
-        public final @ColorInt int color;
-
-        RecyclerItem(String text, @ColorInt int color){
-            this.text = text;
-            this.color = color;
-        }
     }
 
     private int getGridSpanCount(){
@@ -126,6 +103,44 @@ public class LauncherRecyclerFragment extends Fragment {
         return isCompact ?
                 getResources().getInteger(R.integer.compact_views_count) :
                 getResources().getInteger(R.integer.views_count);
+    }
+}
+
+class RecyclerItem{
+    private String mText;
+    private @Nullable @ColorInt Integer mColor;
+
+    public String getText() {
+        return mText;
+    }
+
+    public void setText(String text) {
+        this.mText = text;
+    }
+
+    @Nullable
+    public Integer getColor() {
+        return mColor;
+    }
+
+    public void setColor(@Nullable Integer color) {
+        this.mColor = color;
+    }
+
+    private static final Random mRandom = new Random();
+    private static final int RGB_CANALS_COUNT = 255;
+
+    public static @ColorInt int getRandomColor(){
+        return Color.argb(RGB_CANALS_COUNT,
+                mRandom.nextInt(RGB_CANALS_COUNT),
+                mRandom.nextInt(RGB_CANALS_COUNT),
+                mRandom.nextInt(RGB_CANALS_COUNT)
+        );
+    }
+
+    RecyclerItem(String text, @Nullable @ColorInt Integer color){
+        this.mText = text;
+        this.mColor = color;
     }
 }
 

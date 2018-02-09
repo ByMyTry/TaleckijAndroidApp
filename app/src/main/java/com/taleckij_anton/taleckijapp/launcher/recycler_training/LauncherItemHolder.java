@@ -1,6 +1,7 @@
 package com.taleckij_anton.taleckijapp.launcher.recycler_training;
 
 import android.support.annotation.ColorInt;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -21,9 +22,13 @@ public class LauncherItemHolder extends RecyclerView.ViewHolder {
         mItemIcon = itemView.findViewById(R.id.launcher_item_icon);
     }
 
-    void bind(String itemText, @ColorInt int color){
-        mItemTextView.setText(itemText);
-        mItemIcon.setBackgroundColor(color);
+    void bind(RecyclerItem recyclerItem){
+        mItemTextView.setText(recyclerItem.getText());
+
+        if(recyclerItem.getColor() == null){
+            recyclerItem.setColor(RecyclerItem.getRandomColor());
+        }
+        mItemIcon.setBackgroundColor(recyclerItem.getColor());
     }
 
     public String getText(){

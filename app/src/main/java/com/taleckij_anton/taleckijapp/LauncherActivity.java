@@ -1,21 +1,19 @@
 package com.taleckij_anton.taleckijapp;
 
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 
 import com.crashlytics.android.Crashlytics;
 import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.AppsFragment;
@@ -31,7 +29,7 @@ public class LauncherActivity extends AppCompatActivity{
     public static final String LAUNCH_FROM_WELCOME_PAGE = "LAUNCH_FROM_WELCOME_PAGE";
     public static final String LAUNCH_FROM_PROFILE = "LAUNCH_FROM_PROFILE";
 
-    private static int mCurrentMenuItemId = -1;
+    private static int sCurrentMenuItemId = -1;
     private final String CURRENT_MENU_ITEM_ID ="CURRENT_MENU_ITEM_ID";
     private final String CHANGE_THEME_FROM_SETTINGS = "CHANGE_THEME_FROM_SETTINGS";
     private final SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener =
@@ -44,7 +42,7 @@ public class LauncherActivity extends AppCompatActivity{
                         final Intent intent = LauncherActivity.this.getIntent();
                         intent.putExtra(CHANGE_THEME_FROM_SETTINGS,true);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        intent.putExtra(CURRENT_MENU_ITEM_ID, mCurrentMenuItemId);
+                        intent.putExtra(CURRENT_MENU_ITEM_ID, sCurrentMenuItemId);
                         LauncherActivity.this.startActivity(intent);
                     }
                 }
@@ -71,7 +69,7 @@ public class LauncherActivity extends AppCompatActivity{
                 R.string.launcher_drawer_open_desc, R.string.launcher_drawer_close_desc
         ){
             //http://thetechnocafe.com/slide-content-to-side-in-drawer-layout-android/
-            private float scaleFactor = 6f;
+            /*private float scaleFactor = 6f;
             private FrameLayout content = findViewById(R.id.list_fragment_place);
 
             @Override
@@ -85,7 +83,7 @@ public class LauncherActivity extends AppCompatActivity{
                 }
                 content.setScaleX(1 - (slideOffset / scaleFactor));
                 content.setScaleY(1 - (slideOffset / scaleFactor));
-            }
+            }*/
         };
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
@@ -113,7 +111,6 @@ public class LauncherActivity extends AppCompatActivity{
                 && !getIntent().getBooleanExtra(LAUNCH_FROM_WELCOME_PAGE,false)
                 && !getIntent().getBooleanExtra(LAUNCH_FROM_PROFILE, false))
                 ){
-            Log.i("thisIsNotFirstRunning", ""+!thisIsNotFirstRunning(themePrefKey, layoutPrefKey));
             Intent intent = new Intent();
             intent.putExtra(WelcomePageActivity.LAUNCH_FROM_LAUNCHER, true);
             intent.setClass(this, WelcomePageActivity.class);
@@ -152,14 +149,19 @@ public class LauncherActivity extends AppCompatActivity{
 
     private final NavigationView.OnNavigationItemSelectedListener
             onNavigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {
+                private DrawerLayout mDrawerLayout;
+
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     int menuItemId = item.getItemId();
-                    mCurrentMenuItemId = menuItemId;
+                    sCurrentMenuItemId = menuItemId;
+                    //replaceAppsFragment();
                     replaceFragmentByItemId(menuItemId);
 
-                    DrawerLayout drawerLayout = findViewById(R.id.launcher);
-                    drawerLayout.closeDrawer(GravityCompat.START);
+                    if(mDrawerLayout == null){
+                        mDrawerLayout = findViewById(R.id.launcher);
+                    }
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
                     return true;
                 }
             };
@@ -191,6 +193,7 @@ public class LauncherActivity extends AppCompatActivity{
 
         getFragmentManager().beginTransaction()
                 .replace(R.id.list_fragment_place, appsFragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
     }
 
@@ -200,28 +203,31 @@ public class LauncherActivity extends AppCompatActivity{
 
         getFragmentManager().beginTransaction()
                 .replace(R.id.list_fragment_place, launcherRecyclerFragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
     }
 
     private void replaceSettingsFragment(){
         getFragmentManager().beginTransaction()
                 .replace(R.id.list_fragment_place, new SettingsFragment())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
     }
 
     private void replaceFragment(Bundle savedInstanceState) {
         if(savedInstanceState != null){
-            int currentMenuItemId = savedInstanceState.getInt(CURRENT_MENU_ITEM_ID, mCurrentMenuItemId);
+            int currentMenuItemId = savedInstanceState.getInt(CURRENT_MENU_ITEM_ID, sCurrentMenuItemId);
             if(currentMenuItemId != -1){
-                mCurrentMenuItemId = currentMenuItemId;
+                sCurrentMenuItemId = currentMenuItemId;
                 replaceFragmentByItemId(currentMenuItemId);
             } else {
                 replaceAppsFragment();
             }
         } else if(getIntent() != null){
-            int currentMenuItemId = getIntent().getIntExtra(CURRENT_MENU_ITEM_ID, mCurrentMenuItemId);
+            int currentMenuItemId = getIntent().getIntExtra(CURRENT_MENU_ITEM_ID, sCurrentMenuItemId);
             if(currentMenuItemId != -1){
-                mCurrentMenuItemId = currentMenuItemId;
+                getIntent().putExtra(CURRENT_MENU_ITEM_ID, -1);
+                sCurrentMenuItemId = currentMenuItemId;
                 replaceFragmentByItemId(currentMenuItemId);
             } else {
                 replaceAppsFragment();
@@ -233,8 +239,8 @@ public class LauncherActivity extends AppCompatActivity{
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        if (mCurrentMenuItemId != -1) {
-            outState.putInt(CURRENT_MENU_ITEM_ID, mCurrentMenuItemId);
+        if (sCurrentMenuItemId != -1) {
+            outState.putInt(CURRENT_MENU_ITEM_ID, sCurrentMenuItemId);
         }
         super.onSaveInstanceState(outState);
     }
