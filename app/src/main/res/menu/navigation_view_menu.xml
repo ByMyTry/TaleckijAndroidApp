@@ -2,17 +2,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/launcher_menu_item"
-            android:title="@string/launcher_nav_title"
+            android:id="@+id/launcher_grid_menu_item"
+            android:title="@string/launcher_grid_nav_title"
             android:icon="@drawable/ic_grid"/>
         <item
-            android:id="@+id/grid_layout_menu_item"
-            android:title="@string/_nav_title"
-            android:icon="@drawable/ic_grid"/>
-        <item
-            android:id="@+id/linear_layout_menu_item"
-            android:title="@string/linear_recycler_nav_title"
+            android:id="@+id/launcher_linear_menu_item"
+            android:title="@string/launcher_linear_nav_title"
             android:icon="@drawable/ic_linear"/>
+        <!--<item-->
+            <!--android:id="@+id/grid_layout_menu_item"-->
+            <!--android:title="@string/_nav_title"-->
+            <!--android:icon="@drawable/ic_grid"/>-->
+        <!--<item-->
+            <!--android:id="@+id/linear_layout_menu_item"-->
+            <!--android:title="@string/linear_recycler_nav_title"-->
+            <!--android:icon="@drawable/ic_linear"/>-->
         <item
             android:id="@+id/settings_menu_item"
             android:title="@string/settings_nav_title"

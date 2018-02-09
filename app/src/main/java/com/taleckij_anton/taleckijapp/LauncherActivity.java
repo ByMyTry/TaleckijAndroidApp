@@ -154,9 +154,11 @@ public class LauncherActivity extends AppCompatActivity{
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     int menuItemId = item.getItemId();
-                    sCurrentMenuItemId = menuItemId;
                     //replaceAppsFragment();
-                    replaceFragmentByItemId(menuItemId);
+                    if(menuItemId!= sCurrentMenuItemId) {
+                        sCurrentMenuItemId = menuItemId;
+                        replaceFragmentByItemId(menuItemId);
+                    }
 
                     if(mDrawerLayout == null){
                         mDrawerLayout = findViewById(R.id.launcher);
@@ -167,12 +169,14 @@ public class LauncherActivity extends AppCompatActivity{
             };
 
     private void replaceFragmentByItemId(int menuItemId){
-        if(menuItemId == R.id.launcher_menu_item){
-            replaceAppsFragment();
-        }else if (menuItemId == R.id.grid_layout_menu_item){
+        if(menuItemId == R.id.launcher_grid_menu_item) {
+            replaceAppsFragment(AppsFragment.APPS_GRID_LAYOUT);
+        } else if(menuItemId == R.id.launcher_linear_menu_item) {
+            replaceAppsFragment(AppsFragment.APPS_LINEAR_LAYOUT);
+        /*}else if (menuItemId == R.id.grid_layout_menu_item){
             replaceRecyclerFragment(LauncherRecyclerFragment.GRID);
         } else if(menuItemId == R.id.linear_layout_menu_item){
-            replaceRecyclerFragment(LauncherRecyclerFragment.LINEAR);
+            replaceRecyclerFragment(LauncherRecyclerFragment.LINEAR);*/
         } else if(menuItemId == R.id.settings_menu_item) {
             replaceSettingsFragment();
         }
@@ -188,8 +192,8 @@ public class LauncherActivity extends AppCompatActivity{
                 }
             };
 
-    private void replaceAppsFragment(){
-        AppsFragment appsFragment = AppsFragment.getInstance();
+    private void replaceAppsFragment(String layoutType){
+        AppsFragment appsFragment = AppsFragment.getInstance(layoutType);
 
         getFragmentManager().beginTransaction()
                 .replace(R.id.list_fragment_place, appsFragment)
@@ -197,7 +201,7 @@ public class LauncherActivity extends AppCompatActivity{
                 .commit();
     }
 
-    private void replaceRecyclerFragment(String fragmentType){
+    /*private void replaceRecyclerFragment(String fragmentType){
        final LauncherRecyclerFragment launcherRecyclerFragment
                = LauncherRecyclerFragment.getInstance(fragmentType);
 
@@ -205,7 +209,7 @@ public class LauncherActivity extends AppCompatActivity{
                 .replace(R.id.list_fragment_place, launcherRecyclerFragment)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
-    }
+    }*/
 
     private void replaceSettingsFragment(){
         getFragmentManager().beginTransaction()
@@ -221,7 +225,7 @@ public class LauncherActivity extends AppCompatActivity{
                 sCurrentMenuItemId = currentMenuItemId;
                 replaceFragmentByItemId(currentMenuItemId);
             } else {
-                replaceAppsFragment();
+                replaceAppsFragment(AppsFragment.APPS_GRID_LAYOUT);
             }
         } else if(getIntent() != null){
             int currentMenuItemId = getIntent().getIntExtra(CURRENT_MENU_ITEM_ID, sCurrentMenuItemId);
@@ -230,10 +234,10 @@ public class LauncherActivity extends AppCompatActivity{
                 sCurrentMenuItemId = currentMenuItemId;
                 replaceFragmentByItemId(currentMenuItemId);
             } else {
-                replaceAppsFragment();
+                replaceAppsFragment(AppsFragment.APPS_GRID_LAYOUT);
             }
         } else {
-            replaceAppsFragment();
+            replaceAppsFragment(AppsFragment.APPS_GRID_LAYOUT);
         }
     }
 

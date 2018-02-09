@@ -40,9 +40,10 @@
     <string name="sorttype_apps_pref_title">Порядок приложений</string>
     <string name="sorttype_apps_pref_summ">Выбрать однин из доступных способов сортировки для порядка приложений в лончере</string>
 
-    <string name="launcher_nav_title">Лончер</string>
-    <string name="_nav_title">Сетка recycler</string>
-    <string name="linear_recycler_nav_title">Линейный recycler</string>
+    <string name="launcher_grid_nav_title">Лончер сетка</string>
+    <string name="launcher_linear_nav_title">Лончер линейный</string>
+    <!--<string name="_nav_title">Сетка recycler</string>-->
+    <!--<string name="linear_recycler_nav_title">Линейный recycler</string>-->
     <string name="settings_nav_title">Настройки</string>
 
     <string name="popup_count_default_title">Кол-во запусков</string>

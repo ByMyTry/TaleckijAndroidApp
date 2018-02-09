@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.taleckij_anton.taleckijapp.R;
 import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.AppViewModel;
+import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.AppsFragment;
 import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.LaunchAppInfoModel;
 import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.OnRecyclerViewGestureActioner;
 
@@ -36,6 +37,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder>{
     private final Handler mHandler = new Handler();
     private final OnRecyclerViewGestureActioner mOnRecyclerViewGestureActioner;
     private final Comparator<LaunchAppInfoModel> mComporator;
+    private final int mItemLayoutId;
 
     private List<LaunchAppInfoModel> getRemovedAppsModelsByUid(
             List<LaunchAppInfoModel> appsModels, int uid){
@@ -80,17 +82,26 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder>{
         }
     }
 
+    private int getItemLayoutIdFor(String layoutType){
+        if(layoutType.equals(AppsFragment.APPS_GRID_LAYOUT)){
+            return R.layout.launcher_apps_grid_item;
+        } else if(layoutType.equals(AppsFragment.APPS_LINEAR_LAYOUT)) {
+            return R.layout.launcher_apps_linear_item;
+        }
+        return -1;
+    }
+
     public AppsAdapter(List<LaunchAppInfoModel> appsModels,
                        OnRecyclerViewGestureActioner onRecyclerViewGestureActioner,
-                       String sortType){
+                       String sortType, String layoutType){
         if(!sortType.equals(WITHOUT_SORT)){
             mComporator = getComporatorBySortType(sortType);
             Collections.sort(appsModels, getComporatorBySortType(sortType));
         } else
             mComporator = null;
         this.mAppModels = appsModels;
-        //this.mAppViewModels = appViewModels;
         this.mOnRecyclerViewGestureActioner = onRecyclerViewGestureActioner;
+        this.mItemLayoutId = getItemLayoutIdFor(layoutType);
         fetchItems();
     }
 
@@ -112,7 +123,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder>{
     @Override
     public AppViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View appView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_launcher_apps_item, parent, false);
+                .inflate(mItemLayoutId, parent, false);
         return new AppViewHolder(appView);
     }
 
@@ -145,7 +156,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder>{
             @Override
             public boolean onLongClick(final View v) {
                 mOnRecyclerViewGestureActioner.showPopup(v, appModel);
-                return false;
+                return true;
             }
         });
     }

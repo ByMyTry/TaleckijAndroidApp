@@ -19,6 +19,7 @@ import android.os.UserManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -60,16 +61,23 @@ public class AppsFragment extends Fragment {
 
         @Override
         public void onAppRemoved(int removedAppsUid) {
-            //final List<UserHandle> userHandles = getUserHandles();
-            //final List<LauncherActivityInfo> applicationInfos = getApplicationInfos(mUser);
             final AppsAdapter adapter = ((AppsAdapter)mRecyclerView.getAdapter());
             List<LaunchAppInfoModel> removedAppsModels = adapter.updateAfterRemove(removedAppsUid);
             removeAppsFromDb(removedAppsModels);
         }
     };
 
-    public static AppsFragment getInstance(){
-        return new AppsFragment();
+    private final static String APPS_LAYOUT_TYPE_KEY = "APPS_LAYOUT_TYPE_KEY";
+
+    public final static String APPS_GRID_LAYOUT = "APPS_GRID_LAYOUT";
+    public final static String APPS_LINEAR_LAYOUT = "APPS_LINEAR_LAYOUT";
+
+    public static AppsFragment getInstance(String layoutType){
+        Bundle args = new Bundle();
+        args.putString(APPS_LAYOUT_TYPE_KEY, layoutType);
+        AppsFragment appsFragment = new AppsFragment();
+        appsFragment.setArguments(args);
+        return appsFragment;
     }
 
     private List<LaunchAppInfoModel> getAddedAppsModelsByUid(List<LauncherActivityInfo> appsData,
@@ -150,7 +158,8 @@ public class AppsFragment extends Fragment {
 
         int spanCount = getRecyclerSpanCount();
         String sortType = getRecyclerSortType();
-        createRecyclerView(appModels, spanCount, sortType);
+        String layoutType = getArguments().getString(APPS_LAYOUT_TYPE_KEY, APPS_GRID_LAYOUT);
+        createRecyclerView(appModels, spanCount, sortType, layoutType);
 
         mAppsChangeReceiver = new AppsChangeReceiver(onAppsChangeListener);
         registerAppsChangeReceiver(
@@ -269,8 +278,13 @@ public class AppsFragment extends Fragment {
 
     private void createRecyclerView(//List<AppViewModel> appViewModels,
                                     List<LaunchAppInfoModel> appModels,
-                                    int spanCount, String sortType){
-        mRecyclerView.setLayoutManager(new GridLayoutManager(mRecyclerView.getContext(), spanCount));
+                                    int spanCount, String sortType,
+                                    String layoutType){
+        if(layoutType.equals(APPS_GRID_LAYOUT)) {
+            mRecyclerView.setLayoutManager(new GridLayoutManager(mRecyclerView.getContext(), spanCount));
+        } else {
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(mRecyclerView.getContext()));
+        }
         final OnRecyclerViewGestureActioner onRecyclerViewGestureActioner =
                 new OnRecyclerViewGestureActioner() {
                     @Override
@@ -298,7 +312,8 @@ public class AppsFragment extends Fragment {
                         popupMenu.show();
                     }
                 };
-        AppsAdapter adapter = new AppsAdapter(appModels, onRecyclerViewGestureActioner, sortType);
+        AppsAdapter adapter = new AppsAdapter(appModels, onRecyclerViewGestureActioner,
+                sortType, layoutType);
         mRecyclerView.setAdapter(adapter);
     }
 
@@ -320,10 +335,6 @@ public class AppsFragment extends Fragment {
             if(db != null)db.close();
         }
     }
-
-    /*private int getLaunchCountFromDb(String appFullName){
-        return 1;
-    }*/
 
     private PopupMenu.OnMenuItemClickListener
     createOnMenuListener(final Context context,

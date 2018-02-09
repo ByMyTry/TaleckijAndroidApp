@@ -40,9 +40,10 @@
     <string name="sorttype_apps_pref_title">הזמנת יישומים</string>
     <string name="sorttype_apps_pref_summ">בחר באחד מסוגי המיון הזמינים עבור סדר היישומים במפעיל</string>
 
-    <string name="launcher_nav_title">Launcher</string>
-    <string name="_nav_title">רֶשֶׁת recycler</string>
-    <string name="linear_recycler_nav_title">ליניארי recycler</string>
+    <string name="launcher_grid_nav_title">Launcher רֶשֶׁת</string>
+    <string name="launcher_linear_nav_title">Launcher ליניארי</string>
+    <!--<string name="_nav_title">רֶשֶׁת recycler</string>-->
+    <!--<string name="linear_recycler_nav_title">ליניארי recycler</string>-->
     <string name="settings_nav_title">הגדרות</string>
 
     <string name="popup_count_default_title">מספר ההשקה</string>
