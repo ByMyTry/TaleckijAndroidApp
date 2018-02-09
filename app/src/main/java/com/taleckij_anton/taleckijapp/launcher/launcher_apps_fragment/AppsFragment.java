@@ -19,6 +19,7 @@ import android.os.UserManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -60,23 +61,33 @@ public class AppsFragment extends Fragment {
 
         @Override
         public void onAppRemoved(int removedAppsUid) {
-            //final List<UserHandle> userHandles = getUserHandles();
-            //final List<LauncherActivityInfo> applicationInfos = getApplicationInfos(mUser);
             final AppsAdapter adapter = ((AppsAdapter)mRecyclerView.getAdapter());
             List<LaunchAppInfoModel> removedAppsModels = adapter.updateAfterRemove(removedAppsUid);
             removeAppsFromDb(removedAppsModels);
         }
     };
 
-    public static AppsFragment getInstance(){
-        return new AppsFragment();
+    private final static String APPS_LAYOUT_TYPE_KEY = "APPS_LAYOUT_TYPE_KEY";
+
+    public final static String APPS_GRID_LAYOUT = "APPS_GRID_LAYOUT";
+    public final static String APPS_LINEAR_LAYOUT = "APPS_LINEAR_LAYOUT";
+
+    public static AppsFragment getInstance(String layoutType){
+        Bundle args = new Bundle();
+        args.putString(APPS_LAYOUT_TYPE_KEY, layoutType);
+        AppsFragment appsFragment = new AppsFragment();
+        appsFragment.setArguments(args);
+        return appsFragment;
     }
 
     private List<LaunchAppInfoModel> getAddedAppsModelsByUid(List<LauncherActivityInfo> appsData,
                                                              int uid){
         LinkedList<LaunchAppInfoModel> addedAppsModels = new LinkedList<>();
         for (LauncherActivityInfo appData: appsData){
-            LaunchAppInfoModel appModel = new LaunchAppInfoModel(appData, 0);
+            LaunchAppInfoModel appModel = new LaunchAppInfoModel(
+                    appData, 0,
+                    new AppViewModel(null, null)
+            );
             if(appModel.getUid() == uid) {
                 addedAppsModels.add(appModel);
             }
@@ -140,13 +151,15 @@ public class AppsFragment extends Fragment {
         mAppsLaunchDbHelper = new AppsLaunchDbHelper(mRecyclerView.getContext());
         //clearData();
         final List<LauncherActivityInfo> applicationInfos = getApplicationInfos(mUser);
-        final List<LaunchAppInfoModel> appsModels = synchronizeWithDb(applicationInfos);
+        final List<LaunchAppInfoModel> appModels = synchronizeWithDb(applicationInfos);
+        //final List<AppViewModel> appViewModels = getAppsViewModels(appModels.size());
 
         //Log.i("DB","COUNT " +  applicationInfos.size() + " " + appsModels.size());
 
         int spanCount = getRecyclerSpanCount();
         String sortType = getRecyclerSortType();
-        createRecyclerView(appsModels, spanCount, sortType);
+        String layoutType = getArguments().getString(APPS_LAYOUT_TYPE_KEY, APPS_GRID_LAYOUT);
+        createRecyclerView(appModels, spanCount, sortType, layoutType);
 
         mAppsChangeReceiver = new AppsChangeReceiver(onAppsChangeListener);
         registerAppsChangeReceiver(
@@ -213,10 +226,14 @@ public class AppsFragment extends Fragment {
                 if(appsFullNameDb.contains(appInfo.getName())){
                     appModel = new LaunchAppInfoModel(
                             appInfo,
-                            appsLaunchCountsDb.get(appsFullNameDb.indexOf(appInfo.getName()))
+                            appsLaunchCountsDb.get(appsFullNameDb.indexOf(appInfo.getName())),
+                            new AppViewModel(null, null)
                     );
                 } else {
-                    appModel = new LaunchAppInfoModel(appInfo, 0);
+                    appModel = new LaunchAppInfoModel(
+                            appInfo, 0,
+                            new AppViewModel(null, null)
+                    );
                     ContentValues values = new ContentValues();
                     values.put(AppsLaunchCountDb.Columns.FIELD_APP_LAUNCH_COUNT,
                             appModel.getLaunchCount());
@@ -236,6 +253,14 @@ public class AppsFragment extends Fragment {
         return new ArrayList<>(currentAppsModels);
     }
 
+    /*private List<AppViewModel>  getAppsViewModels(int size){
+        LinkedList<AppViewModel> appViewModels = new LinkedList<>();
+        for (int i = 0; i < size; i++) {
+            appViewModels.add(new AppViewModel(null, null));
+        }
+        return appViewModels;
+    }*/
+
     private @Nullable List<UserHandle> getUserHandles(){
         final UserManager userManager = (UserManager)
                 mRecyclerView.getContext().getSystemService(Context.USER_SERVICE);
@@ -251,10 +276,15 @@ public class AppsFragment extends Fragment {
         return applicationInfos;
     }
 
-    private void createRecyclerView(List<LaunchAppInfoModel> appsModels,
-                                    int spanCount, String sortType){
-        // = findViewById(R.id.recycler_apps);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(mRecyclerView.getContext(), spanCount));
+    private void createRecyclerView(//List<AppViewModel> appViewModels,
+                                    List<LaunchAppInfoModel> appModels,
+                                    int spanCount, String sortType,
+                                    String layoutType){
+        if(layoutType.equals(APPS_GRID_LAYOUT)) {
+            mRecyclerView.setLayoutManager(new GridLayoutManager(mRecyclerView.getContext(), spanCount));
+        } else {
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(mRecyclerView.getContext()));
+        }
         final OnRecyclerViewGestureActioner onRecyclerViewGestureActioner =
                 new OnRecyclerViewGestureActioner() {
                     @Override
@@ -282,7 +312,8 @@ public class AppsFragment extends Fragment {
                         popupMenu.show();
                     }
                 };
-        AppsAdapter adapter = new AppsAdapter(appsModels, onRecyclerViewGestureActioner, sortType);
+        AppsAdapter adapter = new AppsAdapter(appModels, onRecyclerViewGestureActioner,
+                sortType, layoutType);
         mRecyclerView.setAdapter(adapter);
     }
 
@@ -304,10 +335,6 @@ public class AppsFragment extends Fragment {
             if(db != null)db.close();
         }
     }
-
-    /*private int getLaunchCountFromDb(String appFullName){
-        return 1;
-    }*/
 
     private PopupMenu.OnMenuItemClickListener
     createOnMenuListener(final Context context,

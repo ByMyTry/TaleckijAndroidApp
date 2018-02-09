@@ -5,6 +5,10 @@
     android:layout_margin="@dimen/margin_grid_item"
     android:orientation="vertical">
     <!--android:background="@color/colorAccent"-->
+    <!--<View android:id="@+id/launcher_item_icon"-->
+        <!--android:layout_width="48dp"-->
+        <!--android:layout_height="48dp">-->
+    <!--</View>-->
     <com.taleckij_anton.taleckijapp.launcher.recycler_training.SquareView
         android:id="@+id/launcher_item_icon"
         android:layout_width="match_parent"

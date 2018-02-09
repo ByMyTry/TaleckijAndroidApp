@@ -1,11 +1,16 @@
 package com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.recycler;
 
+import android.content.pm.LauncherActivityInfo;
+import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.taleckij_anton.taleckijapp.R;
+import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.AppViewModel;
+import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.AppsFragment;
 import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.LaunchAppInfoModel;
 import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.OnRecyclerViewGestureActioner;
 
@@ -27,9 +32,12 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder>{
     public static final String SORT_LAUNCH_COUNT = "4";
 
 
-    private final List<LaunchAppInfoModel> mAppsData;
+    private final List<LaunchAppInfoModel> mAppModels;
+    private Thread mThread;
+    private final Handler mHandler = new Handler();
     private final OnRecyclerViewGestureActioner mOnRecyclerViewGestureActioner;
     private final Comparator<LaunchAppInfoModel> mComporator;
+    private final int mItemLayoutId;
 
     private List<LaunchAppInfoModel> getRemovedAppsModelsByUid(
             List<LaunchAppInfoModel> appsModels, int uid){
@@ -74,26 +82,40 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder>{
         }
     }
 
+    private int getItemLayoutIdFor(String layoutType){
+        if(layoutType.equals(AppsFragment.APPS_GRID_LAYOUT)){
+            return R.layout.launcher_apps_grid_item;
+        } else if(layoutType.equals(AppsFragment.APPS_LINEAR_LAYOUT)) {
+            return R.layout.launcher_apps_linear_item;
+        }
+        return -1;
+    }
+
     public AppsAdapter(List<LaunchAppInfoModel> appsModels,
                        OnRecyclerViewGestureActioner onRecyclerViewGestureActioner,
-                       String sortType){
+                       String sortType, String layoutType){
         if(!sortType.equals(WITHOUT_SORT)){
             mComporator = getComporatorBySortType(sortType);
             Collections.sort(appsModels, getComporatorBySortType(sortType));
         } else
             mComporator = null;
-        this.mAppsData = appsModels;
+        this.mAppModels = appsModels;
         this.mOnRecyclerViewGestureActioner = onRecyclerViewGestureActioner;
+        this.mItemLayoutId = getItemLayoutIdFor(layoutType);
+        fetchItems();
     }
 
     public void updateAfterAdd(List<LaunchAppInfoModel> addedAppModels, int uid){
-        mAppsData.addAll(addedAppModels);
+        mAppModels.addAll(addedAppModels);
+        Collections.sort(mAppModels, mComporator);
+        fetchItems();
         notifyDataSetChanged();
     }
 
     public List<LaunchAppInfoModel> updateAfterRemove(int uid){
-        List<LaunchAppInfoModel> removedAppModel = getRemovedAppsModelsByUid(mAppsData, uid);
-        mAppsData.removeAll(removedAppModel);
+        List<LaunchAppInfoModel> removedAppModel = getRemovedAppsModelsByUid(mAppModels, uid);
+        mAppModels.removeAll(removedAppModel);
+        fetchItems();
         notifyDataSetChanged();
         return removedAppModel;
     }
@@ -101,23 +123,29 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder>{
     @Override
     public AppViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View appView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_launcher_apps_item, parent, false);
+                .inflate(mItemLayoutId, parent, false);
         return new AppViewHolder(appView);
     }
 
     @Override
     public void onBindViewHolder(final AppViewHolder holder, int position) {
-        final LaunchAppInfoModel appModel
-                = mAppsData.get(holder.getAdapterPosition());
+        final LaunchAppInfoModel appModel = mAppModels.get(holder.getAdapterPosition());
         //density 0 ~ юзает дефолтный размер иконки
-        holder.bind(appModel.getIcon(0), appModel.getLabel());
+        //holder.bind(appModel.getIcon(0), appModel.getLabel());
+        //final AppViewModel appViewModel = mAppViewModels.get(position);
+        final AppViewModel appViewModel = appModel.getAppViewModel();
+
+        if(appViewModel.getIcon() != null && appViewModel.getLabel() != null){
+            holder.bind(appViewModel.getIcon(), appViewModel.getLabel());
+        }
+
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 appModel.incrementLaunchCount();
                 if(mComporator != null){
-                    Collections.sort(mAppsData, mComporator);
+                    Collections.sort(mAppModels, mComporator);
                     notifyDataSetChanged();
                 }
                 mOnRecyclerViewGestureActioner.launchApp(v.getContext(), appModel);
@@ -128,13 +156,40 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder>{
             @Override
             public boolean onLongClick(final View v) {
                 mOnRecyclerViewGestureActioner.showPopup(v, appModel);
-                return false;
+                return true;
             }
         });
     }
 
+    private void fetchItems(){
+        mThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final int size = mAppModels.size();
+                for (int i = 0; i < size; i++) {
+                    final LaunchAppInfoModel appModel = mAppModels.get(i);
+                    if(appModel.getAppViewModel().getLabel() == null){
+                        final String label = appModel.getLabel();
+                        appModel.getAppViewModel().setLabel(label);
+                    }
+                    if(appModel.getAppViewModel().getIcon() == null) {
+                        final Drawable icon = appModel.getIcon(0);
+                        appModel.getAppViewModel().setIcon(icon);
+                    }
+                }
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyDataSetChanged();
+                    }
+                });
+            }
+        });
+        mThread.start();
+    }
+
     @Override
     public int getItemCount() {
-        return mAppsData.size();
+        return mAppModels.size();
     }
 }

@@ -10,11 +10,14 @@ import android.graphics.drawable.Drawable;
 
 public class LaunchAppInfoModel {
     private final LauncherActivityInfo mLauncherActivityInfo;
+    private final AppViewModel mAppViewModel;
     private int mLaunchCount;
 
-    public LaunchAppInfoModel(LauncherActivityInfo launcherActivityInfo, int launchCount){
+    public LaunchAppInfoModel(LauncherActivityInfo launcherActivityInfo, int launchCount,
+                                AppViewModel appViewModel){
         mLauncherActivityInfo = launcherActivityInfo;
         mLaunchCount = launchCount;
+        mAppViewModel = appViewModel;
     }
 
     public int getLaunchCount(){
@@ -50,5 +53,9 @@ public class LaunchAppInfoModel {
 
     public Drawable getIcon(int density){
         return mLauncherActivityInfo.getIcon(density);
+    }
+
+    public AppViewModel getAppViewModel(){
+        return mAppViewModel;
     }
 }

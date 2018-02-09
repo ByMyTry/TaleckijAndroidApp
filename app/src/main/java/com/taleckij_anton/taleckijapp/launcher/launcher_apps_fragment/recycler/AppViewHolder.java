@@ -31,4 +31,12 @@ public class AppViewHolder extends RecyclerView.ViewHolder{
         }
         mAppLabel.setText(appLabel);
     }
+
+    void bind(CharSequence appLabel){
+        mAppLabel.setText(appLabel);
+    }
+
+    void bind(Drawable icon){
+        mAppIcon.setImageDrawable(icon);
+    }
 }
