@@ -1,5 +1,6 @@
 package com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.recycler;
 
+import android.content.pm.LauncherActivityInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
@@ -31,7 +32,6 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder>{
 
 
     private final List<LaunchAppInfoModel> mAppModels;
-    private final List<AppViewModel> mAppViewModels;
     private Thread mThread;
     private final Handler mHandler = new Handler();
     private final OnRecyclerViewGestureActioner mOnRecyclerViewGestureActioner;
@@ -80,8 +80,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder>{
         }
     }
 
-    public AppsAdapter(List<AppViewModel> appViewModels,
-                       List<LaunchAppInfoModel> appsModels,
+    public AppsAdapter(List<LaunchAppInfoModel> appsModels,
                        OnRecyclerViewGestureActioner onRecyclerViewGestureActioner,
                        String sortType){
         if(!sortType.equals(WITHOUT_SORT)){
@@ -90,18 +89,22 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder>{
         } else
             mComporator = null;
         this.mAppModels = appsModels;
-        this.mAppViewModels = appViewModels;
+        //this.mAppViewModels = appViewModels;
         this.mOnRecyclerViewGestureActioner = onRecyclerViewGestureActioner;
+        fetchItems();
     }
 
     public void updateAfterAdd(List<LaunchAppInfoModel> addedAppModels, int uid){
         mAppModels.addAll(addedAppModels);
+        Collections.sort(mAppModels, mComporator);
+        fetchItems();
         notifyDataSetChanged();
     }
 
     public List<LaunchAppInfoModel> updateAfterRemove(int uid){
         List<LaunchAppInfoModel> removedAppModel = getRemovedAppsModelsByUid(mAppModels, uid);
         mAppModels.removeAll(removedAppModel);
+        fetchItems();
         notifyDataSetChanged();
         return removedAppModel;
     }
@@ -115,19 +118,16 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder>{
 
     @Override
     public void onBindViewHolder(final AppViewHolder holder, int position) {
-        final LaunchAppInfoModel appModel
-                = mAppModels.get(holder.getAdapterPosition());
+        final LaunchAppInfoModel appModel = mAppModels.get(holder.getAdapterPosition());
         //density 0 ~ юзает дефолтный размер иконки
         //holder.bind(appModel.getIcon(0), appModel.getLabel());
-        final AppViewModel appViewModel = mAppViewModels.get(position);
+        //final AppViewModel appViewModel = mAppViewModels.get(position);
+        final AppViewModel appViewModel = appModel.getAppViewModel();
 
         if(appViewModel.getIcon() != null && appViewModel.getLabel() != null){
             holder.bind(appViewModel.getIcon(), appViewModel.getLabel());
         }
 
-        if(mThread == null){
-            fetchItems();
-        }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,15 +151,20 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder>{
     }
 
     private void fetchItems(){
-        mThread =new Thread(new Runnable() {
+        mThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 final int size = mAppModels.size();
                 for (int i = 0; i < size; i++) {
-                    final String label = mAppModels.get(i).getLabel();
-                    final Drawable icon = mAppModels.get(i).getIcon(0);
-                    mAppViewModels.get(i).setLabel(label);
-                    mAppViewModels.get(i).setIcon(icon);
+                    final LaunchAppInfoModel appModel = mAppModels.get(i);
+                    if(appModel.getAppViewModel().getLabel() == null){
+                        final String label = appModel.getLabel();
+                        appModel.getAppViewModel().setLabel(label);
+                    }
+                    if(appModel.getAppViewModel().getIcon() == null) {
+                        final Drawable icon = appModel.getIcon(0);
+                        appModel.getAppViewModel().setIcon(icon);
+                    }
                 }
                 mHandler.post(new Runnable() {
                     @Override
