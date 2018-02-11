@@ -32,6 +32,8 @@ import com.taleckij_anton.taleckijapp.R;
 import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.db.AppsLaunchCountDb;
 import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.db.AppsLaunchDbHelper;
 import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.recycler.AppsAdapter;
+import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
+import com.yandex.metrica.YandexMetrica;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -281,7 +283,8 @@ public class AppsFragment extends Fragment {
                                     int spanCount, String sortType,
                                     String layoutType){
         if(layoutType.equals(APPS_GRID_LAYOUT)) {
-            mRecyclerView.setLayoutManager(new GridLayoutManager(mRecyclerView.getContext(), spanCount));
+            mRecyclerView.setLayoutManager(
+                    new GridLayoutManager(mRecyclerView.getContext(), spanCount));
         } else {
             mRecyclerView.setLayoutManager(new LinearLayoutManager(mRecyclerView.getContext()));
         }
@@ -297,6 +300,9 @@ public class AppsFragment extends Fragment {
                                     incrementedAppModel.getComponentName(),
                                     mUser, null, null);
                         }
+
+                        YandexMetrica.reportEvent(MetricaAppEvents.AppOpen,
+                            String.format("{\"app_name\":%s}", incrementedAppModel.getLabel()));
                     }
 
                     @Override
@@ -336,8 +342,7 @@ public class AppsFragment extends Fragment {
         }
     }
 
-    private PopupMenu.OnMenuItemClickListener
-    createOnMenuListener(final Context context,
+    private PopupMenu.OnMenuItemClickListener createOnMenuListener(final Context context,
                          final LaunchAppInfoModel appModel){
         return new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -346,11 +351,19 @@ public class AppsFragment extends Fragment {
                     final String deletePackageName =
                             appModel.getPackageName();
                     deleteApp(context, deletePackageName);
+
+                    YandexMetrica.reportEvent(MetricaAppEvents.AppPackageDelete,
+                            String.format("{\"package_name\":%s}", appModel.getPackageName()));
+
                     return true;
                 } else if (item.getItemId() == R.id.popup_info) {
                     final ComponentName showComponentName = appModel.getComponentName();
                     final UserHandle user = mUser;
                     showAppInfo(showComponentName, user);
+
+                    YandexMetrica.reportEvent(MetricaAppEvents.AppInfoOpen,
+                            String.format("{\"app_name\":%s}", appModel.getLabel()));
+
                     return true;
                 }
                 return false;

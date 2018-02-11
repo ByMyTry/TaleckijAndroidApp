@@ -14,6 +14,9 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
+import com.yandex.metrica.YandexMetrica;
+
 
 public class AboutMeActivity extends AppCompatActivity {
 
@@ -45,6 +48,7 @@ public class AboutMeActivity extends AppCompatActivity {
             }
         });
 
+        YandexMetrica.reportEvent(MetricaAppEvents.ProfileOpen);
        /* TextView textView = findViewById(R.id.my_github_link);
         makeGithubLink(textView, GITHUB_URL);
 

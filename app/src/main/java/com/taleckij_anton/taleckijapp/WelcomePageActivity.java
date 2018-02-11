@@ -11,9 +11,12 @@ import android.view.View;
 import android.widget.RadioButton;
 
 import com.crashlytics.android.Crashlytics;
+import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
 import com.taleckij_anton.taleckijapp.welcome_page.SettingsWpFragment;
 import com.taleckij_anton.taleckijapp.welcome_page.SimpleWpFragment;
 import com.taleckij_anton.taleckijapp.welcome_page.WpFragment;
+import com.yandex.metrica.YandexMetrica;
+import com.yandex.metrica.YandexMetricaConfig;
 
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.UpdateManager;
@@ -67,6 +70,8 @@ public class WelcomePageActivity extends AppCompatActivity {
 
         final View nextButtton = findViewById(R.id.button_next);
         nextButtton.setOnClickListener(mNextButtonOnClick);
+
+        YandexMetrica.reportEvent(MetricaAppEvents.WelcomePageOpen);
     }
 
     public boolean isDarkTheme(){

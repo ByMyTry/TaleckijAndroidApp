@@ -19,6 +19,8 @@ import com.crashlytics.android.Crashlytics;
 import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.AppsFragment;
 import com.taleckij_anton.taleckijapp.launcher.recycler_training.LauncherRecyclerFragment;
 import com.taleckij_anton.taleckijapp.launcher.SettingsFragment;
+import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
+import com.yandex.metrica.YandexMetrica;
 
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.UpdateManager;
@@ -171,14 +173,17 @@ public class LauncherActivity extends AppCompatActivity{
     private void replaceFragmentByItemId(int menuItemId){
         if(menuItemId == R.id.launcher_grid_menu_item) {
             replaceAppsFragment(AppsFragment.APPS_GRID_LAYOUT);
+            YandexMetrica.reportEvent(MetricaAppEvents.AppsGridOpen);
         } else if(menuItemId == R.id.launcher_linear_menu_item) {
             replaceAppsFragment(AppsFragment.APPS_LINEAR_LAYOUT);
+            YandexMetrica.reportEvent(MetricaAppEvents.AppsLinearOpen);
         /*}else if (menuItemId == R.id.grid_layout_menu_item){
             replaceRecyclerFragment(LauncherRecyclerFragment.GRID);
         } else if(menuItemId == R.id.linear_layout_menu_item){
             replaceRecyclerFragment(LauncherRecyclerFragment.LINEAR);*/
         } else if(menuItemId == R.id.settings_menu_item) {
             replaceSettingsFragment();
+            YandexMetrica.reportEvent(MetricaAppEvents.AppsSettingsOpen);
         }
     }
 
