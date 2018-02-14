@@ -24,6 +24,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.taleckij_anton.taleckijapp.background_images.ImageLoaderService;
@@ -36,6 +37,8 @@ import com.yandex.metrica.YandexMetrica;
 
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.UpdateManager;
+
+import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -68,17 +71,22 @@ public class LauncherActivity extends AppCompatActivity{
         public void onReceive(final Context context, final Intent intent) {
             String action = intent.getAction();
             if (ImageLoaderService.BROADCAST_ACTION_UPDATE_IMAGE.equals(action)) {
-                final String imageName = intent.getStringExtra(ImageLoaderService.BROADCAST_PARAM_IMAGE);
-                if(null == imageName){
-                    final Bitmap bitmap = ImageSaver.getInstance().loadImage(getApplicationContext());
+                final String className = LauncherActivity.class.getSimpleName();
+                final Boolean hasImageName = intent.getBooleanExtra(className, false);
+                final Boolean hasDefaultImageName =
+                        intent.getBooleanExtra(ImageSaver.DEFAULT_IMAGE_NAME, false);
+                final String imageName = hasImageName ? className:
+                        hasDefaultImageName ? ImageSaver.DEFAULT_IMAGE_NAME: null;
+                if(TextUtils.isEmpty(imageName) == false){
+                    final Bitmap bitmap = ImageSaver.getInstance()
+                            .loadImage(getApplicationContext(), imageName);
                     setDrawable(bitmap);
-                } else {
-                    if (TextUtils.isEmpty(imageName) == false
-                            && LauncherActivity.class.getSimpleName().equals(imageName)) {
-                        final Bitmap bitmap = ImageSaver.getInstance()
-                                .loadImage(getApplicationContext(), imageName);
-                        setDrawable(bitmap);
-                    }
+                }
+            } else if(ImageLoaderService.ACTION_UPDATE_CACHE.equals(action)){
+                List<String> imageNames = ImageSaver.getInstance().clear(context);
+                for(String imageName : imageNames) {
+                    ImageLoaderService.enqueueWork(context, ImageLoaderService.ACTION_LOAD_IMAGE,
+                            imageName);
                 }
             }
         }
@@ -288,7 +296,6 @@ public class LauncherActivity extends AppCompatActivity{
     private void backgroundImageProcess(){
         ImageLoaderService.enqueueWork(this, ImageLoaderService.ACTION_LOAD_IMAGE,
                 this.getClass().getSimpleName());
-        //TODO запустить аларм менеджер на очищение ImageSaver и запуск IML
     }
 
     private void setDrawable(Drawable drawable) {
@@ -313,8 +320,11 @@ public class LauncherActivity extends AppCompatActivity{
         super.onResume();
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
-        registerReceiver(mUpdateImageBroadcastReceiver,
-                new IntentFilter(ImageLoaderService.BROADCAST_ACTION_UPDATE_IMAGE));
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ImageLoaderService.BROADCAST_ACTION_UPDATE_IMAGE);
+        intentFilter.addAction(ImageLoaderService.ACTION_UPDATE_CACHE);
+        registerReceiver(mUpdateImageBroadcastReceiver, intentFilter);
         backgroundImageProcess();
 
         checkForCrashes();

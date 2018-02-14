@@ -26,7 +26,7 @@ public class ImageSaver {
     private static final String IMAGE_DIRECTORY = "images";
     private static final int IMAGE_QUALITY = 100;
 
-    private static final String DEFAULT_IMAGE_NAME = "default_image_name";
+    public static final String DEFAULT_IMAGE_NAME = "default_image_name";
 
     public static ImageSaver getInstance(){
         if(null == sInstance){

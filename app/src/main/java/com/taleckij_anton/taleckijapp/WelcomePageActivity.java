@@ -32,6 +32,7 @@ import net.hockeyapp.android.UpdateManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -46,8 +47,19 @@ public class WelcomePageActivity extends AppCompatActivity {
         public void onReceive(final Context context, final Intent intent) {
             String action = intent.getAction();
             if (ImageLoaderService.BROADCAST_ACTION_UPDATE_IMAGE.equals(action)) {
-                final String imageName = intent.getStringExtra(ImageLoaderService.BROADCAST_PARAM_IMAGE);
-                if(null == imageName){
+                //final String imageName = intent.getStringExtra(ImageLoaderService.BROADCAST_PARAM_IMAGE);
+                final String className = WelcomePageActivity.class.getSimpleName();
+                final Boolean hasImageName = intent.getBooleanExtra(className, false);
+                final Boolean hasDefaultImageName =
+                        intent.getBooleanExtra(ImageSaver.DEFAULT_IMAGE_NAME, false);
+                final String imageName = hasImageName ? className:
+                        hasDefaultImageName ? ImageSaver.DEFAULT_IMAGE_NAME: null;
+                if(TextUtils.isEmpty(imageName) == false){
+                    final Bitmap bitmap = ImageSaver.getInstance()
+                            .loadImage(getApplicationContext(), imageName);
+                    setDrawable(bitmap);
+                }
+                /*if(null == imageName){
                     final Bitmap bitmap = ImageSaver.getInstance().loadImage(getApplicationContext());
                     setDrawable(bitmap);
                 } else {
@@ -57,6 +69,12 @@ public class WelcomePageActivity extends AppCompatActivity {
                                 .loadImage(getApplicationContext(), imageName);
                         setDrawable(bitmap);
                     }
+                }*/
+            } else if(ImageLoaderService.ACTION_UPDATE_CACHE.equals(action)){
+                List<String> imageNames = ImageSaver.getInstance().clear(context);
+                for(String imageName : imageNames) {
+                    ImageLoaderService.enqueueWork(context, ImageLoaderService.ACTION_LOAD_IMAGE,
+                            imageName);
                 }
             }
         }
@@ -194,7 +212,6 @@ public class WelcomePageActivity extends AppCompatActivity {
     private void backgroundImageProcess(){
         ImageLoaderService.enqueueWork(this, ImageLoaderService.ACTION_LOAD_IMAGE,
                 this.getClass().getSimpleName());
-        //TODO запустить аларм менеджер на очишение ImageSaver и запуск IML
     }
 
     private void setDrawable(Drawable drawable) {
@@ -204,8 +221,11 @@ public class WelcomePageActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(mUpdateImageBroadcastReceiver,
-                new IntentFilter(ImageLoaderService.BROADCAST_ACTION_UPDATE_IMAGE));
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ImageLoaderService.BROADCAST_ACTION_UPDATE_IMAGE);
+        intentFilter.addAction(ImageLoaderService.ACTION_UPDATE_CACHE);
+        registerReceiver(mUpdateImageBroadcastReceiver, intentFilter);
         backgroundImageProcess();
     }
 
