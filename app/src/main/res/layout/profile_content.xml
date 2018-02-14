@@ -3,7 +3,8 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/profile_content">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,8 +33,7 @@
                 android:layout_marginStart="@dimen/margin"
                 android:layout_toEndOf="@id/ivContactItem0"
                 android:text="@string/my_name"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="#212121" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -43,8 +43,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_toEndOf="@id/ivContactItem0"
                 android:text="@string/profile_name_sign"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:textColor="#727272" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
             <!--<ToggleButton-->
             <!--android:id="@+id/chkState1"-->
@@ -91,8 +90,7 @@
                 android:layout_marginStart="@dimen/margin"
                 android:layout_toEndOf="@id/ivContactItem1"
                 android:text="@string/profile_phone"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="#212121" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -102,8 +100,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_toEndOf="@id/ivContactItem1"
                 android:text="@string/profile_phone_sign"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:textColor="#727272" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
 
             <!--<ToggleButton-->
             <!--android:id="@+id/chkState1"-->
@@ -149,8 +146,7 @@
                 android:layout_marginStart="@dimen/margin"
                 android:layout_toEndOf="@id/ivContactItem2"
                 android:text="@string/profile_github_url"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="#212121" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -160,8 +156,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_toEndOf="@id/ivContactItem2"
                 android:text="@string/profile_github_sign"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:textColor="#727272" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
 
             <!--<ToggleButton-->
             <!--android:id="@+id/chkState1"-->

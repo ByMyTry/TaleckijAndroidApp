@@ -7,6 +7,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 
 import com.taleckij_anton.taleckijapp.R;
+import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
+import com.yandex.metrica.YandexMetrica;
 
 /**
  * Created by Lenovo on 31.01.2018.
@@ -17,21 +19,20 @@ public class SettingsFragment extends PreferenceFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preference);
-
-        setFabVisibility(View.INVISIBLE);
+        //setFabVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        setFabVisibility(View.VISIBLE);
+        //setFabVisibility(View.VISIBLE);
     }
 
-    private void setFabVisibility(int visibility){
+    /*private void setFabVisibility(int visibility){
         FloatingActionButton fab = getActivity().findViewById(R.id.fab_launcher);
         if(fab != null) {
             fab.setVisibility(visibility);
         }
-    }
+    }*/
 }

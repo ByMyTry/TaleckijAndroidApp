@@ -102,20 +102,22 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder>{
         this.mAppModels = appsModels;
         this.mOnRecyclerViewGestureActioner = onRecyclerViewGestureActioner;
         this.mItemLayoutId = getItemLayoutIdFor(layoutType);
-        fetchItems();
+        fetchUiItemsAsync();
     }
 
     public void updateAfterAdd(List<LaunchAppInfoModel> addedAppModels, int uid){
         mAppModels.addAll(addedAppModels);
-        Collections.sort(mAppModels, mComporator);
-        fetchItems();
+        if(mComporator != null) {
+            Collections.sort(mAppModels, mComporator);
+        }
+        fetchUiItemsAsync();
         notifyDataSetChanged();
     }
 
     public List<LaunchAppInfoModel> updateAfterRemove(int uid){
         List<LaunchAppInfoModel> removedAppModel = getRemovedAppsModelsByUid(mAppModels, uid);
         mAppModels.removeAll(removedAppModel);
-        fetchItems();
+        fetchUiItemsAsync();
         notifyDataSetChanged();
         return removedAppModel;
     }
@@ -161,7 +163,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder>{
         });
     }
 
-    private void fetchItems(){
+    private void fetchUiItemsAsync(){
         mThread = new Thread(new Runnable() {
             @Override
             public void run() {

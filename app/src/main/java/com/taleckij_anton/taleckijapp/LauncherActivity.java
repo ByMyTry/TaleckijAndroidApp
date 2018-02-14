@@ -1,8 +1,16 @@
 package com.taleckij_anton.taleckijapp;
 
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -12,16 +20,25 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.taleckij_anton.taleckijapp.background_images.ImageLoaderService;
+import com.taleckij_anton.taleckijapp.background_images.ImageSaver;
 import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.AppsFragment;
 import com.taleckij_anton.taleckijapp.launcher.recycler_training.LauncherRecyclerFragment;
 import com.taleckij_anton.taleckijapp.launcher.SettingsFragment;
+import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
+import com.yandex.metrica.YandexMetrica;
 
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.UpdateManager;
+
+import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -32,12 +49,13 @@ public class LauncherActivity extends AppCompatActivity{
     private static int sCurrentMenuItemId = -1;
     private final String CURRENT_MENU_ITEM_ID ="CURRENT_MENU_ITEM_ID";
     private final String CHANGE_THEME_FROM_SETTINGS = "CHANGE_THEME_FROM_SETTINGS";
+
     private final SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener =
             new SharedPreferences.OnSharedPreferenceChangeListener(){
                 @Override
                 public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key){
-                    final String themePrefKey = getResources().getString(R.string.theme_preference_key);
-                    if(themePrefKey.equals(key)){
+                    final String THEME_PREF_KEY = getResources().getString(R.string.theme_preference_key);
+                    if(THEME_PREF_KEY.equals(key)){
                         LauncherActivity.this.finish();
                         final Intent intent = LauncherActivity.this.getIntent();
                         intent.putExtra(CHANGE_THEME_FROM_SETTINGS,true);
@@ -47,6 +65,37 @@ public class LauncherActivity extends AppCompatActivity{
                     }
                 }
             };
+
+    private final BroadcastReceiver mUpdateImageBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            String action = intent.getAction();
+            if (ImageLoaderService.BROADCAST_ACTION_UPDATE_IMAGE.equals(action)) {
+                final String className = LauncherActivity.class.getSimpleName();
+                final Boolean hasImageName = intent.getBooleanExtra(className, false);
+                final Boolean hasDefaultImageName =
+                        intent.getBooleanExtra(ImageSaver.DEFAULT_IMAGE_NAME, false);
+                final String imageName = hasImageName ? className:
+                        hasDefaultImageName ? ImageSaver.DEFAULT_IMAGE_NAME: null;
+                if(TextUtils.isEmpty(imageName) == false){
+                    final Bitmap bitmap = ImageSaver.getInstance()
+                            .loadImage(getApplicationContext(), imageName);
+                    setDrawable(bitmap);
+                }
+            } else if(ImageLoaderService.ACTION_UPDATE_CACHE.equals(action)){
+                List<String> imageNames = ImageSaver.getInstance().clear(context);
+                for(String imageName : imageNames) {
+                    ImageLoaderService.enqueueWork(context, ImageLoaderService.ACTION_LOAD_IMAGE,
+                            imageName);
+                }
+            }
+        }
+
+        private void setDrawable(final Bitmap bitmap){
+            final Drawable drawable = new BitmapDrawable(getResources(), bitmap);
+            LauncherActivity.this.setDrawable(drawable);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,14 +220,17 @@ public class LauncherActivity extends AppCompatActivity{
     private void replaceFragmentByItemId(int menuItemId){
         if(menuItemId == R.id.launcher_grid_menu_item) {
             replaceAppsFragment(AppsFragment.APPS_GRID_LAYOUT);
+            YandexMetrica.reportEvent(MetricaAppEvents.AppsGridOpen);
         } else if(menuItemId == R.id.launcher_linear_menu_item) {
             replaceAppsFragment(AppsFragment.APPS_LINEAR_LAYOUT);
+            YandexMetrica.reportEvent(MetricaAppEvents.AppsLinearOpen);
         /*}else if (menuItemId == R.id.grid_layout_menu_item){
             replaceRecyclerFragment(LauncherRecyclerFragment.GRID);
         } else if(menuItemId == R.id.linear_layout_menu_item){
             replaceRecyclerFragment(LauncherRecyclerFragment.LINEAR);*/
         } else if(menuItemId == R.id.settings_menu_item) {
             replaceSettingsFragment();
+            YandexMetrica.reportEvent(MetricaAppEvents.AppsSettingsOpen);
         }
     }
 
@@ -241,6 +293,20 @@ public class LauncherActivity extends AppCompatActivity{
         }
     }
 
+    private void backgroundImageProcess(){
+        ImageLoaderService.enqueueWork(this, ImageLoaderService.ACTION_LOAD_IMAGE,
+                this.getClass().getSimpleName());
+    }
+
+    private void setDrawable(Drawable drawable) {
+        findViewById(R.id.launcher).setBackground(drawable);
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            findViewById(R.id.launcher).setBackground(drawable);
+        } else {
+            findViewById(R.id.launcher).setBackgroundDrawable(drawable);
+        }*/
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (sCurrentMenuItemId != -1) {
@@ -255,6 +321,12 @@ public class LauncherActivity extends AppCompatActivity{
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
 
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ImageLoaderService.BROADCAST_ACTION_UPDATE_IMAGE);
+        intentFilter.addAction(ImageLoaderService.ACTION_UPDATE_CACHE);
+        registerReceiver(mUpdateImageBroadcastReceiver, intentFilter);
+        backgroundImageProcess();
+
         checkForCrashes();
     }
 
@@ -263,6 +335,7 @@ public class LauncherActivity extends AppCompatActivity{
         super.onPause();
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
+        unregisterReceiver(mUpdateImageBroadcastReceiver);
 
         unregisterManagers();
     }
