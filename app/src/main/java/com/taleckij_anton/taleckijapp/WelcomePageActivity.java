@@ -1,16 +1,25 @@
 package com.taleckij_anton.taleckijapp;
 
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.RadioButton;
 
 import com.crashlytics.android.Crashlytics;
+import com.taleckij_anton.taleckijapp.background_images.ImageLoaderService;
+import com.taleckij_anton.taleckijapp.background_images.ImageSaver;
 import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
 import com.taleckij_anton.taleckijapp.welcome_page.SettingsWpFragment;
 import com.taleckij_anton.taleckijapp.welcome_page.SimpleWpFragment;
@@ -31,6 +40,32 @@ public class WelcomePageActivity extends AppCompatActivity {
 
     private final static String SIMPLE_WP_FRAGMENT = "SIMPLE_WP_FRAGMENT";
     private final static String SETTINGS_WP_FRAGMENT = "SETTINGS_WP_FRAGMENT";
+
+    private final BroadcastReceiver mUpdateImageBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            String action = intent.getAction();
+            if (ImageLoaderService.BROADCAST_ACTION_UPDATE_IMAGE.equals(action)) {
+                final String imageName = intent.getStringExtra(ImageLoaderService.BROADCAST_PARAM_IMAGE);
+                if(null == imageName){
+                    final Bitmap bitmap = ImageSaver.getInstance().loadImage(getApplicationContext());
+                    setDrawable(bitmap);
+                } else {
+                    if (TextUtils.isEmpty(imageName) == false
+                            && WelcomePageActivity.class.getSimpleName().equals(imageName)) {
+                        final Bitmap bitmap = ImageSaver.getInstance()
+                                .loadImage(getApplicationContext(), imageName);
+                        setDrawable(bitmap);
+                    }
+                }
+            }
+        }
+
+        private void setDrawable(final Bitmap bitmap){
+            final Drawable drawable = new BitmapDrawable(getResources(), bitmap);
+            WelcomePageActivity.this.setDrawable(drawable);
+        }
+    };
 
     final ArrayList<WpFragmentInfo> mWpFragmentsInfo = new ArrayList<>(Arrays.<WpFragmentInfo>asList(
             new WpFragmentInfo(R.layout.fragment_wp_hello, SIMPLE_WP_FRAGMENT),
@@ -154,5 +189,29 @@ public class WelcomePageActivity extends AppCompatActivity {
         }
         thisRadioButton.setChecked(true);
         anotherRadioButton.setChecked(false);
+    }
+
+    private void backgroundImageProcess(){
+        ImageLoaderService.enqueueWork(this, ImageLoaderService.ACTION_LOAD_IMAGE,
+                this.getClass().getSimpleName());
+        //TODO запустить аларм менеджер на очишение ImageSaver и запуск IML
+    }
+
+    private void setDrawable(Drawable drawable) {
+        findViewById(R.id.wp_fragment_place).setBackground(drawable);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(mUpdateImageBroadcastReceiver,
+                new IntentFilter(ImageLoaderService.BROADCAST_ACTION_UPDATE_IMAGE));
+        backgroundImageProcess();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mUpdateImageBroadcastReceiver);
     }
 }

@@ -1,8 +1,16 @@
 package com.taleckij_anton.taleckijapp;
 
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -12,10 +20,14 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
+import com.taleckij_anton.taleckijapp.background_images.ImageLoaderService;
+import com.taleckij_anton.taleckijapp.background_images.ImageSaver;
 import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.AppsFragment;
 import com.taleckij_anton.taleckijapp.launcher.recycler_training.LauncherRecyclerFragment;
 import com.taleckij_anton.taleckijapp.launcher.SettingsFragment;
@@ -34,12 +46,13 @@ public class LauncherActivity extends AppCompatActivity{
     private static int sCurrentMenuItemId = -1;
     private final String CURRENT_MENU_ITEM_ID ="CURRENT_MENU_ITEM_ID";
     private final String CHANGE_THEME_FROM_SETTINGS = "CHANGE_THEME_FROM_SETTINGS";
+
     private final SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener =
             new SharedPreferences.OnSharedPreferenceChangeListener(){
                 @Override
                 public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key){
-                    final String themePrefKey = getResources().getString(R.string.theme_preference_key);
-                    if(themePrefKey.equals(key)){
+                    final String THEME_PREF_KEY = getResources().getString(R.string.theme_preference_key);
+                    if(THEME_PREF_KEY.equals(key)){
                         LauncherActivity.this.finish();
                         final Intent intent = LauncherActivity.this.getIntent();
                         intent.putExtra(CHANGE_THEME_FROM_SETTINGS,true);
@@ -49,6 +62,32 @@ public class LauncherActivity extends AppCompatActivity{
                     }
                 }
             };
+
+    private final BroadcastReceiver mUpdateImageBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            String action = intent.getAction();
+            if (ImageLoaderService.BROADCAST_ACTION_UPDATE_IMAGE.equals(action)) {
+                final String imageName = intent.getStringExtra(ImageLoaderService.BROADCAST_PARAM_IMAGE);
+                if(null == imageName){
+                    final Bitmap bitmap = ImageSaver.getInstance().loadImage(getApplicationContext());
+                    setDrawable(bitmap);
+                } else {
+                    if (TextUtils.isEmpty(imageName) == false
+                            && LauncherActivity.class.getSimpleName().equals(imageName)) {
+                        final Bitmap bitmap = ImageSaver.getInstance()
+                                .loadImage(getApplicationContext(), imageName);
+                        setDrawable(bitmap);
+                    }
+                }
+            }
+        }
+
+        private void setDrawable(final Bitmap bitmap){
+            final Drawable drawable = new BitmapDrawable(getResources(), bitmap);
+            LauncherActivity.this.setDrawable(drawable);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -246,6 +285,21 @@ public class LauncherActivity extends AppCompatActivity{
         }
     }
 
+    private void backgroundImageProcess(){
+        ImageLoaderService.enqueueWork(this, ImageLoaderService.ACTION_LOAD_IMAGE,
+                this.getClass().getSimpleName());
+        //TODO запустить аларм менеджер на очищение ImageSaver и запуск IML
+    }
+
+    private void setDrawable(Drawable drawable) {
+        findViewById(R.id.launcher).setBackground(drawable);
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            findViewById(R.id.launcher).setBackground(drawable);
+        } else {
+            findViewById(R.id.launcher).setBackgroundDrawable(drawable);
+        }*/
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (sCurrentMenuItemId != -1) {
@@ -259,6 +313,9 @@ public class LauncherActivity extends AppCompatActivity{
         super.onResume();
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
+        registerReceiver(mUpdateImageBroadcastReceiver,
+                new IntentFilter(ImageLoaderService.BROADCAST_ACTION_UPDATE_IMAGE));
+        backgroundImageProcess();
 
         checkForCrashes();
     }
@@ -268,6 +325,7 @@ public class LauncherActivity extends AppCompatActivity{
         super.onPause();
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
+        unregisterReceiver(mUpdateImageBroadcastReceiver);
 
         unregisterManagers();
     }
