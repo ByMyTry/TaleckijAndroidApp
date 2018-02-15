@@ -8,11 +8,11 @@
         <item>Число запусков</item>
     </string-array>
 
-    <string-array name="sorttype_apps_pref_entryvalues">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
+    <string-array name="update_cache_interval_pref_entries">
+        <item>Обновить сейчас</item>
+        <item>15 минут</item>
+        <item>30 минут</item>
+        <item>45 минут</item>
+        <item>1 час</item>
     </string-array>
 </resources>

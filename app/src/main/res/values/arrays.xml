@@ -8,11 +8,27 @@
         <item>Launch count</item>
     </string-array>
 
-    <string-array name="sorttype_apps_pref_entryvalues">
+    <string-array name="sorttype_apps_pref_entryvalues" translatable="false">
         <item>0</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>
         <item>4</item>
+    </string-array>
+
+    <string-array name="update_cache_interval_pref_entries">
+        <item>Update now</item>
+        <item>15 min</item>
+        <item>30 min</item>
+        <item>45 min</item>
+        <item>1 hour</item>
+    </string-array>
+
+    <string-array name="update_cache_interval_pref_entryvalues" translatable="false">
+        <item>0</item>
+        <item>15</item>
+        <item>30</item>
+        <item>45</item>
+        <item>60</item>
     </string-array>
 </resources>

@@ -23,20 +23,13 @@
     <string name="snackbar_delete_message">מחק פריט זה</string>
     <string name="snackbar_action_text">כן</string>
 
-    <string name="launcher_drawer_open_desc">launcher_drawer_open_desc</string>
-    <string name="launcher_drawer_close_desc">launcher_drawer_close_desc</string>
-
-    <string name="theme_preference_key">theme_preference_key</string>
     <string name="theme_preference_title">נושא כהה</string>
     <string name="theme_preference_summ">השתמש בנושא כהה עבור אפליקציה זו</string>
-    <string name="compact_layout_preference_key">compact_layout_preference_key</string>
     <string name="compact_layout_preference_title">פריסה קומפקטית</string>
     <string name="compact_layout_preference_summ">השתמש בפריסה עם מספר צפיות נוסף בשורה</string>
-    <string name="launch_wp_pref_key">launch_wp_pref_key</string>
     <string name="launch_wp_pref_title">הפעל את דף הפתיחה</string>
     <string name="launch_wp_pref_summ">הפעל את דף הפתיחה כאשר היישום הבא יפעל (רק פעם אחת)</string>
 
-    <string name="sorttype_apps_pref_key">sorttype_apps_pref_key</string>
     <string name="sorttype_apps_pref_title">הזמנת יישומים</string>
     <string name="sorttype_apps_pref_summ">בחר באחד מסוגי המיון הזמינים עבור סדר היישומים במפעיל</string>
 
@@ -55,4 +48,10 @@
     <string name="profile_phone_sign">עֲבוֹדָה</string>
     <string name="profile_github_sign">Github</string>
     <string name="profile_github_url">github.com/ByMyTry/TaleckijAndroidApp</string>
+
+    <!--<string name="diff_background_image_pref_title">Different back image</string>-->
+    <!--<string name="diff_background_image_pref_summ">Use different background image for all activities</string>-->
+
+    <!--<string name="update_cache_interval_pref_title">Update cache interval</string>-->
+    <!--<string name="update_cache_interval_pref_summ">Choice time interval for updating cached images</string>-->
 </resources>
