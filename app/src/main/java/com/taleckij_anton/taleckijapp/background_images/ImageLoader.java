@@ -6,6 +6,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Xml;
 
+import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
+import com.yandex.metrica.YandexMetrica;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -125,6 +128,8 @@ public class ImageLoader {
             } catch (IOException | XmlPullParserException e) {
                 e.printStackTrace();
             }
+
+            YandexMetrica.reportEvent(MetricaAppEvents.DownloadImagesUrls);
         }
 
         return mImageUrls;

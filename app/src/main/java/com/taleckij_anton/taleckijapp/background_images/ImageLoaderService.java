@@ -13,6 +13,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.JobIntentService;
 import android.text.TextUtils;
 
+import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
+import com.yandex.metrica.YandexMetrica;
+
 /**
  * Created by Lenovo on 13.02.2018.
  */
@@ -88,6 +91,10 @@ public class ImageLoaderService extends JobIntentService {
                 final Bitmap bitmap = mImageLoader.loadBitmap(imageUrl);
                 ImageSaver.getInstance().saveImage(getApplicationContext(),
                         changeApacity(bitmap), name);
+
+                YandexMetrica.reportEvent(MetricaAppEvents.DownloadImage);
+            } else {
+                YandexMetrica.reportEvent(MetricaAppEvents.RestoreImageFromCashe);
             }
             final Intent broadcastIntent = new Intent(BROADCAST_ACTION_UPDATE_IMAGE);
             broadcastIntent.putExtra(name, true);

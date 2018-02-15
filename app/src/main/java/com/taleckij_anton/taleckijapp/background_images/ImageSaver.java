@@ -68,10 +68,6 @@ public class ImageSaver {
         }
     }
 
-    public void saveImage(final Context context, final Bitmap bitmap){
-        saveImage(context, bitmap, DEFAULT_IMAGE_NAME);
-    }
-
     public Bitmap loadImage(final Context context, final String fileName){
         if(isCached(fileName)) {
             FileInputStream fileInputStream = null;
@@ -93,16 +89,8 @@ public class ImageSaver {
         return null;
     }
 
-    public Bitmap loadImage(final Context context){
-        return loadImage(context, DEFAULT_IMAGE_NAME);
-    }
-
     public boolean isCached(String fileName){
         return mCachedImageNames.contains(fileName);
-    }
-
-    public boolean isDefaultCached(){
-        return isCached(DEFAULT_IMAGE_NAME);
     }
 
     public ArrayList<String> clear(final Context context){
