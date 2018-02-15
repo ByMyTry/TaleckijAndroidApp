@@ -23,20 +23,13 @@
     <string name="snackbar_delete_message">Удалить этот элемент</string>
     <string name="snackbar_action_text">ДА</string>
 
-    <string name="launcher_drawer_open_desc">launcher_drawer_open_desc</string>
-    <string name="launcher_drawer_close_desc">launcher_drawer_close_desc</string>
-
-    <string name="theme_preference_key">theme_preference_key</string>
     <string name="theme_preference_title">Темная тема</string>
     <string name="theme_preference_summ">Использовать темную тему для этого приложения</string>
-    <string name="compact_layout_preference_key">compact_layout_preference_key</string>
     <string name="compact_layout_preference_title">Компактный макет</string>
     <string name="compact_layout_preference_summ">Использовать макет с большим количеством элементов в строке</string>
-    <string name="launch_wp_pref_key">launch_wp_pref_key</string>
     <string name="launch_wp_pref_title">Показать welcome page</string>
     <string name="launch_wp_pref_summ">Показать welcome page при следующем запуске лончера (один раз)</string>
 
-    <string name="sorttype_apps_pref_key">sorttype_apps_pref_key</string>
     <string name="sorttype_apps_pref_title">Порядок приложений</string>
     <string name="sorttype_apps_pref_summ">Выбрать однин из доступных способов сортировки для порядка приложений в лончере</string>
 
@@ -55,4 +48,10 @@
     <string name="profile_phone_sign">Рабочий</string>
     <string name="profile_github_sign">Github</string>
     <string name="profile_github_url">github.com/ByMyTry/TaleckijAndroidApp</string>
+
+    <string name="diff_background_image_pref_title">Разный фон</string>
+    <string name="diff_background_image_pref_summ">Использовать различное фоновое изображение для всех activities</string>
+
+    <string name="update_cache_interval_pref_title">Интервал обновления кеша</string>
+    <string name="update_cache_interval_pref_summ">Выбрать временной интервал обновления кэша фоновых изображений</string>
 </resources>

@@ -22,4 +22,16 @@
         android:entries="@array/sorttype_apps_pref_entries"
         android:entryValues="@array/sorttype_apps_pref_entryvalues"
         android:defaultValue="0"/>
+    <CheckBoxPreference
+        android:key="@string/diff_background_image_pref_key"
+        android:title="@string/diff_background_image_pref_title"
+        android:summary="@string/diff_background_image_pref_summ"
+        android:defaultValue="false"/>
+    <ListPreference
+        android:key="@string/update_cache_interval_pref_key"
+        android:title="@string/update_cache_interval_pref_title"
+        android:summary="@string/update_cache_interval_pref_summ"
+        android:entries="@array/update_cache_interval_pref_entries"
+        android:entryValues="@array/update_cache_interval_pref_entryvalues"
+        android:defaultValue="15"/>
 </PreferenceScreen>

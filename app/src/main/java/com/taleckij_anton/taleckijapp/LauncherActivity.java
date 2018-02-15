@@ -33,7 +33,9 @@ import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.AppsFragme
 import com.taleckij_anton.taleckijapp.launcher.recycler_training.LauncherRecyclerFragment;
 import com.taleckij_anton.taleckijapp.launcher.SettingsFragment;
 import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
+import com.yandex.metrica.IMetricaService;
 import com.yandex.metrica.YandexMetrica;
+import com.yandex.metrica.YandexMetricaConfig;
 
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.UpdateManager;
@@ -55,14 +57,53 @@ public class LauncherActivity extends AppCompatActivity{
                 @Override
                 public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key){
                     final String THEME_PREF_KEY = getResources().getString(R.string.theme_preference_key);
+                    final String UPDATE_CACHE_INTERVAL_PREF_KEY = getResources().getString(R.string.update_cache_interval_pref_key);
+                    final String DIFF_BACK_IMAGE_PREF_KEY = getResources().getString(R.string.diff_background_image_pref_key);
+                    final String LAYOUT_TYPE_PREF_KEY = getResources().getString(R.string.compact_layout_preference_key);
+                    final String SORT_TYPE_APPS_KEY = getResources().getString(R.string.sorttype_apps_pref_key);
+                    final String SHOW_WP_NEXT_TIME_PREF_KEY = getResources().getString(R.string.launch_wp_pref_key);
                     if(THEME_PREF_KEY.equals(key)){
-                        LauncherActivity.this.finish();
-                        final Intent intent = LauncherActivity.this.getIntent();
-                        intent.putExtra(CHANGE_THEME_FROM_SETTINGS,true);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        intent.putExtra(CURRENT_MENU_ITEM_ID, sCurrentMenuItemId);
-                        LauncherActivity.this.startActivity(intent);
+                        reloadActivivty();
+
+                        YandexMetrica.reportEvent(MetricaAppEvents.ChangeTheme);
+                    } else if(UPDATE_CACHE_INTERVAL_PREF_KEY.equals(key)) {
+                        String currentIntervalMin = String.valueOf(ImageLoaderService.getUpdateCacheInterval());
+                        Long interval = Long.valueOf(sharedPreferences.getString(key, currentIntervalMin));
+                        if(interval == 0) {
+                            sharedPreferences.edit()
+                                    .putString(key, currentIntervalMin)
+                                    .commit();
+                            replaceFragmentByItemId(sCurrentMenuItemId);
+                            sendBroadcast(new Intent(ImageLoaderService.ACTION_UPDATE_CACHE));
+
+                            YandexMetrica.reportEvent(MetricaAppEvents.UpdateBackImgsCacheNowOptionChanged);
+                        } else {
+                            ImageLoaderService.setUpdateCacheInterval(interval);
+
+                            YandexMetrica.reportEvent(MetricaAppEvents.ChangeUpdateCacheInterval);
+                        }
+
+                    } else if(DIFF_BACK_IMAGE_PREF_KEY.equals(key)){
+                        ImageSaver.getInstance().clear(LauncherActivity.this);
+                        reloadActivivty();
+
+                        YandexMetrica.reportEvent(MetricaAppEvents.DiffBackImagesOptionChanged);
+                    }else if(LAYOUT_TYPE_PREF_KEY.equals(key)){
+                        YandexMetrica.reportEvent(MetricaAppEvents.ChangeLayoutType);
+                    }else if(SORT_TYPE_APPS_KEY.equals(key)){
+                        YandexMetrica.reportEvent(MetricaAppEvents.ChangeSortType);
+                    }else if(SHOW_WP_NEXT_TIME_PREF_KEY.equals(key)){
+                        YandexMetrica.reportEvent(MetricaAppEvents.ChangeShowWpNextTime);
                     }
+                }
+
+                private void reloadActivivty(){
+                    LauncherActivity.this.finish();
+                    final Intent intent = LauncherActivity.this.getIntent();
+                    intent.putExtra(CHANGE_THEME_FROM_SETTINGS,true);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.putExtra(CURRENT_MENU_ITEM_ID, sCurrentMenuItemId);
+                    LauncherActivity.this.startActivity(intent);
                 }
             };
 
@@ -82,12 +123,16 @@ public class LauncherActivity extends AppCompatActivity{
                             .loadImage(getApplicationContext(), imageName);
                     setDrawable(bitmap);
                 }
+
+                YandexMetrica.reportEvent(MetricaAppEvents.SetBackgroundImage);
             } else if(ImageLoaderService.ACTION_UPDATE_CACHE.equals(action)){
                 List<String> imageNames = ImageSaver.getInstance().clear(context);
                 for(String imageName : imageNames) {
                     ImageLoaderService.enqueueWork(context, ImageLoaderService.ACTION_LOAD_IMAGE,
                             imageName);
                 }
+
+                YandexMetrica.reportEvent(MetricaAppEvents.UpdateBackImagesCache);
             }
         }
 
@@ -220,9 +265,11 @@ public class LauncherActivity extends AppCompatActivity{
     private void replaceFragmentByItemId(int menuItemId){
         if(menuItemId == R.id.launcher_grid_menu_item) {
             replaceAppsFragment(AppsFragment.APPS_GRID_LAYOUT);
+
             YandexMetrica.reportEvent(MetricaAppEvents.AppsGridOpen);
         } else if(menuItemId == R.id.launcher_linear_menu_item) {
             replaceAppsFragment(AppsFragment.APPS_LINEAR_LAYOUT);
+
             YandexMetrica.reportEvent(MetricaAppEvents.AppsLinearOpen);
         /*}else if (menuItemId == R.id.grid_layout_menu_item){
             replaceRecyclerFragment(LauncherRecyclerFragment.GRID);
@@ -230,6 +277,7 @@ public class LauncherActivity extends AppCompatActivity{
             replaceRecyclerFragment(LauncherRecyclerFragment.LINEAR);*/
         } else if(menuItemId == R.id.settings_menu_item) {
             replaceSettingsFragment();
+
             YandexMetrica.reportEvent(MetricaAppEvents.AppsSettingsOpen);
         }
     }
@@ -294,8 +342,16 @@ public class LauncherActivity extends AppCompatActivity{
     }
 
     private void backgroundImageProcess(){
-        ImageLoaderService.enqueueWork(this, ImageLoaderService.ACTION_LOAD_IMAGE,
-                this.getClass().getSimpleName());
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        String diffBackImagePrefKey =
+                getResources().getString(R.string.diff_background_image_pref_key);
+        Boolean useDiffImages = sharedPreferences.getBoolean(diffBackImagePrefKey, false);
+        String name = null;
+        if(useDiffImages) {
+            name = this.getClass().getSimpleName();
+        }
+        ImageLoaderService.enqueueWork(this, ImageLoaderService.ACTION_LOAD_IMAGE, name);
     }
 
     private void setDrawable(Drawable drawable) {
