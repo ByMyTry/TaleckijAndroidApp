@@ -12,9 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.JobIntentService;
 import android.text.TextUtils;
-import android.util.Log;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Lenovo on 13.02.2018.
@@ -32,10 +29,12 @@ public class ImageLoaderService extends JobIntentService {
     public static final String BROADCAST_PARAM_IMAGE = "com.taleckij_anton.taleckijapp.IMAGE";
 
     private static final int IMAGES_ALPHA = 120;
-    private static final long TIME_INTERVAL = 15 * 60 * 1000;
+    private static final long MINUTES_TO_MILLIS_COEF = 60*1000;
 
     private final ImageLoader mImageLoader;
-    private Thread mUpdateCacheThread;
+    //private Thread mUpdateCacheThread;
+    public static final long DEFAULT_UPDATE_CACHE_INTERVAL = 15;
+    private static long mIntervalUpdateCacheMillis = DEFAULT_UPDATE_CACHE_INTERVAL * MINUTES_TO_MILLIS_COEF;
 
     public ImageLoaderService() {
         mImageLoader = ImageLoader.getInstance();
@@ -51,14 +50,26 @@ public class ImageLoaderService extends JobIntentService {
         enqueueWork(context, ImageLoaderService.class, JOB_ID_LOAD_IMAGE, intent);
     }
 
+    public static void setUpdateCacheInterval(long minutes){
+        mIntervalUpdateCacheMillis = minutes * MINUTES_TO_MILLIS_COEF;
+    }
+
+    public static long getUpdateCacheInterval(){
+        return mIntervalUpdateCacheMillis / MINUTES_TO_MILLIS_COEF;
+    }
+
     private static void runCacheUpdate(Context context){
         final Intent intent = new Intent(ACTION_UPDATE_CACHE);
         final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
                 intent, 0);//PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        long intervalToStart = mIntervalUpdateCacheMillis;
+        if(intervalToStart == 0){
+            mIntervalUpdateCacheMillis = DEFAULT_UPDATE_CACHE_INTERVAL;
+        }
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_FIFTEEN_MINUTES,
-                AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
+                SystemClock.elapsedRealtime() + intervalToStart,
+                mIntervalUpdateCacheMillis, pendingIntent);
     }
 
     @Override
@@ -84,7 +95,7 @@ public class ImageLoaderService extends JobIntentService {
         }
     }
 
-    private Thread createUpdateCacheThread(){
+    /*private Thread createUpdateCacheThread(){
         return new Thread(new Runnable() {
             @Override
             public void run() {
@@ -100,7 +111,7 @@ public class ImageLoaderService extends JobIntentService {
                 }
             }
         });
-    }
+    }*/
 
     private Bitmap changeApacity(Bitmap bitmap){
         Bitmap newBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(),

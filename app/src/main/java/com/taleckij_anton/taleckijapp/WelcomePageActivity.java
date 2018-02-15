@@ -210,8 +210,16 @@ public class WelcomePageActivity extends AppCompatActivity {
     }
 
     private void backgroundImageProcess(){
-        ImageLoaderService.enqueueWork(this, ImageLoaderService.ACTION_LOAD_IMAGE,
-                this.getClass().getSimpleName());
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        String diffBackImagePrefKey =
+                getResources().getString(R.string.diff_background_image_pref_key);
+        Boolean useDiffImages = sharedPreferences.getBoolean(diffBackImagePrefKey, false);
+        String name = null;
+        if(useDiffImages) {
+            name = this.getClass().getSimpleName();
+        }
+        ImageLoaderService.enqueueWork(this, ImageLoaderService.ACTION_LOAD_IMAGE, name);
     }
 
     private void setDrawable(Drawable drawable) {

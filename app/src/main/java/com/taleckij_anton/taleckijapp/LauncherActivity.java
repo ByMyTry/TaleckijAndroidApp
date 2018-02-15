@@ -33,6 +33,7 @@ import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.AppsFragme
 import com.taleckij_anton.taleckijapp.launcher.recycler_training.LauncherRecyclerFragment;
 import com.taleckij_anton.taleckijapp.launcher.SettingsFragment;
 import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
+import com.yandex.metrica.IMetricaService;
 import com.yandex.metrica.YandexMetrica;
 
 import net.hockeyapp.android.CrashManager;
@@ -55,14 +56,35 @@ public class LauncherActivity extends AppCompatActivity{
                 @Override
                 public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key){
                     final String THEME_PREF_KEY = getResources().getString(R.string.theme_preference_key);
+                    final String UPDATE_CACHE_INTERVAL_PREF_KEY = getResources().getString(R.string.update_cache_interval_pref_key);
+                    final String DIFF_BACK_IMAGE_PREF_KEY = getResources().getString(R.string.diff_background_image_pref_key);
                     if(THEME_PREF_KEY.equals(key)){
-                        LauncherActivity.this.finish();
-                        final Intent intent = LauncherActivity.this.getIntent();
-                        intent.putExtra(CHANGE_THEME_FROM_SETTINGS,true);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        intent.putExtra(CURRENT_MENU_ITEM_ID, sCurrentMenuItemId);
-                        LauncherActivity.this.startActivity(intent);
+                        reloadActivivty();
+                    } else if(UPDATE_CACHE_INTERVAL_PREF_KEY.equals(key)) {
+                        String currentIntervalMin = String.valueOf(ImageLoaderService.getUpdateCacheInterval());
+                        Long interval = Long.valueOf(sharedPreferences.getString(key, currentIntervalMin));
+                        if(interval == 0) {
+                            sharedPreferences.edit()
+                                    .putString(key, currentIntervalMin)
+                                    .commit();
+                            replaceFragmentByItemId(sCurrentMenuItemId);
+                            sendBroadcast(new Intent(ImageLoaderService.ACTION_UPDATE_CACHE));
+                        } else {
+                            ImageLoaderService.setUpdateCacheInterval(interval);
+                        }
+                    } else if(DIFF_BACK_IMAGE_PREF_KEY.equals(key)){
+                        ImageSaver.getInstance().clear(LauncherActivity.this);
+                        reloadActivivty();
                     }
+                }
+
+                private void reloadActivivty(){
+                    LauncherActivity.this.finish();
+                    final Intent intent = LauncherActivity.this.getIntent();
+                    intent.putExtra(CHANGE_THEME_FROM_SETTINGS,true);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.putExtra(CURRENT_MENU_ITEM_ID, sCurrentMenuItemId);
+                    LauncherActivity.this.startActivity(intent);
                 }
             };
 
@@ -294,8 +316,16 @@ public class LauncherActivity extends AppCompatActivity{
     }
 
     private void backgroundImageProcess(){
-        ImageLoaderService.enqueueWork(this, ImageLoaderService.ACTION_LOAD_IMAGE,
-                this.getClass().getSimpleName());
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        String diffBackImagePrefKey =
+                getResources().getString(R.string.diff_background_image_pref_key);
+        Boolean useDiffImages = sharedPreferences.getBoolean(diffBackImagePrefKey, false);
+        String name = null;
+        if(useDiffImages) {
+            name = this.getClass().getSimpleName();
+        }
+        ImageLoaderService.enqueueWork(this, ImageLoaderService.ACTION_LOAD_IMAGE, name);
     }
 
     private void setDrawable(Drawable drawable) {

@@ -23,20 +23,20 @@
     <string name="snackbar_delete_message">Delete this item</string>
     <string name="snackbar_action_text">YES</string>
 
-    <string name="launcher_drawer_open_desc">launcher_drawer_open_desc</string>
-    <string name="launcher_drawer_close_desc">launcher_drawer_close_desc</string>
+    <string name="launcher_drawer_open_desc" translatable="false">launcher_drawer_open_desc</string>
+    <string name="launcher_drawer_close_desc" translatable="false">launcher_drawer_close_desc</string>
 
-    <string name="theme_preference_key">theme_preference_key</string>
+    <string name="theme_preference_key" translatable="false">theme_preference_key</string>
     <string name="theme_preference_title">Theme dark</string>
     <string name="theme_preference_summ">Use dark theme for this app</string>
-    <string name="compact_layout_preference_key">compact_layout_preference_key</string>
+    <string name="compact_layout_preference_key" translatable="false">compact_layout_preference_key</string>
     <string name="compact_layout_preference_title">Compact Layout</string>
     <string name="compact_layout_preference_summ">Use layout with more views count in row</string>
-    <string name="launch_wp_pref_key">launch_wp_pref_key</string>
+    <string name="launch_wp_pref_key" translatable="false">launch_wp_pref_key</string>
     <string name="launch_wp_pref_title">Launch welcome page</string>
     <string name="launch_wp_pref_summ">Launch the welcome page when the app next run(only once)</string>
 
-    <string name="sorttype_apps_pref_key">sorttype_apps_pref_key</string>
+    <string name="sorttype_apps_pref_key" translatable="false">sorttype_apps_pref_key</string>
     <string name="sorttype_apps_pref_title">Applications order</string>
     <string name="sorttype_apps_pref_summ">Select one of the available sort types for the order of applications in launcher</string>
 
@@ -55,4 +55,12 @@
     <string name="profile_phone_sign">Work</string>
     <string name="profile_github_sign">Github</string>
     <string name="profile_github_url">github.com/ByMyTry/TaleckijAndroidApp</string>
+
+    <string name="diff_background_image_pref_key" translatable="false">diff_background_image_pref_key</string>
+    <string name="diff_background_image_pref_title">Different back image</string>
+    <string name="diff_background_image_pref_summ">Use different background image for all activities</string>
+
+    <string name="update_cache_interval_pref_key" translatable="false">update_cache_interval_pref_key</string>
+    <string name="update_cache_interval_pref_title">Update cache interval</string>
+    <string name="update_cache_interval_pref_summ">Choice time interval for updating cached images</string>
 </resources>
