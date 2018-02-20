@@ -40,6 +40,7 @@
     <string name="sorttype_apps_pref_title">Applications order</string>
     <string name="sorttype_apps_pref_summ">Select one of the available sort types for the order of applications in launcher</string>
 
+    <string name="launcher_desk_nav_title">Desktop</string>
     <string name="launcher_grid_nav_title">Launcher Grid</string>
     <string name="launcher_linear_nav_title">Launcher Linear</string>
     <!--<string name="_nav_title">Grid recycler</string>-->
@@ -49,6 +50,8 @@
     <string name="popup_count_default_title">Launch count</string>
     <string name="popup_delete_title">Delete</string>
     <string name="popup_info_title">Info</string>
+    <string name="popup_add_to_desk_title">Add to desktop</string>
+    <string name="popup_remove_from_desk_title">Remove from desktop</string>
 
     <string name="profile_name_sign">Name</string>
     <string name="profile_phone">(123) 456–7890</string>
@@ -63,4 +66,5 @@
     <string name="update_cache_interval_pref_key" translatable="false">update_cache_interval_pref_key</string>
     <string name="update_cache_interval_pref_title">Update cache interval</string>
     <string name="update_cache_interval_pref_summ">Choice time interval for updating cached images</string>
+    <string name="desktop_filled_message">Desktop filled. Remove some apps from it</string>
 </resources>

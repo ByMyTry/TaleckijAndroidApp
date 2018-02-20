@@ -22,15 +22,16 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.taleckij_anton.taleckijapp.R;
-import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.db.AppsLaunchCountDb;
-import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.db.AppsLaunchDbHelper;
+import com.taleckij_anton.taleckijapp.launcher.apps_db.AppsDb;
+import com.taleckij_anton.taleckijapp.launcher.apps_db.AppsDbHelper;
+import com.taleckij_anton.taleckijapp.launcher.desktop_fragment.DesktopFragment;
 import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.recycler.AppsAdapter;
 import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
 import com.yandex.metrica.YandexMetrica;
@@ -47,14 +48,14 @@ public class AppsFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private AppsChangeReceiver mAppsChangeReceiver;
     private @Nullable UserHandle mUser;
-    private AppsLaunchDbHelper mAppsLaunchDbHelper;
+    private AppsDbHelper mAppsDbHelper;
 
     private final OnAppsChangeListener
             onAppsChangeListener = new OnAppsChangeListener() {
         @Override
         public void onAppInstalled(int addedAppsUid) {
             final List<LauncherActivityInfo> applicationInfos = getApplicationInfos(mUser);
-            final List<LaunchAppInfoModel> addedAppModels =
+            final List<AppInfoModel> addedAppModels =
                     getAddedAppsModelsByUid(applicationInfos, addedAppsUid);
             final AppsAdapter adapter = ((AppsAdapter)mRecyclerView.getAdapter());
             adapter.updateAfterAdd(addedAppModels, addedAppsUid);
@@ -64,7 +65,7 @@ public class AppsFragment extends Fragment {
         @Override
         public void onAppRemoved(int removedAppsUid) {
             final AppsAdapter adapter = ((AppsAdapter)mRecyclerView.getAdapter());
-            List<LaunchAppInfoModel> removedAppsModels = adapter.updateAfterRemove(removedAppsUid);
+            List<AppInfoModel> removedAppsModels = adapter.updateAfterRemove(removedAppsUid);
             removeAppsFromDb(removedAppsModels);
         }
     };
@@ -82,13 +83,15 @@ public class AppsFragment extends Fragment {
         return appsFragment;
     }
 
-    private List<LaunchAppInfoModel> getAddedAppsModelsByUid(List<LauncherActivityInfo> appsData,
-                                                             int uid){
-        LinkedList<LaunchAppInfoModel> addedAppsModels = new LinkedList<>();
+    private List<AppInfoModel> getAddedAppsModelsByUid(List<LauncherActivityInfo> appsData,
+                                                       int uid){
+        LinkedList<AppInfoModel> addedAppsModels = new LinkedList<>();
         for (LauncherActivityInfo appData: appsData){
-            LaunchAppInfoModel appModel = new LaunchAppInfoModel(
-                    appData, 0,
-                    new AppViewModel(null, null)
+            AppInfoModel appModel = new AppInfoModel(
+                    appData,
+                    0,
+                    new AppViewModel(null, null),
+                    null
             );
             if(appModel.getUid() == uid) {
                 addedAppsModels.add(appModel);
@@ -97,19 +100,19 @@ public class AppsFragment extends Fragment {
         return new ArrayList<>(addedAppsModels);
     }
 
-    private void addAppsToDb(List<LaunchAppInfoModel> addedAppModels){
+    private void addAppsToDb(List<AppInfoModel> addedAppModels){
         SQLiteDatabase db = null;
         try {
-            db = mAppsLaunchDbHelper.getWritableDatabase();
-            for(LaunchAppInfoModel appModel: addedAppModels) {
+            db = mAppsDbHelper.getWritableDatabase();
+            for(AppInfoModel appModel: addedAppModels) {
                 ContentValues values = new ContentValues();
-                values.put(AppsLaunchCountDb.Columns.FIELD_APP_LAUNCH_COUNT,
+                values.put(AppsDb.CountTableColumns.FIELD_APP_LAUNCH_COUNT,
                         appModel.getLaunchCount());
-                //values.put(AppsLaunchCountDb.Columns.FIELD_APP_PACKAGE_NAME,
+                //values.put(AppsDb.Columns.FIELD_APP_PACKAGE_NAME,
                 //        appModel.getPackageName());
-                values.put(AppsLaunchCountDb.Columns.FILED_APP_FULL_NAME,
+                values.put(AppsDb.CountTableColumns.FILED_APP_FULL_NAME,
                         appModel.getFullName());
-                db.insert(AppsLaunchCountDb.APPS_LUNCH_COUNT_TABLE, null, values);
+                db.insert(AppsDb.APPS_LUNCH_COUNT_TABLE, null, values);
             }
         } catch (SQLiteException e) {
         } finally {
@@ -117,14 +120,14 @@ public class AppsFragment extends Fragment {
         }
     }
 
-    private void removeAppsFromDb(List<LaunchAppInfoModel> removedAppModels){
+    private void removeAppsFromDb(List<AppInfoModel> removedAppModels){
         SQLiteDatabase db = null;
         try {
-            db = mAppsLaunchDbHelper.getWritableDatabase();
-            for(LaunchAppInfoModel appModel: removedAppModels) {
+            db = mAppsDbHelper.getWritableDatabase();
+            for(AppInfoModel appModel: removedAppModels) {
                 db.delete(
-                        AppsLaunchCountDb.APPS_LUNCH_COUNT_TABLE,
-                        AppsLaunchCountDb.Columns.FILED_APP_FULL_NAME + " LIKE ?",
+                        AppsDb.APPS_LUNCH_COUNT_TABLE,
+                        AppsDb.CountTableColumns.FILED_APP_FULL_NAME + " LIKE ?",
                         new String[]{appModel.getFullName()}
                 );
             }
@@ -150,10 +153,10 @@ public class AppsFragment extends Fragment {
         if(userHandles != null) {
             mUser = userHandles.get(0);
         }
-        mAppsLaunchDbHelper = new AppsLaunchDbHelper(mRecyclerView.getContext());
+        mAppsDbHelper = new AppsDbHelper(mRecyclerView.getContext());
         //clearData();
         final List<LauncherActivityInfo> applicationInfos = getApplicationInfos(mUser);
-        final List<LaunchAppInfoModel> appModels = synchronizeWithDb(applicationInfos);
+        final List<AppInfoModel> appModels = synchronizeWithDb(applicationInfos);
         //final List<AppViewModel> appViewModels = getAppsViewModels(appModels.size());
 
         //Log.i("DB","COUNT " +  applicationInfos.size() + " " + appsModels.size());
@@ -198,57 +201,80 @@ public class AppsFragment extends Fragment {
 
     private void clearData() {
         try {
-            SQLiteDatabase db = mAppsLaunchDbHelper.getWritableDatabase();
-            db.delete(AppsLaunchCountDb.APPS_LUNCH_COUNT_TABLE, null, null);
+            SQLiteDatabase db = mAppsDbHelper.getWritableDatabase();
+            db.delete(AppsDb.APPS_LUNCH_COUNT_TABLE, null, null);
             db.close();
         } catch (SQLiteException e) {}
     }
 
-    private List<LaunchAppInfoModel> synchronizeWithDb(List<LauncherActivityInfo>
-                                                               applicationInfos) {
-        LinkedList<LaunchAppInfoModel> currentAppsModels = new LinkedList<>();
+    private List<AppInfoModel> synchronizeWithDb(List<LauncherActivityInfo>
+                                                         applicationInfos) {
+        LinkedList<AppInfoModel> currentAppsModels = new LinkedList<>();
         SQLiteDatabase db = null;
         Cursor cursor = null;
+        Cursor desktopPosCursor = null;
         try {
-            db = mAppsLaunchDbHelper.getReadableDatabase();
-            cursor = db.query(AppsLaunchCountDb.APPS_LUNCH_COUNT_TABLE,
-                    new String[]{AppsLaunchCountDb.Columns.FILED_APP_FULL_NAME,
-                            AppsLaunchCountDb.Columns.FIELD_APP_LAUNCH_COUNT },
+            db = mAppsDbHelper.getReadableDatabase();
+            cursor = db.query(AppsDb.APPS_LUNCH_COUNT_TABLE,
+                    new String[]{AppsDb.CountTableColumns._ID,
+                        AppsDb.CountTableColumns.FILED_APP_FULL_NAME,
+                        AppsDb.CountTableColumns.FIELD_APP_LAUNCH_COUNT },
                     null, null, null, null, null);
             List<String> appsFullNameDb = new LinkedList<>();
             List<Integer> appsLaunchCountsDb = new LinkedList<>();
+            List<Integer> appsDesktopPosDb = new LinkedList<>();
             while(cursor.moveToNext()){
-                appsFullNameDb.add(cursor.getString(0));
-                appsLaunchCountsDb.add(cursor.getInt(1));
+                int id = cursor.getInt(0);
+                appsFullNameDb.add(cursor.getString(1));
+                appsLaunchCountsDb.add(cursor.getInt(2));
+                desktopPosCursor = db.query(AppsDb.DESKTOP_APPS_TABLE,
+                        new String []{AppsDb.DesktopTableColumns.FIELD_APP_DESKTOP_POSITION},
+                        AppsDb.DesktopTableColumns.FIELD_APP_ID + " LIKE ?",
+                        new String[]{String.valueOf(id)},
+                        null, null, null);
+                if(desktopPosCursor.moveToNext()){
+                    appsDesktopPosDb.add(desktopPosCursor.getInt(0));
+                } else {
+                    appsDesktopPosDb.add(null);
+                }
             }
             appsFullNameDb = new ArrayList<>(appsFullNameDb);
             appsLaunchCountsDb = new ArrayList<>(appsLaunchCountsDb);
+            appsDesktopPosDb = new ArrayList<>(appsDesktopPosDb);
             for (LauncherActivityInfo appInfo : applicationInfos) {
-                LaunchAppInfoModel appModel;
+                AppInfoModel appModel;
                 if(appsFullNameDb.contains(appInfo.getName())){
-                    appModel = new LaunchAppInfoModel(
+                    int index = appsFullNameDb.indexOf(appInfo.getName());
+                    appModel = new AppInfoModel(
                             appInfo,
-                            appsLaunchCountsDb.get(appsFullNameDb.indexOf(appInfo.getName())),
-                            new AppViewModel(null, null)
+                            appsLaunchCountsDb.get(index),
+                            new AppViewModel(null, null),
+                            appsDesktopPosDb.get(index)
                     );
                 } else {
-                    appModel = new LaunchAppInfoModel(
-                            appInfo, 0,
-                            new AppViewModel(null, null)
+                    db.close();
+                    db = mAppsDbHelper.getWritableDatabase();
+                    appModel = new AppInfoModel(
+                            appInfo,
+                            0,
+                            new AppViewModel(null, null),
+                            null
                     );
                     ContentValues values = new ContentValues();
-                    values.put(AppsLaunchCountDb.Columns.FIELD_APP_LAUNCH_COUNT,
+                    values.put(AppsDb.CountTableColumns.FIELD_APP_LAUNCH_COUNT,
                             appModel.getLaunchCount());
-                    //values.put(AppsLaunchCountDb.Columns.FIELD_APP_PACKAGE_NAME,
+                    //values.put(AppsDb.Columns.FIELD_APP_PACKAGE_NAME,
                     //        appModel.getPackageName());
-                    values.put(AppsLaunchCountDb.Columns.FILED_APP_FULL_NAME,
+                    values.put(AppsDb.CountTableColumns.FILED_APP_FULL_NAME,
                             appModel.getFullName());
-                    db.insert(AppsLaunchCountDb.APPS_LUNCH_COUNT_TABLE, null, values);
+                    db.insert(AppsDb.APPS_LUNCH_COUNT_TABLE, null, values);
                 }
                 currentAppsModels.add(appModel);
             }
         } catch (SQLiteException e) {
+            e.printStackTrace();
         } finally {
+            if(desktopPosCursor != null){desktopPosCursor.close();}
             if(cursor != null)cursor.close();
             if(db != null)db.close();
         }
@@ -279,7 +305,7 @@ public class AppsFragment extends Fragment {
     }
 
     private void createRecyclerView(//List<AppViewModel> appViewModels,
-                                    List<LaunchAppInfoModel> appModels,
+                                    List<AppInfoModel> appModels,
                                     int spanCount, String sortType,
                                     String layoutType){
         if(layoutType.equals(APPS_GRID_LAYOUT)) {
@@ -288,10 +314,10 @@ public class AppsFragment extends Fragment {
         } else {
             mRecyclerView.setLayoutManager(new LinearLayoutManager(mRecyclerView.getContext()));
         }
-        final OnRecyclerViewGestureActioner onRecyclerViewGestureActioner =
-                new OnRecyclerViewGestureActioner() {
+        final OnAppsViewGestureActioner onAppsViewGestureActioner =
+                new OnAppsViewGestureActioner() {
                     @Override
-                    public void launchApp(Context context, LaunchAppInfoModel incrementedAppModel){
+                    public void launchApp(Context context, AppInfoModel incrementedAppModel){
                         final LauncherApps launcherApps =
                                 (LauncherApps)context.getSystemService(Context.LAUNCHER_APPS_SERVICE);
                         incrementLaunchCountDb(incrementedAppModel);
@@ -306,7 +332,7 @@ public class AppsFragment extends Fragment {
                     }
 
                     @Override
-                    public void showPopup(View v, final LaunchAppInfoModel appModel){
+                    public void showPopup(View v, final AppInfoModel appModel){
                         final Context context = v.getContext();
                         PopupMenu popupMenu = new PopupMenu(context, v);
                         popupMenu.setOnMenuItemClickListener(createOnMenuListener(context,
@@ -314,26 +340,57 @@ public class AppsFragment extends Fragment {
                         popupMenu.inflate(R.menu.apps_popup_menu);
                         MenuItem item = popupMenu.getMenu().getItem(0);
                         CharSequence curTitle = item.getTitle();
+
+                        boolean isDesktopApp = appModel.getDesktopPosition() != null;
+                        /*        isDesktopApp(appModel.getFullName());
+                        Log.i("DeskPos==null", String.valueOf());
+                        Log.i("!isDeskApp", String.valueOf(!isDeskApp));*/
+                        popupMenu.getMenu().getItem(1).setVisible(!isDesktopApp);
+                        popupMenu.getMenu().getItem(2).setVisible(isDesktopApp);
+
                         item.setTitle(curTitle + ": " + appModel.getLaunchCount());
                         popupMenu.show();
                     }
                 };
-        AppsAdapter adapter = new AppsAdapter(appModels, onRecyclerViewGestureActioner,
+        AppsAdapter adapter = new AppsAdapter(appModels, onAppsViewGestureActioner,
                 sortType, layoutType);
         mRecyclerView.setAdapter(adapter);
     }
 
-    private void incrementLaunchCountDb(LaunchAppInfoModel incrementedAppModel){
+    /*private boolean isDesktopApp(String appFullName){
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+        boolean res = false;
+        try {
+            db = mAppsDbHelper.getReadableDatabase();
+            cursor = db.query(AppsDb.APPS_LUNCH_COUNT_TABLE,
+                    new String[]{AppsDb.CountTableColumns._ID},
+                    AppsDb.CountTableColumns.FILED_APP_FULL_NAME + " LIKE ?",
+                    new String[]{appFullName},
+                    null, null, null
+            );
+            if(cursor.moveToNext()){
+                res = true;
+            }
+        } catch (SQLiteException e) {
+        } finally {
+            if(cursor != null) cursor.close();
+            if(db != null) db.close();
+        }
+        return res;
+    }*/
+
+    private void incrementLaunchCountDb(AppInfoModel incrementedAppModel){
         SQLiteDatabase db = null;
         ContentValues values = new ContentValues();
-        values.put(AppsLaunchCountDb.Columns.FIELD_APP_LAUNCH_COUNT,
+        values.put(AppsDb.CountTableColumns.FIELD_APP_LAUNCH_COUNT,
                 incrementedAppModel.getLaunchCount());
         try {
-            db = mAppsLaunchDbHelper.getWritableDatabase();
+            db = mAppsDbHelper.getWritableDatabase();
             db.update(
-                    AppsLaunchCountDb.APPS_LUNCH_COUNT_TABLE,
+                    AppsDb.APPS_LUNCH_COUNT_TABLE,
                     values,
-                    AppsLaunchCountDb.Columns.FILED_APP_FULL_NAME + " LIKE ?",
+                    AppsDb.CountTableColumns.FILED_APP_FULL_NAME + " LIKE ?",
                     new String[]{incrementedAppModel.getFullName()}
             );
         } catch (SQLiteException e) {
@@ -343,13 +400,12 @@ public class AppsFragment extends Fragment {
     }
 
     private PopupMenu.OnMenuItemClickListener createOnMenuListener(final Context context,
-                         final LaunchAppInfoModel appModel){
+                         final AppInfoModel appModel){
         return new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.popup_delete) {
-                    final String deletePackageName =
-                            appModel.getPackageName();
+                    final String deletePackageName = appModel.getPackageName();
                     deleteApp(context, deletePackageName);
 
                     YandexMetrica.reportEvent(MetricaAppEvents.AppPackageDelete,
@@ -363,6 +419,28 @@ public class AppsFragment extends Fragment {
 
                     YandexMetrica.reportEvent(MetricaAppEvents.AppInfoOpen,
                             String.format("{\"app_name\":%s}", appModel.getLabel()));
+
+                    return true;
+                } else if (item.getItemId() == R.id.popup_add_to_desk) {
+                    final String appName = appModel.getFullName();
+
+                    final int firstAvailableDeskPos = getFirstAvailableDeskPos();
+                    if(firstAvailableDeskPos != -1){
+                        addToDesktopDb(firstAvailableDeskPos, appName);
+                        appModel.setDesktopPosition(firstAvailableDeskPos);
+                    } else {
+                        String desktopCompletedMessage =
+                                getResources().getString(R.string.desktop_filled_message);
+                        Toast.makeText(context, desktopCompletedMessage, Toast.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    return true;
+                } else if (item.getItemId() == R.id.popup_remove_from_desk) {
+                    int deskPos = appModel.getDesktopPosition() != null ?
+                            appModel.getDesktopPosition() : -1;
+                    removeFromDesktopDb(deskPos);
+                    appModel.setDesktopPosition(null);
 
                     return true;
                 }
@@ -386,6 +464,81 @@ public class AppsFragment extends Fragment {
         }
     }
 
+    private int getFirstAvailableDeskPos(){
+        List<Integer> notAvailableDeskPositions = new LinkedList<>();
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+        try {
+            db = mAppsDbHelper.getReadableDatabase();
+            cursor = db.query(AppsDb.DESKTOP_APPS_TABLE,
+                    new String[]{AppsDb.DesktopTableColumns.FIELD_APP_DESKTOP_POSITION},
+                    null, null, null, null, null);
+            while(cursor.moveToNext()){
+                notAvailableDeskPositions.add(cursor.getInt(0));
+            }
+        } catch (SQLiteException e) {
+        } finally {
+            if(cursor != null)cursor.close();
+            if(db != null)db.close();
+        }
+        for (int i = 0; i < DesktopFragment.DESKTOP_APPS_TOTAL_COUNT; i++) {
+            if(!notAvailableDeskPositions.contains(i)){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private void addToDesktopDb(int desktopPosition, String appFullName){
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+        int appId = -1;
+        try {
+            db = mAppsDbHelper.getReadableDatabase();
+            cursor = db.query(AppsDb.APPS_LUNCH_COUNT_TABLE,
+                    new String[]{AppsDb.CountTableColumns._ID},
+                    AppsDb.CountTableColumns.FILED_APP_FULL_NAME + " LIKE ?",
+                    new String[]{appFullName},
+                     null, null, null
+            );
+            if(cursor.moveToNext()){
+                appId = cursor.getInt(0);
+            }
+        } catch (SQLiteException e) {
+        } finally {
+            if(cursor != null) cursor.close();
+            if(db != null) db.close();
+        }
+        if(appId != -1) {
+            ContentValues values = new ContentValues();
+            values.put(AppsDb.DesktopTableColumns.FIELD_APP_DESKTOP_POSITION, desktopPosition);
+            values.put(AppsDb.DesktopTableColumns.FIELD_APP_ID, appId);
+            db = null;
+            try {
+                db = mAppsDbHelper.getWritableDatabase();
+                db.insert(AppsDb.DESKTOP_APPS_TABLE,null, values);
+            } catch (SQLiteException e) {
+            } finally {
+                if(db != null)db.close();
+            }
+        }
+    }
+
+    private void removeFromDesktopDb(int desktopPosition){
+        SQLiteDatabase db = null;
+        try {
+            db = mAppsDbHelper.getWritableDatabase();
+            db.delete(
+                AppsDb.DESKTOP_APPS_TABLE,
+                AppsDb.DesktopTableColumns.FIELD_APP_DESKTOP_POSITION + " LIKE ?",
+                new String[]{String.valueOf(desktopPosition)}
+            );
+        } catch (SQLiteException e) {
+        } finally {
+            if(db != null)db.close();
+        }
+    }
+
     private void registerAppsChangeReceiver(AppsChangeReceiver appsChangeReceiver,
                                             String[] actions){
         IntentFilter intentFilter = new IntentFilter();
@@ -400,6 +553,6 @@ public class AppsFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         mRecyclerView.getContext().unregisterReceiver(mAppsChangeReceiver);
-        mAppsLaunchDbHelper.close();
+        mAppsDbHelper.close();
     }
 }

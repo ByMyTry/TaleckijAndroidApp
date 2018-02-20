@@ -7,7 +7,7 @@ import android.view.View;
  * Created by Lenovo on 06.02.2018.
  */
 
-public interface OnRecyclerViewGestureActioner {
-    void launchApp(Context context, LaunchAppInfoModel appModel);
-    void showPopup(View v, LaunchAppInfoModel appModel);
+public interface OnAppsViewGestureActioner {
+    void launchApp(Context context, AppInfoModel appModel);
+    void showPopup(View v, AppInfoModel appModel);
 }

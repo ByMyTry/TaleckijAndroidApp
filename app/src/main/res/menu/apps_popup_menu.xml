@@ -3,6 +3,10 @@
     <item android:id="@+id/popup_count"
         android:title="@string/popup_count_default_title"
         android:checkable="false"/>
+    <item  android:id="@+id/popup_add_to_desk"
+        android:title="@string/popup_add_to_desk_title"/>
+    <item  android:id="@+id/popup_remove_from_desk"
+        android:title="@string/popup_remove_from_desk_title"/>
     <item android:id="@+id/popup_delete"
         android:title="@string/popup_delete_title"/>
     <item  android:id="@+id/popup_info"
