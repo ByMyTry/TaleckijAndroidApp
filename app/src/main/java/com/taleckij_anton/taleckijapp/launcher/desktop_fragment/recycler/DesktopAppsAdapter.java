@@ -49,7 +49,7 @@ public class DesktopAppsAdapter extends RecyclerView.Adapter<DesktopAppViewHolde
     }
 
     @Override
-    public void onBindViewHolder(final DesktopAppViewHolder holder, final int position) {
+    public void onBindViewHolder(final DesktopAppViewHolder holder, int position) {
         AppInfoModel appModel = null;
         for(AppInfoModel appInfoModel : mAppModels) {
             if(appInfoModel.getDesktopPosition() != null
@@ -112,9 +112,9 @@ public class DesktopAppsAdapter extends RecyclerView.Adapter<DesktopAppViewHolde
                         v.setBackground(normalShape);
                         break;
                     case DragEvent.ACTION_DROP:
-                        if(isDeskPosAvailable(position)) {
+                        if(isDeskPosAvailable(holder.getAdapterPosition())) {
                             AppInfoModel currentDragApp = getCurrentDragApp();
-                            currentDragApp.setDesktopPosition(position);
+                            currentDragApp.setDesktopPosition(holder.getAdapterPosition());
                             mOnDeskAppsViewGestureActioner.stopDrag(v, currentDragApp);
                             notifyDataSetChanged();
                         }
