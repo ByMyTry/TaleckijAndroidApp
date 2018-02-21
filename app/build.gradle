@@ -9,6 +9,7 @@ buildscript {
 }
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: "jacoco"
 apply from: '../config_quality/quality.gradle'
 
 repositories {
@@ -36,12 +37,24 @@ android {
         manifestPlaceholders = [HOCKEYAPP_APP_ID: "701ffe36001345eb94bb5b56aea3211a"]
     }
     buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
         }
     }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.0"
 }
 
 dependencies {
@@ -61,3 +74,16 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:27.0.2'
     implementation 'com.yandex.android:mobmetricalib:2.80'
 }
+
+afterEvaluate {
+    testDebugUnitTest.jacoco.includeNoLocationClasses = true
+    task runTestsWithCoverage(type: JacocoReport) {
+        dependsOn(testDebugUnitTest, connectedDebugAndroidTest)
+        executionData(fileTree(dir: buildDir, includes: ['**/*.exec' , '**/*.ec']))
+        setSourceDirectories(files(new File(projectDir, 'src/main/java')))
+        setClassDirectories(fileTree(dir: new File(buildDir, 'intermediates/classes/debug'), exclude: [
+                '**/R.class', '**/R$*.class', '**/BuildConfig.*', 'android/**/*.*'
+        ]))
+    }
+}
+
