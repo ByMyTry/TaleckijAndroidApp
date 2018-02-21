@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/launcher_desk_menu_item"
+            android:title="@string/launcher_desk_nav_title"
+            android:icon="@drawable/ic_desktop"/>
+        <item
             android:id="@+id/launcher_grid_menu_item"
             android:title="@string/launcher_grid_nav_title"
             android:icon="@drawable/ic_grid"/>

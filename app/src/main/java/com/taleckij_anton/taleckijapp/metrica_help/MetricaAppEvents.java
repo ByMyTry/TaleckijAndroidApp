@@ -30,7 +30,8 @@ public class MetricaAppEvents {
 
     public static final String DownloadImagesUrls = "DownloadImagesUrls";
     public static final String DownloadImage = "DownloadImage";
-    public static final String RestoreImageFromCashe = "RestoreImageFromCashe";
+    public static final String RestoreImageFromCache = "RestoreImageFromCache";
+    //public static final String CancelUpdateCacheEvent = "CancelUpdateCacheEvent";
 
     private MetricaAppEvents(){
 

@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.JobIntentService;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
 import com.yandex.metrica.YandexMetrica;
@@ -35,6 +36,8 @@ public class ImageLoaderService extends JobIntentService {
     private static final long MINUTES_TO_MILLIS_COEF = 60*1000;
 
     private final ImageLoader mImageLoader;
+    private static PendingIntent sPendingIntent;
+    private static AlarmManager sAlarmManager;
     //private Thread mUpdateCacheThread;
     public static final long DEFAULT_UPDATE_CACHE_INTERVAL = 15;
     private static long mIntervalUpdateCacheMillis = DEFAULT_UPDATE_CACHE_INTERVAL * MINUTES_TO_MILLIS_COEF;
@@ -61,18 +64,22 @@ public class ImageLoaderService extends JobIntentService {
         return mIntervalUpdateCacheMillis / MINUTES_TO_MILLIS_COEF;
     }
 
-    private static void runCacheUpdate(Context context){
+    private static void runCacheUpdate(Context context) {
+        if(sAlarmManager != null && sPendingIntent != null) {
+            sAlarmManager.cancel(sPendingIntent);
+            sPendingIntent.cancel();
+        }
         final Intent intent = new Intent(ACTION_UPDATE_CACHE);
-        final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
+        sPendingIntent = PendingIntent.getBroadcast(context, 0,
                 intent, 0);//PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        sAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         long intervalToStart = mIntervalUpdateCacheMillis;
         if(intervalToStart == 0){
             mIntervalUpdateCacheMillis = DEFAULT_UPDATE_CACHE_INTERVAL;
         }
-        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+        sAlarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() + intervalToStart,
-                mIntervalUpdateCacheMillis, pendingIntent);
+                mIntervalUpdateCacheMillis, sPendingIntent);
     }
 
     @Override
@@ -94,7 +101,7 @@ public class ImageLoaderService extends JobIntentService {
 
                 YandexMetrica.reportEvent(MetricaAppEvents.DownloadImage);
             } else {
-                YandexMetrica.reportEvent(MetricaAppEvents.RestoreImageFromCashe);
+                YandexMetrica.reportEvent(MetricaAppEvents.RestoreImageFromCache);
             }
             final Intent broadcastIntent = new Intent(BROADCAST_ACTION_UPDATE_IMAGE);
             broadcastIntent.putExtra(name, true);
@@ -129,4 +136,16 @@ public class ImageLoaderService extends JobIntentService {
         canvas.drawBitmap(bitmap, 0, 0, alphaPaint);
         return newBitmap;
     }
+
+    /*@Override
+    public void onDestroy() {
+        if(sAlarmManager != null && sPendingIntent != null) {
+            sAlarmManager.cancel(sPendingIntent);
+            sPendingIntent.cancel();
+            Log.i("CANCEL", "CANCEL_CANCEL_CANCEL_CANCEL_CANCEL_CANCEL_CANCEL_CANCEL_CANCEL_CANCEL");
+
+            YandexMetrica.reportEvent(MetricaAppEvents.CancelUpdateCacheEvent);
+        }
+        super.onDestroy();
+    }*/
 }

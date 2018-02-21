@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.taleckij_anton.taleckijapp.background_images.ImageLoaderService;
 import com.taleckij_anton.taleckijapp.background_images.ImageSaver;
+import com.taleckij_anton.taleckijapp.launcher.desktop_fragment.DesktopFragment;
 import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.AppsFragment;
 import com.taleckij_anton.taleckijapp.launcher.recycler_training.LauncherRecyclerFragment;
 import com.taleckij_anton.taleckijapp.launcher.SettingsFragment;
@@ -263,7 +264,9 @@ public class LauncherActivity extends AppCompatActivity{
             };
 
     private void replaceFragmentByItemId(int menuItemId){
-        if(menuItemId == R.id.launcher_grid_menu_item) {
+        if(menuItemId == R.id.launcher_desk_menu_item) {
+            replaceDesktopFragment();
+        } else if(menuItemId == R.id.launcher_grid_menu_item) {
             replaceAppsFragment(AppsFragment.APPS_GRID_LAYOUT);
 
             YandexMetrica.reportEvent(MetricaAppEvents.AppsGridOpen);
@@ -291,6 +294,15 @@ public class LauncherActivity extends AppCompatActivity{
                     startActivity(intent);
                 }
             };
+
+    private void replaceDesktopFragment(){
+        DesktopFragment desktopFragment = new DesktopFragment();
+
+        getFragmentManager().beginTransaction()
+                .replace(R.id.list_fragment_place, desktopFragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .commit();
+    }
 
     private void replaceAppsFragment(String layoutType){
         AppsFragment appsFragment = AppsFragment.getInstance(layoutType);
@@ -325,7 +337,8 @@ public class LauncherActivity extends AppCompatActivity{
                 sCurrentMenuItemId = currentMenuItemId;
                 replaceFragmentByItemId(currentMenuItemId);
             } else {
-                replaceAppsFragment(AppsFragment.APPS_GRID_LAYOUT);
+                replaceDesktopFragment();
+                //replaceAppsFragment(AppsFragment.APPS_GRID_LAYOUT);
             }
         } else if(getIntent() != null){
             int currentMenuItemId = getIntent().getIntExtra(CURRENT_MENU_ITEM_ID, sCurrentMenuItemId);
@@ -334,10 +347,12 @@ public class LauncherActivity extends AppCompatActivity{
                 sCurrentMenuItemId = currentMenuItemId;
                 replaceFragmentByItemId(currentMenuItemId);
             } else {
-                replaceAppsFragment(AppsFragment.APPS_GRID_LAYOUT);
+                replaceDesktopFragment();
+                //replaceAppsFragment(AppsFragment.APPS_GRID_LAYOUT);
             }
         } else {
-            replaceAppsFragment(AppsFragment.APPS_GRID_LAYOUT);
+            replaceDesktopFragment();
+            //replaceAppsFragment(AppsFragment.APPS_GRID_LAYOUT);
         }
     }
 
