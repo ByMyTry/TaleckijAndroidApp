@@ -106,7 +106,9 @@ public class DesktopAppsAdapter extends RecyclerView.Adapter<DesktopAppViewHolde
                 switch (action){
                     case DragEvent.ACTION_DRAG_ENTERED:
                         normalShape = v.getBackground();
-                        v.setBackground(enterShape);
+                        if(isDeskPosAvailable(holder.getAdapterPosition())) {
+                            v.setBackground(enterShape);
+                        }
                         break;
                     case DragEvent.ACTION_DRAG_EXITED:
                         v.setBackground(normalShape);

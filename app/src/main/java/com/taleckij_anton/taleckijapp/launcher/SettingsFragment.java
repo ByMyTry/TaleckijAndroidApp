@@ -1,21 +1,23 @@
 package com.taleckij_anton.taleckijapp.launcher;
 
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.view.View;
+import android.support.v7.preference.PreferenceFragmentCompat;
 
 import com.taleckij_anton.taleckijapp.R;
-import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
-import com.yandex.metrica.YandexMetrica;
 
 /**
  * Created by Lenovo on 31.01.2018.
  */
 
-public class SettingsFragment extends PreferenceFragment {
+public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        //super.onCreatePreferences(savedInstanceState, rootKey);
+        setPreferencesFromResource(R.xml.preference, rootKey);
+    }
+
+    /*@Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preference);
@@ -27,7 +29,7 @@ public class SettingsFragment extends PreferenceFragment {
         super.onDestroy();
 
         //setFabVisibility(View.VISIBLE);
-    }
+    }*/
 
     /*private void setFabVisibility(int visibility){
         FloatingActionButton fab = getActivity().findViewById(R.id.fab_launcher);

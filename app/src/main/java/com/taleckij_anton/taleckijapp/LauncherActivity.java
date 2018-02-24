@@ -1,6 +1,5 @@
 package com.taleckij_anton.taleckijapp;
 
-import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,29 +13,30 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.taleckij_anton.taleckijapp.background_images.ImageLoaderService;
 import com.taleckij_anton.taleckijapp.background_images.ImageSaver;
+import com.taleckij_anton.taleckijapp.launcher.AppsVpFragment;
 import com.taleckij_anton.taleckijapp.launcher.desktop_fragment.DesktopFragment;
 import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.AppsFragment;
 import com.taleckij_anton.taleckijapp.launcher.recycler_training.LauncherRecyclerFragment;
 import com.taleckij_anton.taleckijapp.launcher.SettingsFragment;
 import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
-import com.yandex.metrica.IMetricaService;
 import com.yandex.metrica.YandexMetrica;
-import com.yandex.metrica.YandexMetricaConfig;
 
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.UpdateManager;
@@ -52,6 +52,8 @@ public class LauncherActivity extends AppCompatActivity{
     private static int sCurrentMenuItemId = -1;
     private final String CURRENT_MENU_ITEM_ID ="CURRENT_MENU_ITEM_ID";
     private final String CHANGE_THEME_FROM_SETTINGS = "CHANGE_THEME_FROM_SETTINGS";
+
+//    private NavigationView mNavigationView;
 
     private final SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener =
             new SharedPreferences.OnSharedPreferenceChangeListener(){
@@ -143,6 +145,27 @@ public class LauncherActivity extends AppCompatActivity{
         }
     };
 
+    private final NavigationView.OnNavigationItemSelectedListener
+            mOnNavigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {
+        private DrawerLayout mDrawerLayout;
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            int menuItemId = item.getItemId();
+            //replaceAppsFragment();
+            if(menuItemId!= sCurrentMenuItemId) {
+                sCurrentMenuItemId = menuItemId;
+                replaceFragmentByItemId(menuItemId);
+            }
+
+            if(mDrawerLayout == null){
+                mDrawerLayout = findViewById(R.id.launcher);
+            }
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            return true;
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         launchWelcomePageIfNecessary();
@@ -184,7 +207,8 @@ public class LauncherActivity extends AppCompatActivity{
         toggle.syncState();
 
         final NavigationView navigationView = findViewById(R.id.launcher_nav_view);
-        navigationView.setNavigationItemSelectedListener(onNavigationItemSelectedListener);
+//        mNavigationView = navigationView;
+        navigationView.setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         final View myPhotoHeaderNavView = navigationView
                 .getHeaderView(0).findViewById(R.id.nav_header_my_photo);
@@ -242,31 +266,20 @@ public class LauncherActivity extends AppCompatActivity{
         }
     }
 
-    private final NavigationView.OnNavigationItemSelectedListener
-            onNavigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {
-                private DrawerLayout mDrawerLayout;
-
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    int menuItemId = item.getItemId();
-                    //replaceAppsFragment();
-                    if(menuItemId!= sCurrentMenuItemId) {
-                        sCurrentMenuItemId = menuItemId;
-                        replaceFragmentByItemId(menuItemId);
-                    }
-
-                    if(mDrawerLayout == null){
-                        mDrawerLayout = findViewById(R.id.launcher);
-                    }
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
-                    return true;
-                }
-            };
+    private final View.OnClickListener
+            onHeaderPhotoClickListener = new View.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent();
+            intent.setClass(v.getContext(), AboutMeActivity.class);
+            startActivity(intent);
+        }
+    };
 
     private void replaceFragmentByItemId(int menuItemId){
         if(menuItemId == R.id.launcher_desk_menu_item) {
-            replaceDesktopFragment();
-        } else if(menuItemId == R.id.launcher_grid_menu_item) {
+            replaceAppsVpFragment();
+        } /*else if(menuItemId == R.id.launcher_grid_menu_item) {
             replaceAppsFragment(AppsFragment.APPS_GRID_LAYOUT);
 
             YandexMetrica.reportEvent(MetricaAppEvents.AppsGridOpen);
@@ -274,46 +287,51 @@ public class LauncherActivity extends AppCompatActivity{
             replaceAppsFragment(AppsFragment.APPS_LINEAR_LAYOUT);
 
             YandexMetrica.reportEvent(MetricaAppEvents.AppsLinearOpen);
-        /*}else if (menuItemId == R.id.grid_layout_menu_item){
+        }else if (menuItemId == R.id.grid_layout_menu_item){
             replaceRecyclerFragment(LauncherRecyclerFragment.GRID);
         } else if(menuItemId == R.id.linear_layout_menu_item){
-            replaceRecyclerFragment(LauncherRecyclerFragment.LINEAR);*/
-        } else if(menuItemId == R.id.settings_menu_item) {
+            replaceRecyclerFragment(LauncherRecyclerFragment.LINEAR);
+        }*/ else if(menuItemId == R.id.settings_menu_item) {
             replaceSettingsFragment();
 
             YandexMetrica.reportEvent(MetricaAppEvents.AppsSettingsOpen);
         }
     }
 
-    private final View.OnClickListener
-            onHeaderPhotoClickListener = new View.OnClickListener(){
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent();
-                    intent.setClass(v.getContext(), AboutMeActivity.class);
-                    startActivity(intent);
-                }
-            };
+    private AppsVpFragment replaceAppsVpFragment() {
+        AppsVpFragment appsVpFragment = new AppsVpFragment();
 
-    private void replaceDesktopFragment(){
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.launcher_main_fragment_place, appsVpFragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .commit();
+
+        return appsVpFragment;
+    }
+
+    /*private DesktopFragment replaceDesktopFragment(){
         DesktopFragment desktopFragment = new DesktopFragment();
 
-        getFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .replace(R.id.list_fragment_place, desktopFragment)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
+
+        return desktopFragment;
     }
 
-    private void replaceAppsFragment(String layoutType){
+    private AppsFragment replaceAppsFragment(String layoutType){
         AppsFragment appsFragment = AppsFragment.getInstance(layoutType);
 
-        getFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .replace(R.id.list_fragment_place, appsFragment)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
+
+        return appsFragment;
     }
 
-    /*private void replaceRecyclerFragment(String fragmentType){
+    private void replaceRecyclerFragment(String fragmentType){
        final LauncherRecyclerFragment launcherRecyclerFragment
                = LauncherRecyclerFragment.getInstance(fragmentType);
 
@@ -323,11 +341,15 @@ public class LauncherActivity extends AppCompatActivity{
                 .commit();
     }*/
 
-    private void replaceSettingsFragment(){
-        getFragmentManager().beginTransaction()
-                .replace(R.id.list_fragment_place, new SettingsFragment())
+    private SettingsFragment replaceSettingsFragment(){
+        SettingsFragment settingsFragment = new SettingsFragment();
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.launcher_main_fragment_place, settingsFragment)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
+
+        return settingsFragment;
     }
 
     private void replaceFragment(Bundle savedInstanceState) {
@@ -337,7 +359,7 @@ public class LauncherActivity extends AppCompatActivity{
                 sCurrentMenuItemId = currentMenuItemId;
                 replaceFragmentByItemId(currentMenuItemId);
             } else {
-                replaceDesktopFragment();
+                replaceAppsVpFragment();
                 //replaceAppsFragment(AppsFragment.APPS_GRID_LAYOUT);
             }
         } else if(getIntent() != null){
@@ -347,11 +369,11 @@ public class LauncherActivity extends AppCompatActivity{
                 sCurrentMenuItemId = currentMenuItemId;
                 replaceFragmentByItemId(currentMenuItemId);
             } else {
-                replaceDesktopFragment();
+                replaceAppsVpFragment();
                 //replaceAppsFragment(AppsFragment.APPS_GRID_LAYOUT);
             }
         } else {
-            replaceDesktopFragment();
+            replaceAppsVpFragment();
             //replaceAppsFragment(AppsFragment.APPS_GRID_LAYOUT);
         }
     }
