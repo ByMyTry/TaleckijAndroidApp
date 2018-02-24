@@ -65,7 +65,6 @@ public class SettingsWpFragment extends WpFragment {
 
     @Override
     public void onStop() {
-        Log.i("onStop", String.valueOf(isThemeLayout()));
         if(isThemeLayout()) {
             final RadioButton darkThemeRadio = getActivity().findViewById(R.id.radio_two);
             applyPrefToSharedPref(R.string.theme_preference_key, darkThemeRadio.isChecked());

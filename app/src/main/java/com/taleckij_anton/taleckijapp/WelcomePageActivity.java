@@ -17,7 +17,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RadioButton;
 
-import com.crashlytics.android.Crashlytics;
 import com.taleckij_anton.taleckijapp.background_images.ImageLoaderService;
 import com.taleckij_anton.taleckijapp.background_images.ImageSaver;
 import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
@@ -25,16 +24,10 @@ import com.taleckij_anton.taleckijapp.welcome_page.SettingsWpFragment;
 import com.taleckij_anton.taleckijapp.welcome_page.SimpleWpFragment;
 import com.taleckij_anton.taleckijapp.welcome_page.WpFragment;
 import com.yandex.metrica.YandexMetrica;
-import com.yandex.metrica.YandexMetricaConfig;
-
-import net.hockeyapp.android.CrashManager;
-import net.hockeyapp.android.UpdateManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import io.fabric.sdk.android.Fabric;
 
 public class WelcomePageActivity extends AppCompatActivity {
     public final static String LAUNCH_FROM_LAUNCHER = "LAUNCH_FROM_LAUNCHER";

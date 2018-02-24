@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.util.Xml;
 
 import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
@@ -55,12 +56,9 @@ public class ImageLoader {
         while (parser.next() != XmlPullParser.END_DOCUMENT) {
             if (parser.getEventType() == XmlPullParser.START_TAG
                     && "img".equals(parser.getName())) {
-                for (int i = 1; i < parser.getAttributeCount(); i++) {
-                    if ("size".equals(parser.getAttributeName(i))) {
-                        if ("XXXL".equals(parser.getAttributeValue(i))) {
-                            return parser.getAttributeValue(i-1);
-                        }
-                    }
+                String bigImageUrl = findBigImageUrl(parser);
+                if(bigImageUrl != null){
+                    return bigImageUrl;
                 }
             }
         }
@@ -69,7 +67,19 @@ public class ImageLoader {
     }
 
     @Nullable
-    Bitmap loadBitmap(String srcUrl) {
+    private String findBigImageUrl(XmlPullParser parser) {
+        for (int i = 1; i < parser.getAttributeCount(); i++) {
+            if ("size".equals(parser.getAttributeName(i))) {
+                if ("XXXL".equals(parser.getAttributeValue(i))) {
+                    return parser.getAttributeValue(i - 1);
+                }
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public Bitmap loadBitmap(String srcUrl) {
         try {
             URL url = new URL(srcUrl);
             URLConnection urlConnection = url.openConnection();
@@ -92,7 +102,7 @@ public class ImageLoader {
     }
 
     @Nullable
-     String getImageUrl() {
+    public String getImageUrl() {
         final List<String> imageUrls = getImageUrls();
         if (imageUrls.isEmpty() == false) {
             String imageUrl = imageUrls.get(0);
