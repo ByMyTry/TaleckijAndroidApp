@@ -41,6 +41,13 @@ public class DesktopAppsAdapter extends RecyclerView.Adapter<DesktopAppViewHolde
         fetchUiItemsAsync();
     }
 
+    public void updateDesktopHard(List<AppInfoModel> newAppModels){
+        mAppModels.removeAll(mAppModels);
+        mAppModels.addAll(newAppModels);
+        notifyDataSetChanged();
+        fetchUiItemsAsync();
+    }
+
     @Override
     public DesktopAppViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View desktopAppView = LayoutInflater.from(parent.getContext())

@@ -1,6 +1,9 @@
 package com.taleckij_anton.taleckijapp.launcher.desktop_fragment;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
 import android.os.Bundle;
@@ -10,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +39,18 @@ public class DesktopFragment extends Fragment {
     private AppsDbHelper mAppsDbHelper;
     private AppsDbSynchronizer mAppsDbSynchronizer;
 
+    private final BroadcastReceiver UpdateDesktopBroadkast = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (UPDATE_DESKTOP_BROADCAST_ACTION.equals(intent.getAction())) {
+                //TODO По фасту, для зачета. Сделать оптимальнее чем убрать все, добавить все
+                ((DesktopAppsAdapter) mRecyclerView.getAdapter())
+                        .updateDesktopHard(getCurrentDeskApps(context));
+            }
+        }
+    };
+
+    public static final String UPDATE_DESKTOP_BROADCAST_ACTION = "UPDATE_DESKTOP_BROADCAST_ACTION";
     public static final int DESKTOP_APPS_TOTAL_COUNT = 6;
     public static final int DESKTOP_APPS_ROW_COUNT = 3;
     //public static final int DESKTOP_APPS_ROW_COUNT_PORT = 3;
@@ -56,25 +72,30 @@ public class DesktopFragment extends Fragment {
         if(userHandles != null) {
             mUser = userHandles.get(0);
         }
-        final List<LauncherActivityInfo> applicationInfos =
-                getApplicationInfos(desktopView.getContext(), mUser);
-        final List<AppInfoModel> deskAppModels =
-                mAppsDbSynchronizer.synchronizeWithDb(mAppsDbHelper, applicationInfos);
 
-        //~создать RecyclerView из актуального списка приложений рабочего стола
-        /*for(AppInfoModel appInfoModel : deskAppModels){
-            if(appInfoModel.getDesktopPosition() != null){
-                Log.d("DESKTOP", appInfoModel.getFullName());
-            }
-        }*/
+        final List<AppInfoModel> deskAppModels = getCurrentDeskApps(getContext());
         createRecyclerView(deskAppModels, DESKTOP_APPS_ROW_COUNT);
 
         return desktopView;
     }
 
-    /*private List<DesktopAppViewModel> getCurrentDeskApps(){
+    @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter(UPDATE_DESKTOP_BROADCAST_ACTION);
+        mRecyclerView.getContext().registerReceiver(UpdateDesktopBroadkast, filter);
+    }
 
-    }*/
+    @Override
+    public void onPause() {
+        super.onPause();
+        mRecyclerView.getContext().unregisterReceiver(UpdateDesktopBroadkast);
+    }
+
+    private List<AppInfoModel> getCurrentDeskApps(Context context){
+        final List<LauncherActivityInfo> applicationInfos = getApplicationInfos(context, mUser);
+        return mAppsDbSynchronizer.synchronizeWithDb(mAppsDbHelper, applicationInfos);
+    }
 
     private @Nullable List<UserHandle> getUserHandles(Context context){
         final UserManager userManager = (UserManager)

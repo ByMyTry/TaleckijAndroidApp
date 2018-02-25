@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.taleckij_anton.taleckijapp.R;
 import com.taleckij_anton.taleckijapp.launcher.apps_db.AppsDbHelper;
 import com.taleckij_anton.taleckijapp.launcher.apps_db.AppsDbSynchronizer;
+import com.taleckij_anton.taleckijapp.launcher.desktop_fragment.DesktopFragment;
 import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.recycler.AppsAdapter;
 import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
 import com.yandex.metrica.YandexMetrica;
@@ -256,6 +257,8 @@ public class AppsFragment extends Fragment {
                     final String deletePackageName = appModel.getPackageName();
                     deleteApp(context, deletePackageName);
 
+                    sendUpdateDesktopBroadcast();
+
                     YandexMetrica.reportEvent(MetricaAppEvents.AppPackageDelete,
                             String.format("{\"package_name\":%s}", appModel.getPackageName()));
 
@@ -283,6 +286,8 @@ public class AppsFragment extends Fragment {
                                 .show();
                     }
 
+                    sendUpdateDesktopBroadcast();
+
                     return true;
                 } else if (item.getItemId() == R.id.popup_remove_from_desk) {
                     int deskPos = appModel.getDesktopPosition() != null ?
@@ -290,11 +295,18 @@ public class AppsFragment extends Fragment {
                     mAppsDbSynchronizer.removeFromDesktopDb(mAppsDbHelper, deskPos);
                     appModel.setDesktopPosition(null);
 
+                    sendUpdateDesktopBroadcast();
+
                     return true;
                 }
                 return false;
             }
         };
+    }
+
+    private  void sendUpdateDesktopBroadcast(){
+        Intent intent = new Intent(DesktopFragment.UPDATE_DESKTOP_BROADCAST_ACTION);
+        mRecyclerView.getContext().sendBroadcast(intent);
     }
 
     private void deleteApp(Context context, String packageName){
