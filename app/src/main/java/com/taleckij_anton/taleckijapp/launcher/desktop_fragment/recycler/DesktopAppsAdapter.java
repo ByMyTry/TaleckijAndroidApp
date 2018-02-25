@@ -122,10 +122,16 @@ public class DesktopAppsAdapter extends RecyclerView.Adapter<DesktopAppViewHolde
                         break;
                     case DragEvent.ACTION_DROP:
                         if(isDeskPosAvailable(holder.getAdapterPosition())) {
-                            AppInfoModel currentDragApp = getCurrentDragApp();
+                            final AppInfoModel currentDragApp = getCurrentDragApp();
+                            final Integer oldDeskPosition = currentDragApp.getDesktopPosition();
                             currentDragApp.setDesktopPosition(holder.getAdapterPosition());
                             mOnDeskAppsViewGestureActioner.stopDrag(v, currentDragApp);
-                            notifyDataSetChanged();
+                            if(oldDeskPosition != null) {
+                                notifyItemChanged(oldDeskPosition);
+                            }
+                            if(currentDragApp.getDesktopPosition() != null) {
+                                notifyItemChanged(currentDragApp.getDesktopPosition());
+                            }
                         }
                         break;
                     case DragEvent.ACTION_DRAG_ENDED:
