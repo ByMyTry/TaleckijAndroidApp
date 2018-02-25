@@ -7,4 +7,5 @@
     <color name="darkColorPrimary">#311b92</color>
     <color name="darkColorPrimaryDark">#000063</color>
     <color name="darkColorAccent">#ad1457</color>
+    <color name="desktop_shadow">#66000000</color>
 </resources>
