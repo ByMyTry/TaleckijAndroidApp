@@ -3,6 +3,9 @@ package com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
+
+import com.taleckij_anton.taleckijapp.launcher.desktop_fragment.DesktopFragment;
 
 /**
  * Created by Lenovo on 06.02.2018.

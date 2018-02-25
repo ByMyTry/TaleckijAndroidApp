@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.UserHandle;
 import android.os.UserManager;
@@ -14,9 +15,11 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.taleckij_anton.taleckijapp.R;
 import com.taleckij_anton.taleckijapp.launcher.apps_db.AppsDbHelper;
@@ -33,11 +36,13 @@ import java.util.List;
  */
 
 public class DesktopFragment extends Fragment {
-    //private ImageView mGarbageSpace;
+    private View mGarbageSpace;
     private RecyclerView mRecyclerView;
     private @Nullable UserHandle mUser;
     private AppsDbHelper mAppsDbHelper;
     private AppsDbSynchronizer mAppsDbSynchronizer;
+
+    private AppInfoModel mCurrentDragApp;
 
     private final BroadcastReceiver UpdateDesktopBroadkast = new BroadcastReceiver() {
         @Override
@@ -51,10 +56,64 @@ public class DesktopFragment extends Fragment {
     };
 
     public static final String UPDATE_DESKTOP_BROADCAST_ACTION = "UPDATE_DESKTOP_BROADCAST_ACTION";
+    public static final String UPDATE_APP_POS_DESK_BROADCAST_ACTION =
+            "UPDATE_APP_POS_DESK_BROADCAST_ACTION";
+    public static final String APP_FULL_NAME_EXTRA = "APP_FULL_NAME_EXTRA";
+    public static final String APP_DESK_POS_EXTRA = "APP_DESK_POS_EXTRA";
+
     public static final int DESKTOP_APPS_TOTAL_COUNT = 6;
     public static final int DESKTOP_APPS_ROW_COUNT = 3;
     //public static final int DESKTOP_APPS_ROW_COUNT_PORT = 3;
     //public static final int DESKTOP_APPS_ROW_COUNT_LAND = 4;
+
+    private final View.OnDragListener mGarbageDragListener = new View.OnDragListener() {
+        private Drawable enterShape;
+        private Drawable normalShape;
+
+        @Override
+        public boolean onDrag(View v, DragEvent event) {
+            enterShape = v.getResources().getDrawable(R.drawable.shape_droptarget,
+                    v.getContext().getTheme());
+            int action = event.getAction();
+            switch (action){
+                case DragEvent.ACTION_DRAG_ENTERED:
+                    normalShape = v.getBackground();
+                    v.setBackground(enterShape);
+                    break;
+                case DragEvent.ACTION_DRAG_EXITED:
+                    v.setBackground(normalShape);
+                    break;
+                case DragEvent.ACTION_DROP:
+                    if(mCurrentDragApp.getDesktopPosition() != null) {
+                        int deskPos = mCurrentDragApp.getDesktopPosition();
+                        mCurrentDragApp.setDesktopPosition(null);
+                        mRecyclerView.getAdapter().notifyItemChanged(deskPos);
+                        mAppsDbSynchronizer.removeFromDesktopDb(mAppsDbHelper, deskPos);
+
+                        sendUpdateAppPosFromDeskBroadcast(mCurrentDragApp);
+                    }
+                    mGarbageSpace.setVisibility(View.INVISIBLE);
+                    v.setBackground(normalShape);
+                    break;
+                case DragEvent.ACTION_DRAG_ENDED:
+                    v.setVisibility(View.INVISIBLE);
+                    break;
+                default:
+                    break;
+            }
+            return true;
+        }
+    };
+
+    private  void sendUpdateAppPosFromDeskBroadcast(AppInfoModel appInfoModel){
+        Intent intent = new Intent(UPDATE_APP_POS_DESK_BROADCAST_ACTION);
+        intent.putExtra(APP_FULL_NAME_EXTRA, appInfoModel.getFullName());
+        intent.putExtra(APP_DESK_POS_EXTRA,
+                appInfoModel.getDesktopPosition() == null ?
+                -1 : appInfoModel.getDesktopPosition());
+        Log.i("STOPDRAG", "" + appInfoModel.getDesktopPosition());
+        mRecyclerView.getContext().sendBroadcast(intent);
+    }
 
     @Nullable
     @Override
@@ -62,7 +121,10 @@ public class DesktopFragment extends Fragment {
                              @Nullable ViewGroup container, Bundle savedInstanceState) {
         View desktopView =
                 inflater.inflate(R.layout.fragment_launcher_desktop, container, false);
-        //mGarbageSpace = desktopView.findViewById(R.id.desktop_garbage_space);
+
+        mGarbageSpace = desktopView.findViewById(R.id.desktop_garbage_space);
+        mGarbageSpace.setOnDragListener(mGarbageDragListener);
+
         mRecyclerView = desktopView.findViewById(R.id.desktop_apps_recycler);
 
         mAppsDbHelper = new AppsDbHelper(desktopView.getContext());
@@ -75,6 +137,8 @@ public class DesktopFragment extends Fragment {
 
         final List<AppInfoModel> deskAppModels = getCurrentDeskApps(getContext());
         createRecyclerView(deskAppModels, DESKTOP_APPS_ROW_COUNT);
+
+//        desktopView.setOnDragListener();
 
         return desktopView;
     }
@@ -119,6 +183,8 @@ public class DesktopFragment extends Fragment {
                 new GridLayoutManager(mRecyclerView.getContext(), spanCount));
         final OnDeskAppsViewGestureActioner onDeskAppsViewGestureActioner =
                 new OnDeskAppsViewGestureActioner() {
+                    private Integer oldDeskPos;
+
                     @Override
                     public void launchApp(Context context, AppInfoModel incrementedAppModel){
                         final LauncherApps launcherApps =
@@ -136,13 +202,20 @@ public class DesktopFragment extends Fragment {
 
                     @Override
                     public void startDrag(View v, AppInfoModel appModel) {
-                        //mGarbageSpace.setVisibility(View.VISIBLE);
+                        mGarbageSpace.setVisibility(View.VISIBLE);
+                        mCurrentDragApp = appModel;
+                        oldDeskPos = appModel.getDesktopPosition();
                     }
 
                     @Override
-                    public void stopDrag(View v, AppInfoModel appModelWithNewDescPos) {
-                        //mGarbageSpace.setVisibility(View.INVISIBLE);
-                        mAppsDbSynchronizer.updateDeskPosDb(mAppsDbHelper, appModelWithNewDescPos);
+                    public void stopDrag(View v, AppInfoModel appModelWithNewDescPos,
+                                         boolean changeDeskPos) {
+//                        mGarbageSpace.setVisibility(View.INVISIBLE);
+                        if(changeDeskPos) {
+//                            mAppsDbSynchronizer.updateDeskPosDb(mAppsDbHelper, appModelWithNewDescPos);
+                            mAppsDbSynchronizer.updateDeskPosDb(mAppsDbHelper, mCurrentDragApp);
+                            sendUpdateAppPosFromDeskBroadcast(mCurrentDragApp);
+                        }
                     }
                 };
         DesktopAppsAdapter adapter =
