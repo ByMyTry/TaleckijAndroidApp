@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "106294277951",
+    "firebase_url": "https://taleckijlauncherapp.firebaseio.com",
+    "project_id": "taleckijlauncherapp",
+    "storage_bucket": "taleckijlauncherapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:106294277951:android:9e3f769ac076a0fd",
+        "android_client_info": {
+          "package_name": "com.taleckij_anton.taleckijapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "106294277951-6i3ri307ck3nv3mg5boinf0fj2k0ar6r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBv3tyuOpSm9QeLcoUJyQSrGyNUK_IgYnw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

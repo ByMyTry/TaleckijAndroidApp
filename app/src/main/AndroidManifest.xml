@@ -9,9 +9,9 @@
     <application
         android:name=".App"
         android:allowBackup="true"
-        android:icon="@drawable/takeckij_launcher_logo_round"
+        android:icon="@mipmap/ic_taleckij_launcher_logo_round"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/takeckij_launcher_logo_round"
+        android:roundIcon="@mipmap/ic_taleckij_launcher_logo_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:fullBackupContent="@xml/my_backup_rules">
