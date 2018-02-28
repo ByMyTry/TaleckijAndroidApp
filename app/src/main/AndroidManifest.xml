@@ -16,7 +16,8 @@
         android:theme="@style/AppTheme"
         android:fullBackupContent="@xml/my_backup_rules">
         <activity android:name=".WelcomePageActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:noHistory="true">
         </activity>
         <activity android:name=".LauncherActivity"
             android:theme="@style/AppTheme.NoActionBar">
