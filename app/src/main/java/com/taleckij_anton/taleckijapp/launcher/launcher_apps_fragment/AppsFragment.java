@@ -1,5 +1,6 @@
 package com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -64,6 +66,23 @@ public class AppsFragment extends Fragment {
             final AppsAdapter adapter = ((AppsAdapter)mRecyclerView.getAdapter());
             List<AppInfoModel> removedAppsModels = adapter.updateAfterRemove(removedAppsUid);
             mAppsDbSynchronizer.removeAppsFromDb(mAppsDbHelper, removedAppsModels);
+        }
+    };
+
+    private final BroadcastReceiver UpdateAppPosDesktopReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(DesktopFragment.UPDATE_APP_POS_DESK_BROADCAST_ACTION.equals(intent.getAction())){
+                String appFullName = intent.getStringExtra(DesktopFragment.APP_FULL_NAME_EXTRA);
+                int currentDeskPos = intent.getIntExtra(DesktopFragment.APP_DESK_POS_EXTRA, -1);
+                final AppsAdapter adapter = ((AppsAdapter)mRecyclerView.getAdapter());
+                //int currentDeskPos =
+                //mAppsDbSynchronizer.getCurrentDeskPos(mAppsDbHelper, appFullName);
+                adapter.updateAppPosFromDesk(appFullName,
+                        currentDeskPos == -1 ? null : currentDeskPos);
+                //Log.i("STOPDRAG", "" + currentDeskPos);
+            }
+
         }
     };
 
@@ -135,10 +154,24 @@ public class AppsFragment extends Fragment {
                 new String[]{
                         Intent.ACTION_PACKAGE_ADDED,
                         Intent.ACTION_PACKAGE_REPLACED,
-                        Intent.ACTION_PACKAGE_REMOVED}
+                        Intent.ACTION_PACKAGE_REMOVED
+                }
         );
 
         return mRecyclerView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter(DesktopFragment.UPDATE_APP_POS_DESK_BROADCAST_ACTION);
+        mRecyclerView.getContext().registerReceiver(UpdateAppPosDesktopReceiver, filter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mRecyclerView.getContext().unregisterReceiver(UpdateAppPosDesktopReceiver);
     }
 
     private void registerAppsChangeReceiver(AppsChangeReceiver appsChangeReceiver,

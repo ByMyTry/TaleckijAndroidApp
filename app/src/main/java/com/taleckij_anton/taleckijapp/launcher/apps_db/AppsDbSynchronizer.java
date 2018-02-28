@@ -315,4 +315,47 @@ public class AppsDbSynchronizer {
             if(db != null)db.close();
         }
     }
+
+    public int getCurrentDeskPos(AppsDbHelper appsDbHelper, String appFullName){
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+        int appId = -1;
+        try {
+            db = appsDbHelper.getReadableDatabase();
+            cursor = db.query(AppsDb.APPS_LUNCH_COUNT_TABLE,
+                    new String[]{AppsDb.CountTableColumns._ID},
+                    AppsDb.CountTableColumns.FILED_APP_FULL_NAME + " LIKE ?",
+                    new String[]{appFullName},
+                    null, null, null
+            );
+            if(cursor.moveToNext()){
+                appId = cursor.getInt(0);
+            }
+        } catch (SQLiteException e) {
+        } finally {
+            if(cursor != null) cursor.close();
+            if(db != null) db.close();
+        }
+        int currentDeskPos = -1;
+        if(appId != -1) {
+            try {
+                db = appsDbHelper.getReadableDatabase();
+                cursor = db.query(
+                        AppsDb.DESKTOP_APPS_TABLE,
+                        new String[]{AppsDb.DesktopTableColumns.FIELD_APP_DESKTOP_POSITION},
+                        AppsDb.DesktopTableColumns.FIELD_APP_ID + " LIKE ?",
+                        new String[]{String.valueOf(appId)},
+                        null, null, null, null
+                );
+                while(cursor.moveToNext()){
+                    currentDeskPos = cursor.getInt(0);
+                }
+            } catch (SQLiteException e) {
+            } finally {
+                if (cursor != null) cursor.close();
+                if (db != null) db.close();
+            }
+        }
+        return currentDeskPos;
+    }
 }

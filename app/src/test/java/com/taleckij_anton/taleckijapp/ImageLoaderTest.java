@@ -31,8 +31,7 @@ public class ImageLoaderTest {
 
     @Test
     public void loadBitmap() {
-        String url = IMAGE_URL;
-        Bitmap bitmap = mImageLoader.loadBitmap(url);
+        Bitmap bitmap = mImageLoader.loadBitmap(IMAGE_URL);
         Boolean bitmapNotEmpty = bitmap != null && bitmap.getByteCount() > 0;
         assertEquals(true, bitmapNotEmpty);
     }

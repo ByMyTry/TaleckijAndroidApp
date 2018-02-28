@@ -4,7 +4,9 @@
 
     <stroke
         android:width="2dp"
-        android:color="#FFFF0000" />
+        android:color="?attr/colorAccent"
+        />
+    <!--android:color="#FFFF0000"-->
 
     <corners
         android:bottomLeftRadius="7dp"

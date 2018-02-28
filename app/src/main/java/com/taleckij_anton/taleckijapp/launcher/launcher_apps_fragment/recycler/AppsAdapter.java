@@ -3,6 +3,7 @@ package com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.recycler;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -119,6 +120,17 @@ public class AppsAdapter extends RecyclerView.Adapter<AppViewHolder>{
         fetchUiItemsAsync();
         notifyDataSetChanged();
         return removedAppModel;
+    }
+
+    public void updateAppPosFromDesk(String appFullName, Integer currentPos){
+        //Log.i("STOPDRAG", "" + currentPos);
+        for(AppInfoModel appInfoModel : mAppModels){
+            if(appInfoModel.getFullName().equals(appFullName)){
+                appInfoModel.setDesktopPosition(currentPos);
+                notifyItemChanged(mAppModels.indexOf(appInfoModel));
+                return;
+            }
+        }
     }
 
     @Override

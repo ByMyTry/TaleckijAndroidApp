@@ -37,7 +37,7 @@ public class ImageSaverTest {
     @Test
     public void imageProcess() {
         mImageSaver.saveImage(mContext, mTestBitmap, mTestImgName);
-        assertNotEquals(mTestBitmap, mImageSaver.loadImage(mContext, mTestImgName));
+        assertNotEquals(null, mImageSaver.loadImage(mContext, mTestImgName));
     }
 
     @Test

@@ -121,15 +121,24 @@ public class DesktopAppsAdapter extends RecyclerView.Adapter<DesktopAppViewHolde
                         v.setBackground(normalShape);
                         break;
                     case DragEvent.ACTION_DROP:
-                        if(isDeskPosAvailable(holder.getAdapterPosition())) {
-                            AppInfoModel currentDragApp = getCurrentDragApp();
+                        final AppInfoModel currentDragApp = getCurrentDragApp();
+                        boolean changeDeskPos = isDeskPosAvailable(holder.getAdapterPosition());
+                        if(changeDeskPos) {
+                            final Integer oldDeskPosition = currentDragApp.getDesktopPosition();
                             currentDragApp.setDesktopPosition(holder.getAdapterPosition());
-                            mOnDeskAppsViewGestureActioner.stopDrag(v, currentDragApp);
-                            notifyDataSetChanged();
+                            if(oldDeskPosition != null) {
+                                notifyItemChanged(oldDeskPosition);
+                            }
+                            if(currentDragApp.getDesktopPosition() != null) {
+                                notifyItemChanged(currentDragApp.getDesktopPosition());
+                            }
                         }
-                        break;
-                    case DragEvent.ACTION_DRAG_ENDED:
+                        mOnDeskAppsViewGestureActioner.stopDrag(v, currentDragApp, changeDeskPos);
                         v.setBackground(normalShape);
+                        break;
+//                    case DragEvent.ACTION_DRAG_ENDED:
+//                        v.setBackground(normalShape);
+//                        break;
                     default:
                         break;
                 }
@@ -160,13 +169,15 @@ public class DesktopAppsAdapter extends RecyclerView.Adapter<DesktopAppViewHolde
                 final int size = mAppModels.size();
                 for (int i = 0; i < size; i++) {
                     final AppInfoModel appModel = mAppModels.get(i);
-                    if(appModel.getAppViewModel().getLabel() == null) {
-                        final String label = appModel.getLabel();
-                        appModel.getAppViewModel().setLabel(label);
-                    }
-                    if(appModel.getAppViewModel().getIcon() == null) {
-                        final Drawable icon = appModel.getIcon(0);
-                        appModel.getAppViewModel().setIcon(icon);
+                    if(appModel.getDesktopPosition() != null) {
+                        if (appModel.getAppViewModel().getLabel() == null) {
+                            final String label = appModel.getLabel();
+                            appModel.getAppViewModel().setLabel(label);
+                        }
+                        if (appModel.getAppViewModel().getIcon() == null) {
+                            final Drawable icon = appModel.getIcon(0);
+                            appModel.getAppViewModel().setIcon(icon);
+                        }
                     }
                 }
                 mHandler.post(new Runnable() {
