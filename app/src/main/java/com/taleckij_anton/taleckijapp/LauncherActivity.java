@@ -6,18 +6,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -31,9 +26,6 @@ import com.crashlytics.android.Crashlytics;
 import com.taleckij_anton.taleckijapp.background_images.ImageLoaderService;
 import com.taleckij_anton.taleckijapp.background_images.ImageSaver;
 import com.taleckij_anton.taleckijapp.launcher.AppsVpFragment;
-import com.taleckij_anton.taleckijapp.launcher.desktop_fragment.DesktopFragment;
-import com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment.AppsFragment;
-import com.taleckij_anton.taleckijapp.launcher.recycler_training.LauncherRecyclerFragment;
 import com.taleckij_anton.taleckijapp.launcher.SettingsFragment;
 import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
 import com.yandex.metrica.YandexMetrica;
@@ -77,7 +69,7 @@ public class LauncherActivity extends AppCompatActivity{
                                     .putString(key, currentIntervalMin)
                                     .commit();
                             replaceFragmentByItemId(sCurrentMenuItemId);
-                            sendBroadcast(new Intent(ImageLoaderService.ACTION_UPDATE_CACHE));
+                            sendBroadcast(new Intent(ImageLoaderService.BROADCAST_ACTION_UPDATE_CACHE));
 
                             YandexMetrica.reportEvent(MetricaAppEvents.UpdateBackImgsCacheNowOptionChanged);
                         } else {
@@ -101,8 +93,8 @@ public class LauncherActivity extends AppCompatActivity{
                 }
 
                 private void reloadActivivty(){
-                    LauncherActivity.this.finish();
                     final Intent intent = LauncherActivity.this.getIntent();
+                    LauncherActivity.this.finish();
                     intent.putExtra(CHANGE_THEME_FROM_SETTINGS,true);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     intent.putExtra(CURRENT_MENU_ITEM_ID, sCurrentMenuItemId);
@@ -128,7 +120,7 @@ public class LauncherActivity extends AppCompatActivity{
                 }
 
                 YandexMetrica.reportEvent(MetricaAppEvents.SetBackgroundImage);
-            } else if(ImageLoaderService.ACTION_UPDATE_CACHE.equals(action)){
+            } else if(ImageLoaderService.BROADCAST_ACTION_UPDATE_CACHE.equals(action)){
                 List<String> imageNames = ImageSaver.getInstance().clear(context);
                 for(String imageName : imageNames) {
                     ImageLoaderService.enqueueWork(context, ImageLoaderService.ACTION_LOAD_IMAGE,
@@ -353,18 +345,18 @@ public class LauncherActivity extends AppCompatActivity{
     }
 
     private void replaceFragment(Bundle savedInstanceState) {
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             int currentMenuItemId = savedInstanceState.getInt(CURRENT_MENU_ITEM_ID, sCurrentMenuItemId);
-            if(currentMenuItemId != -1){
+            if (currentMenuItemId != -1) {
                 sCurrentMenuItemId = currentMenuItemId;
                 replaceFragmentByItemId(currentMenuItemId);
             } else {
                 replaceAppsVpFragment();
                 //replaceAppsFragment(AppsFragment.APPS_GRID_LAYOUT);
             }
-        } else if(getIntent() != null){
+        } else if(getIntent() != null) {
             int currentMenuItemId = getIntent().getIntExtra(CURRENT_MENU_ITEM_ID, sCurrentMenuItemId);
-            if(currentMenuItemId != -1){
+            if (currentMenuItemId != -1) {
                 getIntent().putExtra(CURRENT_MENU_ITEM_ID, -1);
                 sCurrentMenuItemId = currentMenuItemId;
                 replaceFragmentByItemId(currentMenuItemId);
@@ -378,7 +370,7 @@ public class LauncherActivity extends AppCompatActivity{
         }
     }
 
-    private void backgroundImageProcess(){
+    private void backgroundImageProcess() {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(this);
         String diffBackImagePrefKey =
@@ -416,7 +408,7 @@ public class LauncherActivity extends AppCompatActivity{
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ImageLoaderService.BROADCAST_ACTION_UPDATE_IMAGE);
-        intentFilter.addAction(ImageLoaderService.ACTION_UPDATE_CACHE);
+        intentFilter.addAction(ImageLoaderService.BROADCAST_ACTION_UPDATE_CACHE);
         registerReceiver(mUpdateImageBroadcastReceiver, intentFilter);
         backgroundImageProcess();
 

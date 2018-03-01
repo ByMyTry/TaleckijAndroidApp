@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -23,6 +24,7 @@ import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
 import com.taleckij_anton.taleckijapp.welcome_page.SettingsWpFragment;
 import com.taleckij_anton.taleckijapp.welcome_page.SimpleWpFragment;
 import com.taleckij_anton.taleckijapp.welcome_page.WpFragment;
+import com.taleckij_anton.taleckijapp.welcome_page.WpPageAdapter;
 import com.yandex.metrica.YandexMetrica;
 
 import java.util.ArrayList;
@@ -32,8 +34,8 @@ import java.util.List;
 public class WelcomePageActivity extends AppCompatActivity {
     public final static String LAUNCH_FROM_LAUNCHER = "LAUNCH_FROM_LAUNCHER";
 
-    private final static String SIMPLE_WP_FRAGMENT = "SIMPLE_WP_FRAGMENT";
-    private final static String SETTINGS_WP_FRAGMENT = "SETTINGS_WP_FRAGMENT";
+//    private final static String SIMPLE_WP_FRAGMENT = "SIMPLE_WP_FRAGMENT";
+//    private final static String SETTINGS_WP_FRAGMENT = "SETTINGS_WP_FRAGMENT";
 
     private final BroadcastReceiver mUpdateImageBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -45,9 +47,9 @@ public class WelcomePageActivity extends AppCompatActivity {
                 final Boolean hasImageName = intent.getBooleanExtra(className, false);
                 final Boolean hasDefaultImageName =
                         intent.getBooleanExtra(ImageSaver.DEFAULT_IMAGE_NAME, false);
-                final String imageName = hasImageName ? className:
-                        hasDefaultImageName ? ImageSaver.DEFAULT_IMAGE_NAME: null;
-                if(TextUtils.isEmpty(imageName) == false){
+                final String imageName = hasImageName ? className :
+                        hasDefaultImageName ? ImageSaver.DEFAULT_IMAGE_NAME : null;
+                if (TextUtils.isEmpty(imageName) == false) {
                     final Bitmap bitmap = ImageSaver.getInstance()
                             .loadImage(getApplicationContext(), imageName);
                     setDrawable(bitmap);
@@ -63,7 +65,7 @@ public class WelcomePageActivity extends AppCompatActivity {
                         setDrawable(bitmap);
                     }
                 }*/
-            } else if(ImageLoaderService.ACTION_UPDATE_CACHE.equals(action)){
+            } else if(ImageLoaderService.BROADCAST_ACTION_UPDATE_CACHE.equals(action)){
                 List<String> imageNames = ImageSaver.getInstance().clear(context);
                 for(String imageName : imageNames) {
                     ImageLoaderService.enqueueWork(context, ImageLoaderService.ACTION_LOAD_IMAGE,
@@ -78,7 +80,7 @@ public class WelcomePageActivity extends AppCompatActivity {
         }
     };
 
-    final ArrayList<WpFragmentInfo> mWpFragmentsInfo = new ArrayList<>(Arrays.<WpFragmentInfo>asList(
+    /*final ArrayList<WpFragmentInfo> mWpFragmentsInfo = new ArrayList<>(Arrays.<WpFragmentInfo>asList(
             new WpFragmentInfo(R.layout.fragment_wp_hello, SIMPLE_WP_FRAGMENT),
             new WpFragmentInfo(R.layout.fragment_wp_about_app, SIMPLE_WP_FRAGMENT),
             new WpFragmentInfo(R.layout.fragment_wp_theme_choice, SETTINGS_WP_FRAGMENT),
@@ -93,7 +95,7 @@ public class WelcomePageActivity extends AppCompatActivity {
             this.wpFragmentLayoutId = wpFragmentLayoutId;
             this.wpFragmentType = wpFragmentType;
         }
-    }
+    }*/
 
     int mCurrentFragmentIndex;
     WpFragment lastFragment;
@@ -110,12 +112,17 @@ public class WelcomePageActivity extends AppCompatActivity {
         final String launchWpPrefKey = getResources().getString(R.string.launch_wp_pref_key);
         ifWpOnceTrueSetFalse(launchWpPrefKey);
 
-        mCurrentFragmentIndex = 0;
+        /*mCurrentFragmentIndex = 0;
         final WpFragmentInfo wpFragmentInfo = mWpFragmentsInfo.get(mCurrentFragmentIndex);
-        lastFragment = replaceWpFragmentBy(wpFragmentInfo);
+        lastFragment = replaceWpFragmentBy(wpFragmentInfo);*/
 
-        final View nextButtton = findViewById(R.id.button_next);
-        nextButtton.setOnClickListener(mNextButtonOnClick);
+        /*final View nextButton = findViewById(R.id.button_next);
+        if(nextButton != null) {
+            nextButton.setOnClickListener(mNextButtonOnClick);
+        }*/
+
+        final ViewPager wpViewPager = findViewById(R.id.wp_view_pager);
+        wpViewPager.setAdapter(new WpPageAdapter(getSupportFragmentManager()));
 
         YandexMetrica.reportEvent(MetricaAppEvents.WelcomePageOpen);
     }
@@ -139,7 +146,7 @@ public class WelcomePageActivity extends AppCompatActivity {
         }
     }
 
-    private final View.OnClickListener
+   /* private final View.OnClickListener
             mNextButtonOnClick = new View.OnClickListener() {
         @Override
         public void onClick(final View v) {
@@ -147,10 +154,10 @@ public class WelcomePageActivity extends AppCompatActivity {
             if(mCurrentFragmentIndex < mWpFragmentsInfo.size() - 1){
                 mCurrentFragmentIndex++;
                 final WpFragmentInfo wpFragmentInfo = mWpFragmentsInfo.get(mCurrentFragmentIndex);
-                lastFragment = replaceWpFragmentBy(wpFragmentInfo);
+                //lastFragment = replaceWpFragmentBy(wpFragmentInfo);
             } else {
                 //TODO пределать, без ремува; новая активити создается раньше, чем преференсы сохраняются
-                removeWpFragment(lastFragment);
+                //removeWpFragment(lastFragment);
                 //mCurrentFragmentIndex = -1;
                 final Intent intent = new Intent();
                 intent.putExtra(LauncherActivity.LAUNCH_FROM_WELCOME_PAGE, true);
@@ -158,9 +165,9 @@ public class WelcomePageActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         }
-    };
+    };*/
 
-    private WpFragment replaceWpFragmentBy(WpFragmentInfo wpFragmentInfo){
+   /* private WpFragment replaceWpFragmentBy(WpFragmentInfo wpFragmentInfo){
         final WpFragment currWpFragment = wpFragmentWithId(wpFragmentInfo);
         getFragmentManager().beginTransaction()
                 .replace(R.id.wp_fragment_place, currWpFragment)
@@ -173,20 +180,20 @@ public class WelcomePageActivity extends AppCompatActivity {
     private void removeWpFragment(WpFragment wpFragment){
         getFragmentManager().beginTransaction()
                 .remove(wpFragment)
-                .addToBackStack(null)
+                //.addToBackStack(null)
                 //.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
     }
 
-    private WpFragment wpFragmentWithId(WpFragmentInfo wpFragmentInfo){
+    private WpFragment wpFragmentWithId(WpFragmentInfo wpFragmentInfo) {
         final WpFragment wpFragment;
-        if(wpFragmentInfo.wpFragmentType.equals(SIMPLE_WP_FRAGMENT)){
+        if (SIMPLE_WP_FRAGMENT.equals(wpFragmentInfo.wpFragmentType)) {
             wpFragment = SimpleWpFragment.getInstance(wpFragmentInfo.wpFragmentLayoutId);
-        }else{
+        } else {
             wpFragment = SettingsWpFragment.getInstance(wpFragmentInfo.wpFragmentLayoutId);
         }
         return wpFragment;
-    }
+    }*/
 
     public void onRadioClick(View view){
         final RadioButton thisRadioButton, anotherRadioButton;
@@ -209,7 +216,7 @@ public class WelcomePageActivity extends AppCompatActivity {
                 getResources().getString(R.string.diff_background_image_pref_key);
         Boolean useDiffImages = sharedPreferences.getBoolean(diffBackImagePrefKey, false);
         String name = null;
-        if(useDiffImages) {
+        if (useDiffImages) {
             name = this.getClass().getSimpleName();
         }
         ImageLoaderService.enqueueWork(this, ImageLoaderService.ACTION_LOAD_IMAGE, name);
@@ -225,7 +232,7 @@ public class WelcomePageActivity extends AppCompatActivity {
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ImageLoaderService.BROADCAST_ACTION_UPDATE_IMAGE);
-        intentFilter.addAction(ImageLoaderService.ACTION_UPDATE_CACHE);
+        intentFilter.addAction(ImageLoaderService.BROADCAST_ACTION_UPDATE_CACHE);
         registerReceiver(mUpdateImageBroadcastReceiver, intentFilter);
         backgroundImageProcess();
     }

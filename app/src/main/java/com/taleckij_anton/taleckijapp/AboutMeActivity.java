@@ -12,14 +12,12 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.taleckij_anton.taleckijapp.background_images.ImageLoaderService;
 import com.taleckij_anton.taleckijapp.background_images.ImageSaver;
@@ -49,7 +47,7 @@ public class AboutMeActivity extends AppCompatActivity {
                             .loadImage(getApplicationContext(), imageName);
                     setDrawable(bitmap);
                 }
-            } else if(ImageLoaderService.ACTION_UPDATE_CACHE.equals(action)){
+            } else if(ImageLoaderService.BROADCAST_ACTION_UPDATE_CACHE.equals(action)){
                 List<String> imageNames = ImageSaver.getInstance().clear(context);
                 for(String imageName : imageNames) {
                     ImageLoaderService.enqueueWork(context, ImageLoaderService.ACTION_LOAD_IMAGE,
@@ -144,7 +142,7 @@ public class AboutMeActivity extends AppCompatActivity {
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ImageLoaderService.BROADCAST_ACTION_UPDATE_IMAGE);
-        intentFilter.addAction(ImageLoaderService.ACTION_UPDATE_CACHE);
+        intentFilter.addAction(ImageLoaderService.BROADCAST_ACTION_UPDATE_CACHE);
         registerReceiver(mUpdateImageBroadcastReceiver, intentFilter);
         backgroundImageProcess();
     }

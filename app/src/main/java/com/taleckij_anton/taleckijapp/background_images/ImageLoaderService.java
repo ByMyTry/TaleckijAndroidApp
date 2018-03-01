@@ -12,7 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.JobIntentService;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
 import com.yandex.metrica.YandexMetrica;
@@ -27,7 +26,7 @@ public class ImageLoaderService extends JobIntentService {
     public static final String PARAM_IMAGE_NAME = "com.taleckij_anton.taleckijapp.PARAM_IMAGE_NAME";
     public static final String ACTION_LOAD_IMAGE = "com.taleckij_anton.taleckijapp.LOAD_IMAGE";
 
-    public static final String ACTION_UPDATE_CACHE = "com.taleckij_anton.taleckijapp.ACTION_UPDATE_CACHE";
+    public static final String BROADCAST_ACTION_UPDATE_CACHE = "com.taleckij_anton.taleckijapp.BROADCAST_ACTION_UPDATE_CACHE";
 
     public static final String BROADCAST_ACTION_UPDATE_IMAGE = "com.taleckij_anton.taleckijapp.UPDATE_IMAGE";
     public static final String BROADCAST_PARAM_IMAGE = "com.taleckij_anton.taleckijapp.IMAGE";
@@ -52,7 +51,7 @@ public class ImageLoaderService extends JobIntentService {
             name = ImageSaver.DEFAULT_IMAGE_NAME;
         }
         intent.putExtra(PARAM_IMAGE_NAME, name);
-        runCacheUpdate(context);
+        //runCacheUpdate(context);
         enqueueWork(context, ImageLoaderService.class, JOB_ID_LOAD_IMAGE, intent);
     }
 
@@ -69,7 +68,7 @@ public class ImageLoaderService extends JobIntentService {
             sAlarmManager.cancel(sPendingIntent);
             sPendingIntent.cancel();
         }
-        final Intent intent = new Intent(ACTION_UPDATE_CACHE);
+        final Intent intent = new Intent(BROADCAST_ACTION_UPDATE_CACHE);
         sPendingIntent = PendingIntent.getBroadcast(context, 0,
                 intent, 0);//PendingIntent.FLAG_CANCEL_CURRENT);
         sAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -91,13 +90,15 @@ public class ImageLoaderService extends JobIntentService {
                 mUpdateCacheThread.start();
             }*/
             String name = intent.getStringExtra(PARAM_IMAGE_NAME);
-            if(ImageSaver.getInstance().isCached(name) == false){
+            if(ImageSaver.getInstance().isCached(getApplicationContext(), name) == false){
                 final String imageUrl = mImageLoader.getImageUrl();
                 if (TextUtils.isEmpty(imageUrl))
                     return;
                 final Bitmap bitmap = mImageLoader.loadBitmap(imageUrl);
                 ImageSaver.getInstance().saveImage(getApplicationContext(),
                         changeApacity(bitmap), name);
+
+                runCacheUpdate(getApplicationContext());
 
                 YandexMetrica.reportEvent(MetricaAppEvents.DownloadImage);
             } else {
@@ -116,7 +117,7 @@ public class ImageLoaderService extends JobIntentService {
                 while (true){
                     try {
                         Thread.sleep(15000);
-                        final Intent intent = new Intent(ACTION_UPDATE_CACHE);
+                        final Intent intent = new Intent(BROADCAST_ACTION_UPDATE_CACHE);
                         sendBroadcast(intent);
                         Log.i("TAGGGG", "_----------------------------------------------------------");
                     } catch (InterruptedException e) {

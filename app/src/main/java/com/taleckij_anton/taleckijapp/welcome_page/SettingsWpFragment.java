@@ -64,42 +64,26 @@ public class SettingsWpFragment extends WpFragment {
     }
 
     @Override
-    public void onStop() {
-        if(isThemeLayout()) {
+    public void onPause() {
+        super.onPause();
+        if (isThemeLayout()) {
             final RadioButton darkThemeRadio = getActivity().findViewById(R.id.radio_two);
             applyPrefToSharedPref(R.string.theme_preference_key, darkThemeRadio.isChecked());
             //final String themeDarkPrefKey = getResources().getString(R.string.theme_preference_key);
             //editor.putBoolean(themeDarkPrefKey, darkThemeRadio.isChecked())
             //        .apply();
-        }else{
+        } else {
             final RadioButton compactLayoutRadio = getActivity().findViewById(R.id.radio_two);
             applyPrefToSharedPref(R.string.compact_layout_preference_key, compactLayoutRadio.isChecked());
         }
-        super.onStop();
     }
-
-    /*@Override
-    public void onDestroyView() {
-        Log.i("onDestroyView", String.valueOf(isThemeLayout()));
-        if(isThemeLayout()) {
-            final RadioButton darkThemeRadio = getActivity().findViewById(R.id.radio_two);
-            applyPrefToSharedPref(R.string.theme_preference_key, darkThemeRadio.isChecked());
-            //final String themeDarkPrefKey = getResources().getString(R.string.theme_preference_key);
-            //editor.putBoolean(themeDarkPrefKey, darkThemeRadio.isChecked())
-            //       .apply();
-        }else{
-            final RadioButton compactLayoutRadio = getActivity().findViewById(R.id.radio_two);
-            applyPrefToSharedPref(R.string.compact_layout_preference_key, compactLayoutRadio.isChecked());
-        }
-        super.onDestroyView();
-    }*/
 
     private void applyPrefToSharedPref(int prefKeyResId, Boolean value){
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final SharedPreferences.Editor spEditor = sharedPreferences.edit();
         final String prefKey = getResources().getString(prefKeyResId);
         spEditor.putBoolean(prefKey, value)
-                .apply();
+                .commit();
     }
 
     public static SettingsWpFragment getInstance(int wpFragmentLayoutId){

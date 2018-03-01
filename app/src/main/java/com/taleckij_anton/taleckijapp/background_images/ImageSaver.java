@@ -58,18 +58,18 @@ public class ImageSaver {
         } catch (Exception e){
             e.printStackTrace();
         } finally {
-            try{
-                if(fileOutputStream != null){
+            try {
+                if (fileOutputStream != null) {
                     fileOutputStream.close();
                 }
-            } catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
     public Bitmap loadImage(final Context context, final String fileName){
-        if(isCached(fileName)) {
+        if(isCached(context, fileName)) {
             FileInputStream fileInputStream = null;
             try {
                 fileInputStream = new FileInputStream(createFile(context, fileName));
@@ -89,8 +89,14 @@ public class ImageSaver {
         return null;
     }
 
-    public boolean isCached(String fileName){
-        return mCachedImageNames.contains(fileName);
+    public boolean isCached(Context context, String fileName){
+        if (mCachedImageNames.contains(fileName)) {
+            return true;
+        } else if (createFile(context, fileName).exists()) {
+            mCachedImageNames.add(fileName);
+            return true;
+        }
+        return false;
     }
 
     public ArrayList<String> clear(final Context context){
