@@ -5,7 +5,7 @@
     <string name="locale_my">Мой</string>
     <string name="my_email">anton.taleckij.job@gmail.com</string>
     <string name="hello_message">Привет. Добро пожаловать. Рады вам!</string>
-    <string name="next_button_text">Далее</string>
+    <string name="finish_button_text">Готово</string>
     <string name="app_description">Это простой лончер</string>
 
     <string name="light_theme_text">Светлая тема</string>

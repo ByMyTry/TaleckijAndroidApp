@@ -15,4 +15,6 @@
     <dimen name="height_head_nav_view">164dp</dimen>
     <dimen name="height_head_subtitle_nav_view">56dp</dimen>
     <dimen name="profile_app_bar_height">180dp</dimen>
+
+    <dimen name="wp_bottom_space">72dp</dimen>
 </resources>

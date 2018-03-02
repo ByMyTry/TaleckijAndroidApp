@@ -1,5 +1,7 @@
 package com.taleckij_anton.taleckijapp.welcome_page;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -9,8 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
+import android.widget.WrapperListAdapter;
 
+import com.taleckij_anton.taleckijapp.LauncherActivity;
 import com.taleckij_anton.taleckijapp.R;
+import com.taleckij_anton.taleckijapp.WelcomePageActivity;
 
 //import static com.taleckij_anton.taleckijapp.welcope_page.SimpleWpFragment.FRAGMENT_LAYOUT_ID;
 
@@ -19,7 +24,7 @@ import com.taleckij_anton.taleckijapp.R;
  */
 
 public class SettingsWpFragment extends WpFragment {
-    //private int mFragmentLayoutId;
+//    private int mFragmentLayoutId;
 
     @Nullable
     @Override
@@ -28,6 +33,11 @@ public class SettingsWpFragment extends WpFragment {
         final View view = inflater.inflate(fragmentLayoutId, container, false);
 
         setCurrentRadioFromSp(view);
+        final View finishButton = view.findViewById(R.id.wp_finish_button);
+        if(finishButton != null) {
+            View.OnClickListener onFinishClick = ((WelcomePageActivity)getActivity()).onFinishButtonClick;
+            finishButton.setOnClickListener(onFinishClick);
+        }
 
         return view;
     }

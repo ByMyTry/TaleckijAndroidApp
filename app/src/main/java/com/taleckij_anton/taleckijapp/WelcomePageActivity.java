@@ -1,6 +1,5 @@
 package com.taleckij_anton.taleckijapp;
 
-import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,29 +9,31 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.RadioButton;
 
 import com.taleckij_anton.taleckijapp.background_images.ImageLoaderService;
 import com.taleckij_anton.taleckijapp.background_images.ImageSaver;
 import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
-import com.taleckij_anton.taleckijapp.welcome_page.SettingsWpFragment;
-import com.taleckij_anton.taleckijapp.welcome_page.SimpleWpFragment;
 import com.taleckij_anton.taleckijapp.welcome_page.WpFragment;
 import com.taleckij_anton.taleckijapp.welcome_page.WpPageAdapter;
 import com.yandex.metrica.YandexMetrica;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class WelcomePageActivity extends AppCompatActivity {
     public final static String LAUNCH_FROM_LAUNCHER = "LAUNCH_FROM_LAUNCHER";
+    public final View.OnClickListener onFinishButtonClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            finishWpAndOpenLauncher(v.getContext());
+        }
+    };
 
 //    private final static String SIMPLE_WP_FRAGMENT = "SIMPLE_WP_FRAGMENT";
 //    private final static String SETTINGS_WP_FRAGMENT = "SETTINGS_WP_FRAGMENT";
@@ -102,9 +103,7 @@ public class WelcomePageActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if(isDarkTheme()) {
-            setTheme(R.style.AppTheme_Dark_NoActionBar);
-        }
+        setCurrentTheme();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome_page);
@@ -123,8 +122,20 @@ public class WelcomePageActivity extends AppCompatActivity {
 
         final ViewPager wpViewPager = findViewById(R.id.wp_view_pager);
         wpViewPager.setAdapter(new WpPageAdapter(getSupportFragmentManager()));
+        //onLastPageActionListener = createLastPageListener();\
+
+        final TabLayout wpPageIndicator = findViewById(R.id.wp_pager_indicator);
+        wpPageIndicator.setupWithViewPager(wpViewPager, true);
 
         YandexMetrica.reportEvent(MetricaAppEvents.WelcomePageOpen);
+    }
+
+    private void setCurrentTheme() {
+        if(isDarkTheme()) {
+            setTheme(R.style.AppTheme_Dark_NoActionBar);
+        } else {
+            setTheme(R.style.AppTheme_NoActionBar);
+        }
     }
 
     public boolean isDarkTheme(){
@@ -144,6 +155,13 @@ public class WelcomePageActivity extends AppCompatActivity {
                         .apply();
             }
         }
+    }
+
+    private void finishWpAndOpenLauncher(final Context context){
+        final Intent intent = new Intent();
+        intent.putExtra(LauncherActivity.LAUNCH_FROM_WELCOME_PAGE, true);
+        intent.setClass(context, LauncherActivity.class);
+        startActivity(intent);
     }
 
    /* private final View.OnClickListener

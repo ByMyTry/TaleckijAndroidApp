@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin"
-        android:text="@string/next_button_text"
+        android:text="@string/finish_button_text"
         android:layout_gravity="bottom|end"
         style="@style/Widget.AppCompat.Button.Colored"/>
 </FrameLayout>
