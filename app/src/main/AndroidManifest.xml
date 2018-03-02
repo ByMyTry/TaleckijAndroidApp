@@ -16,11 +16,11 @@
         android:theme="@style/AppTheme"
         android:fullBackupContent="@xml/my_backup_rules">
         <activity android:name=".WelcomePageActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/AppTheme"
             android:noHistory="true">
         </activity>
         <activity android:name=".LauncherActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,7 +32,7 @@
         </activity>
         <activity android:name=".AboutMeActivity"
             android:parentActivityName=".LauncherActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
         </activity>
 
         <service

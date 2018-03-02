@@ -24,6 +24,7 @@ import com.taleckij_anton.taleckijapp.welcome_page.WpFragment;
 import com.taleckij_anton.taleckijapp.welcome_page.WpPageAdapter;
 import com.yandex.metrica.YandexMetrica;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class WelcomePageActivity extends AppCompatActivity {
@@ -132,9 +133,9 @@ public class WelcomePageActivity extends AppCompatActivity {
 
     private void setCurrentTheme() {
         if(isDarkTheme()) {
-            setTheme(R.style.AppTheme_Dark_NoActionBar);
+            setTheme(R.style.AppTheme_Dark);
         } else {
-            setTheme(R.style.AppTheme_NoActionBar);
+            setTheme(R.style.AppTheme);
         }
     }
 
@@ -213,19 +214,33 @@ public class WelcomePageActivity extends AppCompatActivity {
         return wpFragment;
     }*/
 
-    public void onRadioClick(View view){
-        final RadioButton thisRadioButton, anotherRadioButton;
-        if(view.getId() == R.id.layout_radio_one
-                || view.getId() == R.id.radio_one){
-            thisRadioButton = findViewById(R.id.radio_one);
-            anotherRadioButton = findViewById(R.id.radio_two);
-        } else {
-            thisRadioButton = findViewById(R.id.radio_two);
-            anotherRadioButton= findViewById(R.id.radio_one);
-        }
-        thisRadioButton.setChecked(true);
-        anotherRadioButton.setChecked(false);
-    }
+//    public void onRadioClick(View view){
+////        final RadioButton thisRadioButton, anotherRadioButton;
+////        if(view.getId() == R.id.layout_radio_one
+////                || view.getId() == R.id.radio_one){
+////            thisRadioButton = getView().findViewById(R.id.radio_one);
+////            anotherRadioButton = getView().findViewById(R.id.radio_two);
+////        } else {
+////            thisRadioButton = getView().findViewById(R.id.radio_two);
+////            anotherRadioButton= getView().findViewById(R.id.radio_one);
+////        }
+////        thisRadioButton.setChecked(true);
+////        anotherRadioButton.setChecked(false);
+//        final int radioOneId, radioTwoId;
+//        if(Arrays.asList(new Integer[]{R.id.radio_theme_one, R.id.radio_theme_two,
+//        R.id.layout_radio_theme_one, R.id.layout_radio_theme_two}).contains(view.getId())){
+//            radioOneId = R.id.radio_theme_one;
+//            radioTwoId = R.id.radio_theme_two;
+//        } else {
+//            radioOneId = R.id.radio_layout_one;
+//            radioTwoId = R.id.radio_layout_two;
+//        }
+//        final RadioButton
+//                firstRadioButton = findViewById(radioOneId),
+//                secondRadioButton = findViewById(radioTwoId);
+//        firstRadioButton.setChecked(!firstRadioButton.isChecked());
+//        secondRadioButton.setChecked(!firstRadioButton.isChecked());
+//    }
 
     private void backgroundImageProcess(){
         SharedPreferences sharedPreferences =

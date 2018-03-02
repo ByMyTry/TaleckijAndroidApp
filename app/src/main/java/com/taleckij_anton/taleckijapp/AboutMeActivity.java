@@ -17,6 +17,8 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.taleckij_anton.taleckijapp.background_images.ImageLoaderService;
@@ -65,7 +67,7 @@ public class AboutMeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if(isDarkTheme()) {
-            setTheme(R.style.AppTheme_Dark_NoActionBar);
+            setTheme(R.style.AppTheme_Dark);
         }
 
         super.onCreate(savedInstanceState);

@@ -164,7 +164,7 @@ public class LauncherActivity extends AppCompatActivity{
 
         if(isDarkTheme()) {
             //getApplication().setTheme(R.style.AppTheme_Dark);
-            setTheme(R.style.AppTheme_Dark_NoActionBar);
+            setTheme(R.style.AppTheme_Dark);
         }
 
         super.onCreate(savedInstanceState);
