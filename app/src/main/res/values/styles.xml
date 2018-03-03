@@ -26,6 +26,7 @@
 
     <style name="LauncherAppText">
         <item name="android:gravity">center</item>
+        <!--<item name="android:textColor">?attr/titleTextColor</item>-->
         <item name="android:textColor">@android:color/white</item>
         <item name="android:ellipsize">end</item>
         <item name="android:paddingTop">4dp</item>

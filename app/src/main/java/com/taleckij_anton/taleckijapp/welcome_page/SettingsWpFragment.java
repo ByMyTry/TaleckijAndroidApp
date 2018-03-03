@@ -47,10 +47,13 @@ public class SettingsWpFragment extends WpFragment {
         }
 
         private void setCheckedIfNecessary(RadioButton checked, RadioButton unchecked){
-            if(checked.isChecked() == false){
-                checked.setChecked(true);
-                unchecked.setChecked(false);
-            }
+            checked.setChecked(true);
+            unchecked.setChecked(false);
+//            Баг, система помечает checked раньше меня, в итоге if пролетает
+//            if(checked.isChecked() == false){
+//                checked.setChecked(true);
+//                unchecked.setChecked(false);
+//            }
         }
     };
 

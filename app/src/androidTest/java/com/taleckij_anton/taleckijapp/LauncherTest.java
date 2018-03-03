@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.DrawerMatchers.isClosed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -27,13 +28,27 @@ public class LauncherTest {
             mActivityRule = new ActivityTestRule<>(LauncherActivity.class);
 
     @Test
+    public void fastPagesForward(){
+        try {
+            swipeLeftNTimes(R.id.launcher, 2);
+        } catch (NoMatchingViewException e) {
+            //first launch
+            //TODO [переделать] мокнуть SharedPreference
+            swipeLeftNTimes(R.id.wp_view_pager, 3);
+            onView(withId(R.id.wp_finish_button)).perform(click());
+            swipeLeftNTimes(R.id.launcher, 2);
+        }
+    }
+
+    @Test
     public void openAboutMe(){
         try {
             clickPhotoInDrawer();
         } catch (NoMatchingViewException e) {
             //first launch
             //TODO [переделать] мокнуть SharedPreference
-            clickNTimes(R.id.button_next, 4);
+            swipeLeftNTimes(R.id.wp_view_pager, 3);
+            onView(withId(R.id.wp_finish_button)).perform(click());
             clickPhotoInDrawer();
         }
     }
@@ -45,9 +60,9 @@ public class LauncherTest {
         onView(withId(R.id.nav_header_my_photo)).perform(click());
     }
 
-    private void clickNTimes(int id, int n){
+    private void swipeLeftNTimes(int id, int n){
         for (int i = 0; i < n; i++) {
-            onView(withId(id)).perform(click());
+            onView(withId(id)).perform(swipeLeft());
         }
     }
 }

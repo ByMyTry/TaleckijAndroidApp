@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -44,41 +45,45 @@ public class WelcomePageTest {
 
     @Test
     public void changeThemeToLight() {
-        clickNTimes(R.id.button_next, 2);
-        onView(withId(R.id.radio_one)).perform(click());
-        onView(withId(R.id.radio_two)).check(matches(not(isChecked())));
-        onView(withId(R.id.radio_one)).check(matches(isChecked()));
+        swipeLeftNTimes(R.id.wp_view_pager, 2);
+        onView(withId(R.id.radio_theme_one)).perform(click());
+        onView(withId(R.id.radio_theme_one)).perform(click());
+        onView(withId(R.id.radio_theme_two)).check(matches(not(isChecked())));
+        onView(withId(R.id.radio_theme_one)).check(matches(isChecked()));
     }
 
     @Test
     public void changeThemeToDark() {
-        clickNTimes(R.id.button_next, 2);
-        onView(withId(R.id.radio_two)).perform(click());
-        onView(withId(R.id.radio_one)).check(matches(not(isChecked())));
-        onView(withId(R.id.radio_two)).check(matches(isChecked()));
-        onView(withId(R.id.radio_one)).perform(click());
+        swipeLeftNTimes(R.id.wp_view_pager, 2);
+        onView(withId(R.id.radio_theme_two)).perform(click());
+        onView(withId(R.id.radio_theme_two)).perform(click());
+        onView(withId(R.id.radio_theme_one)).check(matches(not(isChecked())));
+        onView(withId(R.id.radio_theme_two)).check(matches(isChecked()));
+//        onView(withId(R.id.radio_theme_one)).perform(click());
     }
 
     @Test
     public void changeLayoutTypeToNormal() {
-        clickNTimes(R.id.button_next, 3);
-        onView(withId(R.id.radio_one)).perform(click());
-        onView(withId(R.id.radio_two)).check(matches(not(isChecked())));
-        onView(withId(R.id.radio_one)).check(matches(isChecked()));
+        swipeLeftNTimes(R.id.wp_view_pager, 3);
+        onView(withId(R.id.radio_layout_one)).perform(click());
+        onView(withId(R.id.radio_layout_one)).perform(click());
+        onView(withId(R.id.radio_layout_two)).check(matches(not(isChecked())));
+        onView(withId(R.id.radio_layout_one)).check(matches(isChecked()));
     }
 
     @Test
     public void changeLayoutTypeToCompact() {
-        clickNTimes(R.id.button_next, 3);
-        onView(withId(R.id.radio_two)).perform(click());
-        onView(withId(R.id.radio_one)).check(matches(not(isChecked())));
-        onView(withId(R.id.radio_two)).check(matches(isChecked()));
-        onView(withId(R.id.radio_one)).perform(click());
+        swipeLeftNTimes(R.id.wp_view_pager, 3);
+        onView(withId(R.id.radio_layout_two)).perform(click());
+        onView(withId(R.id.radio_layout_two)).perform(click());
+        onView(withId(R.id.radio_layout_one)).check(matches(not(isChecked())));
+        onView(withId(R.id.radio_layout_two)).check(matches(isChecked()));
+//        onView(withId(R.id.radio_layout_one)).perform(click());
     }
 
-    private void clickNTimes(int id, int n){
+    private void swipeLeftNTimes(int id, int n){
         for (int i = 0; i < n; i++) {
-            onView(withId(id)).perform(click());
+            onView(withId(id)).perform(swipeLeft());
         }
     }
 }
