@@ -1,24 +1,17 @@
 package com.taleckij_anton.taleckijapp;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -33,19 +26,15 @@ import com.yandex.metrica.YandexMetrica;
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.UpdateManager;
 
-import java.util.List;
-
 import io.fabric.sdk.android.Fabric;
 
-public class LauncherActivity extends AppCompatActivity{
+public class LauncherActivity extends BaseActivity{
     public static final String LAUNCH_FROM_WELCOME_PAGE = "LAUNCH_FROM_WELCOME_PAGE";
     public static final String LAUNCH_FROM_PROFILE = "LAUNCH_FROM_PROFILE";
 
     private static int sCurrentMenuItemId = -1;
     private final String CURRENT_MENU_ITEM_ID ="CURRENT_MENU_ITEM_ID";
     private final String CHANGE_THEME_FROM_SETTINGS = "CHANGE_THEME_FROM_SETTINGS";
-
-//    private NavigationView mNavigationView;
 
     private final SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener =
             new SharedPreferences.OnSharedPreferenceChangeListener(){
@@ -58,7 +47,7 @@ public class LauncherActivity extends AppCompatActivity{
                     final String SORT_TYPE_APPS_KEY = getResources().getString(R.string.sorttype_apps_pref_key);
                     final String SHOW_WP_NEXT_TIME_PREF_KEY = getResources().getString(R.string.launch_wp_pref_key);
                     if(THEME_PREF_KEY.equals(key)){
-                        reloadActivivty();
+                        reloadActivity();
 
                         YandexMetrica.reportEvent(MetricaAppEvents.ChangeTheme);
                     } else if(UPDATE_CACHE_INTERVAL_PREF_KEY.equals(key)) {
@@ -80,7 +69,7 @@ public class LauncherActivity extends AppCompatActivity{
 
                     } else if(DIFF_BACK_IMAGE_PREF_KEY.equals(key)){
                         ImageSaver.getInstance().clear(LauncherActivity.this);
-                        reloadActivivty();
+                        reloadActivity();
 
                         YandexMetrica.reportEvent(MetricaAppEvents.DiffBackImagesOptionChanged);
                     }else if(LAYOUT_TYPE_PREF_KEY.equals(key)){
@@ -92,7 +81,7 @@ public class LauncherActivity extends AppCompatActivity{
                     }
                 }
 
-                private void reloadActivivty(){
+                private void reloadActivity(){
                     final Intent intent = LauncherActivity.this.getIntent();
                     LauncherActivity.this.finish();
                     intent.putExtra(CHANGE_THEME_FROM_SETTINGS,true);
@@ -102,41 +91,6 @@ public class LauncherActivity extends AppCompatActivity{
                 }
             };
 
-    private final BroadcastReceiver mUpdateImageBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            String action = intent.getAction();
-            if (ImageLoaderService.BROADCAST_ACTION_UPDATE_IMAGE.equals(action)) {
-                final String className = LauncherActivity.class.getSimpleName();
-                final Boolean hasImageName = intent.getBooleanExtra(className, false);
-                final Boolean hasDefaultImageName =
-                        intent.getBooleanExtra(ImageSaver.DEFAULT_IMAGE_NAME, false);
-                final String imageName = hasImageName ? className:
-                        hasDefaultImageName ? ImageSaver.DEFAULT_IMAGE_NAME: null;
-                if(TextUtils.isEmpty(imageName) == false){
-                    final Bitmap bitmap = ImageSaver.getInstance()
-                            .loadImage(getApplicationContext(), imageName);
-                    setDrawable(bitmap);
-                }
-
-                YandexMetrica.reportEvent(MetricaAppEvents.SetBackgroundImage);
-            } else if(ImageLoaderService.BROADCAST_ACTION_UPDATE_CACHE.equals(action)){
-                List<String> imageNames = ImageSaver.getInstance().clear(context);
-                for(String imageName : imageNames) {
-                    ImageLoaderService.enqueueWork(context, ImageLoaderService.ACTION_LOAD_IMAGE,
-                            imageName);
-                }
-
-                YandexMetrica.reportEvent(MetricaAppEvents.UpdateBackImagesCache);
-            }
-        }
-
-        private void setDrawable(final Bitmap bitmap){
-            final Drawable drawable = new BitmapDrawable(getResources(), bitmap);
-            LauncherActivity.this.setDrawable(drawable);
-        }
-    };
-
     private final NavigationView.OnNavigationItemSelectedListener
             mOnNavigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {
         private DrawerLayout mDrawerLayout;
@@ -144,7 +98,6 @@ public class LauncherActivity extends AppCompatActivity{
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             int menuItemId = item.getItemId();
-            //replaceAppsFragment();
             if(menuItemId!= sCurrentMenuItemId) {
                 sCurrentMenuItemId = menuItemId;
                 replaceFragmentByItemId(menuItemId);
@@ -161,11 +114,6 @@ public class LauncherActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         launchWelcomePageIfNecessary();
-
-        if(isDarkTheme()) {
-            //getApplication().setTheme(R.style.AppTheme_Dark);
-            setTheme(R.style.AppTheme_Dark);
-        }
 
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
@@ -199,15 +147,14 @@ public class LauncherActivity extends AppCompatActivity{
         toggle.syncState();
 
         final NavigationView navigationView = findViewById(R.id.launcher_nav_view);
-//        mNavigationView = navigationView;
         navigationView.setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         final View myPhotoHeaderNavView = navigationView
-                .getHeaderView(0).findViewById(R.id.nav_header_my_photo);
+                .getHeaderView(0)
+                .findViewById(R.id.nav_header_my_photo);
         myPhotoHeaderNavView.setOnClickListener(onHeaderPhotoClickListener);
 
         replaceFragment(savedInstanceState);
-        //replaceRecyclerFragment(LauncherRecyclerFragment.GRID);
 
         checkForUpdates();
     }
@@ -241,13 +188,6 @@ public class LauncherActivity extends AppCompatActivity{
         return launchWpOnce;
     }
 
-    public boolean isDarkTheme(){
-        final SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        final String themePrefKey = getResources().getString(R.string.theme_preference_key);
-        return sharedPreferences.getBoolean(themePrefKey, false);
-    }
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.launcher);
@@ -258,8 +198,7 @@ public class LauncherActivity extends AppCompatActivity{
         }
     }
 
-    private final View.OnClickListener
-            onHeaderPhotoClickListener = new View.OnClickListener(){
+    private final View.OnClickListener onHeaderPhotoClickListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
             Intent intent = new Intent();
@@ -271,15 +210,7 @@ public class LauncherActivity extends AppCompatActivity{
     private void replaceFragmentByItemId(int menuItemId){
         if(menuItemId == R.id.launcher_desk_menu_item) {
             replaceAppsVpFragment();
-        } /*else if(menuItemId == R.id.launcher_grid_menu_item) {
-            replaceAppsFragment(AppsFragment.APPS_GRID_LAYOUT);
-
-            YandexMetrica.reportEvent(MetricaAppEvents.AppsGridOpen);
-        } else if(menuItemId == R.id.launcher_linear_menu_item) {
-            replaceAppsFragment(AppsFragment.APPS_LINEAR_LAYOUT);
-
-            YandexMetrica.reportEvent(MetricaAppEvents.AppsLinearOpen);
-        }else if (menuItemId == R.id.grid_layout_menu_item){
+        } /*else if (menuItemId == R.id.grid_layout_menu_item){
             replaceRecyclerFragment(LauncherRecyclerFragment.GRID);
         } else if(menuItemId == R.id.linear_layout_menu_item){
             replaceRecyclerFragment(LauncherRecyclerFragment.LINEAR);
@@ -301,29 +232,7 @@ public class LauncherActivity extends AppCompatActivity{
         return appsVpFragment;
     }
 
-    /*private DesktopFragment replaceDesktopFragment(){
-        DesktopFragment desktopFragment = new DesktopFragment();
-
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.list_fragment_place, desktopFragment)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
-
-        return desktopFragment;
-    }
-
-    private AppsFragment replaceAppsFragment(String layoutType){
-        AppsFragment appsFragment = AppsFragment.getInstance(layoutType);
-
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.list_fragment_place, appsFragment)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
-
-        return appsFragment;
-    }
-
-    private void replaceRecyclerFragment(String fragmentType){
+    /*private void replaceRecyclerFragment(String fragmentType){
        final LauncherRecyclerFragment launcherRecyclerFragment
                = LauncherRecyclerFragment.getInstance(fragmentType);
 
@@ -370,26 +279,10 @@ public class LauncherActivity extends AppCompatActivity{
         }
     }
 
-    private void backgroundImageProcess() {
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        String diffBackImagePrefKey =
-                getResources().getString(R.string.diff_background_image_pref_key);
-        Boolean useDiffImages = sharedPreferences.getBoolean(diffBackImagePrefKey, false);
-        String name = null;
-        if(useDiffImages) {
-            name = this.getClass().getSimpleName();
-        }
-        ImageLoaderService.enqueueWork(this, ImageLoaderService.ACTION_LOAD_IMAGE, name);
-    }
-
-    private void setDrawable(Drawable drawable) {
-        findViewById(R.id.launcher).setBackground(drawable);
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            findViewById(R.id.launcher).setBackground(drawable);
-        } else {
-            findViewById(R.id.launcher).setBackgroundDrawable(drawable);
-        }*/
+    @Nullable
+    @Override
+    protected View getBackView() {
+        return findViewById(R.id.launcher);
     }
 
     @Override
@@ -406,12 +299,6 @@ public class LauncherActivity extends AppCompatActivity{
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
 
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ImageLoaderService.BROADCAST_ACTION_UPDATE_IMAGE);
-        intentFilter.addAction(ImageLoaderService.BROADCAST_ACTION_UPDATE_CACHE);
-        registerReceiver(mUpdateImageBroadcastReceiver, intentFilter);
-        backgroundImageProcess();
-
         checkForCrashes();
     }
 
@@ -420,7 +307,6 @@ public class LauncherActivity extends AppCompatActivity{
         super.onPause();
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
-        unregisterReceiver(mUpdateImageBroadcastReceiver);
 
         unregisterManagers();
     }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -92,10 +93,11 @@ public class ImageSaver {
     public boolean isCached(Context context, String fileName){
         if (mCachedImageNames.contains(fileName)) {
             return true;
-        } else if (createFile(context, fileName).exists()) {
-            mCachedImageNames.add(fileName);
-            return true;
         }
+//        else if (createFile(context, fileName).exists()) {
+//            mCachedImageNames.add(fileName);
+//            return true;
+//        }
         return false;
     }
 

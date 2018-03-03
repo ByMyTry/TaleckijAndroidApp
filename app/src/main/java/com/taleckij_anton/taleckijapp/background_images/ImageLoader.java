@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+import android.util.Log;
 import android.util.Xml;
 
 import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
@@ -108,6 +109,7 @@ public class ImageLoader {
             String imageUrl = imageUrls.get(0);
             imageUrls.remove(imageUrl);
             //final int index = new Random().nextInt(mImageUrls.size());
+            Log.i("getImageUrl", imageUrl + "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             return imageUrl;//imageUrls.get(index);
         } else {
             return null;
