@@ -15,5 +15,6 @@
         android:id="@+id/app_label"
         android:layout_marginStart="@dimen/margin"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        style="@style/LauncherAppText"/>
 </LinearLayout>
