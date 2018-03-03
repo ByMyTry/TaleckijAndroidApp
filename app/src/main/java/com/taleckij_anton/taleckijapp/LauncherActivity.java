@@ -12,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -29,12 +30,9 @@ import net.hockeyapp.android.UpdateManager;
 import io.fabric.sdk.android.Fabric;
 
 public class LauncherActivity extends BaseActivity{
-    public static final String LAUNCH_FROM_WELCOME_PAGE = "LAUNCH_FROM_WELCOME_PAGE";
-    public static final String LAUNCH_FROM_PROFILE = "LAUNCH_FROM_PROFILE";
-
-    private static int sCurrentMenuItemId = -1;
+//    private static long mCurrentMenuItemId = -1;
+    private long mCurrentMenuItemId = -1;
     private final String CURRENT_MENU_ITEM_ID ="CURRENT_MENU_ITEM_ID";
-    private final String CHANGE_THEME_FROM_SETTINGS = "CHANGE_THEME_FROM_SETTINGS";
 
     private final SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener =
             new SharedPreferences.OnSharedPreferenceChangeListener(){
@@ -57,7 +55,7 @@ public class LauncherActivity extends BaseActivity{
                             sharedPreferences.edit()
                                     .putString(key, currentIntervalMin)
                                     .commit();
-                            replaceFragmentByItemId(sCurrentMenuItemId);
+                            replaceFragmentByItemId(mCurrentMenuItemId);
                             sendBroadcast(new Intent(ImageLoaderService.BROADCAST_ACTION_UPDATE_CACHE));
 
                             YandexMetrica.reportEvent(MetricaAppEvents.UpdateBackImgsCacheNowOptionChanged);
@@ -84,9 +82,9 @@ public class LauncherActivity extends BaseActivity{
                 private void reloadActivity(){
                     final Intent intent = LauncherActivity.this.getIntent();
                     LauncherActivity.this.finish();
-                    intent.putExtra(CHANGE_THEME_FROM_SETTINGS,true);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    intent.putExtra(CURRENT_MENU_ITEM_ID, sCurrentMenuItemId);
+                    intent.putExtra(CURRENT_MENU_ITEM_ID, mCurrentMenuItemId);
+                    Log.i("reloadActivity", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" + mCurrentMenuItemId);
                     LauncherActivity.this.startActivity(intent);
                 }
             };
@@ -98,12 +96,12 @@ public class LauncherActivity extends BaseActivity{
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             int menuItemId = item.getItemId();
-            if(menuItemId!= sCurrentMenuItemId) {
-                sCurrentMenuItemId = menuItemId;
+            if (menuItemId != mCurrentMenuItemId) {
+                mCurrentMenuItemId = menuItemId;
                 replaceFragmentByItemId(menuItemId);
             }
 
-            if(mDrawerLayout == null){
+            if (mDrawerLayout == null) {
                 mDrawerLayout = findViewById(R.id.launcher);
             }
             mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -113,19 +111,18 @@ public class LauncherActivity extends BaseActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        launchWelcomePageIfNecessary();
-
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_launcher);
 
         final Toolbar toolbar = findViewById(R.id.launcher_toolbar);
         setSupportActionBar(toolbar);
+
         final DrawerLayout drawerLayout = findViewById(R.id.launcher);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar,
                 R.string.launcher_drawer_open_desc, R.string.launcher_drawer_close_desc
-        ){
+        ) {
             //http://thetechnocafe.com/slide-content-to-side-in-drawer-layout-android/
             /*private float scaleFactor = 6f;
             private FrameLayout content = findViewById(R.id.list_fragment_place);
@@ -159,38 +156,9 @@ public class LauncherActivity extends BaseActivity{
         checkForUpdates();
     }
 
-    private void launchWelcomePageIfNecessary(){
-        final String themePrefKey = getResources().getString(R.string.theme_preference_key);
-        final String layoutPrefKey = getResources().getString(R.string.compact_layout_preference_key);
-        final String launchWpPrefKey = getResources().getString(R.string.launch_wp_pref_key);
-        if(!thisIsNotFirstRunning(themePrefKey, layoutPrefKey)
-                || (launchWpOncePrefIsTrue(launchWpPrefKey)
-                 && !getIntent().getBooleanExtra(CHANGE_THEME_FROM_SETTINGS,false)
-                && !getIntent().getBooleanExtra(LAUNCH_FROM_WELCOME_PAGE,false)
-                && !getIntent().getBooleanExtra(LAUNCH_FROM_PROFILE, false))
-                ){
-            Intent intent = new Intent();
-            intent.putExtra(WelcomePageActivity.LAUNCH_FROM_LAUNCHER, true);
-            intent.setClass(this, WelcomePageActivity.class);
-            startActivity(intent);
-        }
-    }
-
-    private boolean thisIsNotFirstRunning(String themePrefKey, String layoutPrefKey){
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPreferences.contains(themePrefKey) && sharedPreferences.contains(layoutPrefKey);
-    }
-
-    private boolean launchWpOncePrefIsTrue(String launchWpPrefKey){
-        final SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        final boolean launchWpOnce = sharedPreferences.getBoolean(launchWpPrefKey, false);
-        return launchWpOnce;
-    }
-
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.launcher);
+        DrawerLayout drawer = findViewById(R.id.launcher);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -207,7 +175,7 @@ public class LauncherActivity extends BaseActivity{
         }
     };
 
-    private void replaceFragmentByItemId(int menuItemId){
+    private void replaceFragmentByItemId(long menuItemId){
         if(menuItemId == R.id.launcher_desk_menu_item) {
             replaceAppsVpFragment();
         } /*else if (menuItemId == R.id.grid_layout_menu_item){
@@ -255,19 +223,21 @@ public class LauncherActivity extends BaseActivity{
 
     private void replaceFragment(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            int currentMenuItemId = savedInstanceState.getInt(CURRENT_MENU_ITEM_ID, sCurrentMenuItemId);
+            long currentMenuItemId = savedInstanceState.getLong(CURRENT_MENU_ITEM_ID, -1);
+            Log.i("savedInstanceState", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" + currentMenuItemId);
             if (currentMenuItemId != -1) {
-                sCurrentMenuItemId = currentMenuItemId;
+                mCurrentMenuItemId = currentMenuItemId;
                 replaceFragmentByItemId(currentMenuItemId);
             } else {
                 replaceAppsVpFragment();
                 //replaceAppsFragment(AppsFragment.APPS_GRID_LAYOUT);
             }
         } else if(getIntent() != null) {
-            int currentMenuItemId = getIntent().getIntExtra(CURRENT_MENU_ITEM_ID, sCurrentMenuItemId);
+            long currentMenuItemId = getIntent().getLongExtra(CURRENT_MENU_ITEM_ID, -1);
+            Log.i("getIntent", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" + currentMenuItemId);
             if (currentMenuItemId != -1) {
                 getIntent().putExtra(CURRENT_MENU_ITEM_ID, -1);
-                sCurrentMenuItemId = currentMenuItemId;
+                mCurrentMenuItemId = currentMenuItemId;
                 replaceFragmentByItemId(currentMenuItemId);
             } else {
                 replaceAppsVpFragment();
@@ -287,8 +257,9 @@ public class LauncherActivity extends BaseActivity{
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        if (sCurrentMenuItemId != -1) {
-            outState.putInt(CURRENT_MENU_ITEM_ID, sCurrentMenuItemId);
+        if (mCurrentMenuItemId != -1) {
+            Log.i("onSaveInstanceState", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" + mCurrentMenuItemId);
+            outState.putLong(CURRENT_MENU_ITEM_ID, mCurrentMenuItemId);
         }
         super.onSaveInstanceState(outState);
     }

@@ -109,7 +109,7 @@ public class ImageLoader {
             String imageUrl = imageUrls.get(0);
             imageUrls.remove(imageUrl);
             //final int index = new Random().nextInt(mImageUrls.size());
-            Log.i("getImageUrl", imageUrl + "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            Log.i("getImageUrl", imageUrl);
             return imageUrl;//imageUrls.get(index);
         } else {
             return null;

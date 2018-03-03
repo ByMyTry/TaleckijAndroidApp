@@ -30,7 +30,6 @@ public class AboutMeActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 final Intent intent = new Intent();
-                intent.putExtra(LauncherActivity.LAUNCH_FROM_PROFILE, true);
                 intent.setClass(v.getContext(), LauncherActivity.class);
                 startActivity(intent);
             }
@@ -42,6 +41,8 @@ public class AboutMeActivity extends BaseActivity {
     @Nullable
     @Override
     protected View getBackView() {
-        return findViewById(R.id.profile_content);
+        //TODO как красивей?
+        return findViewById(R.id.profile);
+//        return findViewById(R.id.profile_content);
     }
 }

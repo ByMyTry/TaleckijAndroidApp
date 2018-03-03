@@ -15,22 +15,17 @@ import com.taleckij_anton.taleckijapp.welcome_page.WpPageAdapter;
 import com.yandex.metrica.YandexMetrica;
 
 public class WelcomePageActivity extends BaseActivity {
-    public final static String LAUNCH_FROM_LAUNCHER = "LAUNCH_FROM_LAUNCHER";
     public final View.OnClickListener onFinishButtonClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            finishWpAndOpenLauncher(v.getContext());
+            openLauncher(v.getContext());
         }
     };
 
-//    private final static String SIMPLE_WP_FRAGMENT = "SIMPLE_WP_FRAGMENT";
-//    private final static String SETTINGS_WP_FRAGMENT = "SETTINGS_WP_FRAGMENT";
-
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome_page);
-
-        ifWpOnceTrueSetFalse();
 
         final ViewPager wpViewPager = findViewById(R.id.wp_view_pager);
         wpViewPager.setAdapter(new WpPageAdapter(getSupportFragmentManager()));
@@ -47,22 +42,8 @@ public class WelcomePageActivity extends BaseActivity {
         return findViewById(R.id.wp_fragment_place);
     }
 
-    private void ifWpOnceTrueSetFalse(){
-        final String launchWpPrefKey = getResources().getString(R.string.launch_wp_pref_key);
-        if(getIntent().getBooleanExtra(LAUNCH_FROM_LAUNCHER, false)) {
-            final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-            final boolean launchWpOnce = sharedPreferences.getBoolean(launchWpPrefKey, false);
-            if (launchWpOnce) {
-                sharedPreferences.edit()
-                        .putBoolean(launchWpPrefKey, false)
-                        .apply();
-            }
-        }
-    }
-
-    private void finishWpAndOpenLauncher(final Context context){
+    private void openLauncher(final Context context){
         final Intent intent = new Intent();
-        intent.putExtra(LauncherActivity.LAUNCH_FROM_WELCOME_PAGE, true);
         intent.setClass(context, LauncherActivity.class);
         startActivity(intent);
     }

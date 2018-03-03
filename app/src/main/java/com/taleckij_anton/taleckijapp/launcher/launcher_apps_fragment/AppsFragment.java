@@ -116,11 +116,6 @@ public class AppsFragment extends Fragment {
         return new ArrayList<>(addedAppsModels);
     }
 
-    /*@Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-    }*/
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater,
