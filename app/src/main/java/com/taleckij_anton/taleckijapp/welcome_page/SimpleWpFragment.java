@@ -14,11 +14,11 @@ public class SimpleWpFragment extends WpFragment {
     /*public static final String FRAGMENT_LAYOUT_ID = "FRAGMENT_LAYOUT_ID";
     protected int fragmentLayoutId;*/
 
-    @Nullable
+    /*@Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         return super.onCreateView(inflater, container, savedInstanceState);
-    }
+    }*/
 
     public static SimpleWpFragment getInstance(int wpFragmentLayoutId){
         final Bundle bundle = new Bundle();

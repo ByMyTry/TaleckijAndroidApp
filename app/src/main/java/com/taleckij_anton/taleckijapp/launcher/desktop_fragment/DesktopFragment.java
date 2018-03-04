@@ -183,7 +183,6 @@ public class DesktopFragment extends Fragment {
                 new GridLayoutManager(mRecyclerView.getContext(), spanCount));
         final OnDeskAppsViewGestureActioner onDeskAppsViewGestureActioner =
                 new OnDeskAppsViewGestureActioner() {
-                    private Integer oldDeskPos;
 
                     @Override
                     public void launchApp(Context context, AppInfoModel incrementedAppModel){
@@ -204,15 +203,12 @@ public class DesktopFragment extends Fragment {
                     public void startDrag(View v, AppInfoModel appModel) {
                         mGarbageSpace.setVisibility(View.VISIBLE);
                         mCurrentDragApp = appModel;
-                        oldDeskPos = appModel.getDesktopPosition();
                     }
 
                     @Override
                     public void stopDrag(View v, AppInfoModel appModelWithNewDescPos,
                                          boolean changeDeskPos) {
-//                        mGarbageSpace.setVisibility(View.INVISIBLE);
                         if(changeDeskPos) {
-//                            mAppsDbSynchronizer.updateDeskPosDb(mAppsDbHelper, appModelWithNewDescPos);
                             mAppsDbSynchronizer.updateDeskPosDb(mAppsDbHelper, mCurrentDragApp);
                             sendUpdateAppPosFromDeskBroadcast(mCurrentDragApp);
                         }
@@ -222,25 +218,4 @@ public class DesktopFragment extends Fragment {
                 new DesktopAppsAdapter(appModels, onDeskAppsViewGestureActioner);
         mRecyclerView.setAdapter(adapter);
     }
-
-    /*private void incrementLaunchCountDb(AppInfoModel incrementedAppModel){
-        SQLiteDatabase db = null;
-        ContentValues values = new ContentValues();
-        values.put(AppsDb.CountTableColumns.FIELD_APP_LAUNCH_COUNT,
-                incrementedAppModel.getLaunchCount());
-        try {
-            db = mAppsDbHelper.getWritableDatabase();
-            db.update(
-                    AppsDb.APPS_LUNCH_COUNT_TABLE,
-                    values,
-                    AppsDb.CountTableColumns.FILED_APP_FULL_NAME + " LIKE ?",
-                    new String[]{incrementedAppModel.getFullName()}
-            );
-        } catch (SQLiteException e) {
-        } finally {
-            if(db != null)db.close();
-        }
-    }
-
-    */
 }

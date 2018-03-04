@@ -16,11 +16,21 @@
         android:theme="@style/AppTheme"
         android:fullBackupContent="@xml/my_backup_rules">
         <activity android:name=".WelcomePageActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/AppTheme"
             android:noHistory="true">
         </activity>
+
         <activity android:name=".LauncherActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
+        </activity>
+
+        <activity android:name=".AboutMeActivity"
+            android:parentActivityName=".LauncherActivity"
+            android:theme="@style/AppTheme">
+        </activity>
+
+        <activity android:name=".NavigatorActivity"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,10 +39,6 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.MONKEY"/>
             </intent-filter>
-        </activity>
-        <activity android:name=".AboutMeActivity"
-            android:parentActivityName=".LauncherActivity"
-            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <service

@@ -5,7 +5,7 @@
     <string name="my_name">Anton Taleckij</string>
     <string name="my_email">anton.taleckij.job@gmail.com</string>
     <string name="hello_message">שלום. ברוך הבא. שמח לראות אותך!</string>
-    <string name="next_button_text">הַבָּא</string>
+    <string name="finish_button_text">הַבָּא</string>
     <string name="app_description">זהו היישום פשוט משגר</string>
 
     <string name="light_theme_text">נושא קל</string>
