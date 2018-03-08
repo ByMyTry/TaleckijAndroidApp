@@ -54,7 +54,8 @@ public class LauncherActivity extends BaseActivity{
                         if(interval == 0) {
                             sharedPreferences.edit()
                                     .putString(key, currentIntervalMin)
-                                    .commit();
+//                                    .commit();
+                                    .apply();
                             replaceFragmentByItemId(mCurrentMenuItemId);
                             sendBroadcast(new Intent(ImageLoaderService.BROADCAST_ACTION_UPDATE_CACHE));
 

@@ -17,6 +17,12 @@ public class AppsDbHelper extends SQLiteOpenHelper {
     }
 
     @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        db.execSQL("PRAGMA foreign_keys=ON;");
+    }
+
+    @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(AppsDb.CREATE_COUNT_TABLE_SCRIPT);
         db.execSQL(AppsDb.CREATE_DESKTOP_TABLE_SCRIPT);

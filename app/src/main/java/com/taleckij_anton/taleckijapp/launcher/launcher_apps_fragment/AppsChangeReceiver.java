@@ -24,17 +24,17 @@ public class AppsChangeReceiver extends BroadcastReceiver {
         if(intent.getAction().equals(Intent.ACTION_PACKAGE_ADDED)) {
             if(!intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)) {
                 int addedAppUid = intent.getIntExtra(Intent.EXTRA_UID, -1);
-                onAppsChangeListener.onAppInstalled(addedAppUid);
+                onAppsChangeListener.onAppInstalled(context, addedAppUid);
             }
         } else if (intent.getAction().equals(Intent.ACTION_PACKAGE_REMOVED)) {
             if(!intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)) {
                 int removedAppUid = intent.getIntExtra(Intent.EXTRA_UID, -1);
-                onAppsChangeListener.onAppRemoved(removedAppUid);
+                onAppsChangeListener.onAppRemoved(context, removedAppUid);
             }
         } else if (intent.getAction().equals(Intent.ACTION_PACKAGE_REPLACED)){
             int updatedAppUid = intent.getIntExtra(Intent.EXTRA_UID, -1);
-            onAppsChangeListener.onAppRemoved(updatedAppUid);
-            onAppsChangeListener.onAppInstalled(updatedAppUid);
+            onAppsChangeListener.onAppRemoved(context, updatedAppUid);
+            onAppsChangeListener.onAppInstalled(context, updatedAppUid);
         }
     }
 }

@@ -12,6 +12,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.JobIntentService;
 import android.text.TextUtils;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
 import com.yandex.metrica.YandexMetrica;
@@ -27,6 +29,7 @@ public class ImageLoaderService extends JobIntentService {
     public static final String ACTION_LOAD_IMAGE = "com.taleckij_anton.taleckijapp.LOAD_IMAGE";
 
     public static final String BROADCAST_ACTION_UPDATE_CACHE = "com.taleckij_anton.taleckijapp.BROADCAST_ACTION_UPDATE_CACHE";
+    public static final String BROADCAST_ACTION_SET_TEMP_IMAGE = "com.taleckij_anton.taleckijapp.BROADCAST_ACTION_SET_TEMP_IMAGE";
 
     public static final String BROADCAST_ACTION_UPDATE_IMAGE = "com.taleckij_anton.taleckijapp.UPDATE_IMAGE";
     public static final String BROADCAST_PARAM_IMAGE = "com.taleckij_anton.taleckijapp.IMAGE";
@@ -73,9 +76,12 @@ public class ImageLoaderService extends JobIntentService {
                 intent, 0);//PendingIntent.FLAG_CANCEL_CURRENT);
         sAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         long intervalToStart = mIntervalUpdateCacheMillis;
-        if(intervalToStart == 0){
-            mIntervalUpdateCacheMillis = DEFAULT_UPDATE_CACHE_INTERVAL;
-        }
+        //Ноль не попадает т.к. изменяю его сразу в обработчике, который слушает sp
+//        if(intervalToStart == 0) {
+//            mIntervalUpdateCacheMillis = DEFAULT_UPDATE_CACHE_INTERVAL;// * MINUTES_TO_MILLIS_COEF;
+//        }
+//        intervalToStart = 0;
+//        mIntervalUpdateCacheMillis = 5000;
         sAlarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() + intervalToStart,
                 mIntervalUpdateCacheMillis, sPendingIntent);
@@ -91,6 +97,9 @@ public class ImageLoaderService extends JobIntentService {
             }*/
             String name = intent.getStringExtra(PARAM_IMAGE_NAME);
             if(ImageSaver.getInstance().isCached(getApplicationContext(), name) == false){
+                final Intent broadcastIntent = new Intent(BROADCAST_ACTION_SET_TEMP_IMAGE);
+                sendBroadcast(broadcastIntent);
+
                 final String imageUrl = mImageLoader.getImageUrl();
                 if (TextUtils.isEmpty(imageUrl))
                     return;

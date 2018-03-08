@@ -31,10 +31,16 @@ import java.util.List;
 
 public class BaseActivity extends AppCompatActivity {
     private final BroadcastReceiver mUpdateImageBroadcastReceiver = new BroadcastReceiver() {
+        private Drawable defaultBackDraw;
+
         @Override
         public void onReceive(final Context context, final Intent intent) {
             String action = intent.getAction();
-            if (ImageLoaderService.BROADCAST_ACTION_UPDATE_IMAGE.equals(action)) {
+            if(ImageLoaderService.BROADCAST_ACTION_SET_TEMP_IMAGE.equals(action)) {
+                defaultBackDraw = getResources().getDrawable(R.drawable.back_image_default, getTheme());
+                setDrawable(((BitmapDrawable) defaultBackDraw).getBitmap());
+
+            } else if(ImageLoaderService.BROADCAST_ACTION_UPDATE_IMAGE.equals(action)) {
                 final String className = getCurrentActivityName();
                 final Boolean hasImageName = intent.getBooleanExtra(className, false);
                 final Boolean hasDefaultImageName =
@@ -69,6 +75,8 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setCurrentTheme();
         super.onCreate(savedInstanceState);
+
+        PreferenceManager.setDefaultValues(this, R.xml.preference, false);
     }
 
 //    @Override
@@ -86,6 +94,7 @@ public class BaseActivity extends AppCompatActivity {
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ImageLoaderService.BROADCAST_ACTION_UPDATE_IMAGE);
+        intentFilter.addAction(ImageLoaderService.BROADCAST_ACTION_SET_TEMP_IMAGE);
         intentFilter.addAction(ImageLoaderService.BROADCAST_ACTION_UPDATE_CACHE);
         registerReceiver(mUpdateImageBroadcastReceiver, intentFilter);
         backgroundImageProcess();
