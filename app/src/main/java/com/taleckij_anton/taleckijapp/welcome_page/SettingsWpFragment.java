@@ -1,33 +1,24 @@
 package com.taleckij_anton.taleckijapp.welcome_page;
 
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
-import android.widget.WrapperListAdapter;
 
-import com.taleckij_anton.taleckijapp.LauncherActivity;
 import com.taleckij_anton.taleckijapp.R;
 import com.taleckij_anton.taleckijapp.WelcomePageActivity;
 
-import java.sql.Array;
 import java.util.Arrays;
-
-//import static com.taleckij_anton.taleckijapp.welcope_page.SimpleWpFragment.FRAGMENT_LAYOUT_ID;
 
 /**
  * Created by Lenovo on 01.02.2018.
  */
 
 public class SettingsWpFragment extends WpFragment {
-//    private int mFragmentLayoutId;
     private RadioButton mFirstRadio;
     private View mFirstLayoutRadio;
     private RadioButton mSecondRadio;
@@ -36,14 +27,16 @@ public class SettingsWpFragment extends WpFragment {
     private final View.OnClickListener mOnRadioClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            int clickedViewId = v.getId();
-            if(clickedViewId == mFirstRadio.getId()
-                    || clickedViewId == mFirstLayoutRadio.getId()){
+            final int clickedViewId = v.getId();
+            final boolean firstRadioClicked = clickedViewId == mFirstRadio.getId()
+                                            || clickedViewId == mFirstLayoutRadio.getId();
+            if(firstRadioClicked) {
                 setCheckedIfNecessary(mFirstRadio, mSecondRadio);
-            } else if(clickedViewId == mSecondRadio.getId()
-                    || clickedViewId == mSecondLayoutRadio.getId()){
+            } else {
                 setCheckedIfNecessary(mSecondRadio, mFirstRadio);
             }
+
+            setSettingToSpPreference();
         }
 
         private void setCheckedIfNecessary(RadioButton checked, RadioButton unchecked){
@@ -121,15 +114,10 @@ public class SettingsWpFragment extends WpFragment {
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
+    private void setSettingToSpPreference(){
         if (isThemeLayout()) {
             final RadioButton darkThemeRadio = getView().findViewById(R.id.radio_theme_two);
             applyPrefToSharedPref(R.string.theme_preference_key, darkThemeRadio.isChecked());
-            //final String themeDarkPrefKey = getResources().getString(R.string.theme_preference_key);
-            //editor.putBoolean(themeDarkPrefKey, darkThemeRadio.isChecked())
-            //        .apply();
         } else {
             final RadioButton compactLayoutRadio = getView().findViewById(R.id.radio_layout_two);
             applyPrefToSharedPref(R.string.compact_layout_preference_key, compactLayoutRadio.isChecked());
@@ -141,7 +129,8 @@ public class SettingsWpFragment extends WpFragment {
         final SharedPreferences.Editor spEditor = sharedPreferences.edit();
         final String prefKey = getResources().getString(prefKeyResId);
         spEditor.putBoolean(prefKey, value)
-                .commit();
+//                .commit()
+                .apply();
     }
 
     public static SettingsWpFragment getInstance(int wpFragmentLayoutId){

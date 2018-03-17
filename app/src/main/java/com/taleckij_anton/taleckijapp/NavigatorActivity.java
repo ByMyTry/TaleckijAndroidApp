@@ -12,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
  */
 
 public class NavigatorActivity extends AppCompatActivity {
+    public static final String LaunchWpIntentKey = "LaunchWpIntentKey";
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,20 +30,27 @@ public class NavigatorActivity extends AppCompatActivity {
     }
 
     private boolean needLaunchWelcomePage(){
-        final String themePrefKey = getResources().getString(R.string.theme_preference_key);
-        final String layoutPrefKey = getResources().getString(R.string.compact_layout_preference_key);
-        final String launchWpPrefKey = getResources().getString(R.string.launch_wp_pref_key);
+        if(getIntent().hasExtra(LaunchWpIntentKey)) {
+            return getIntent().getBooleanExtra(LaunchWpIntentKey, false);
+        } else {
+            final String launchWpPrefKey = getResources().getString(R.string.launch_wp_pref_key);
+//        final String themePrefKey = getResources().getString(R.string.theme_preference_key);
+//        final String layoutPrefKey = getResources().getString(R.string.compact_layout_preference_key);
+//        final String launchWpPrefKey = getResources().getString(R.string.launch_wp_pref_key);
 
-        if(isFirstRunning(themePrefKey, layoutPrefKey)){
-            return true;
+//        if(isFirstRunning(themePrefKey, layoutPrefKey)){
+//            return true;
+//        }
+//
+//        if(getLaunchWpOnceValue(launchWpPrefKey)){
+//            setLaunchWpOnceFalse(launchWpPrefKey);
+//            return true;
+//        }
+            final SharedPreferences sharedPreferences =
+                    PreferenceManager.getDefaultSharedPreferences(this);
+
+            return sharedPreferences.getBoolean(launchWpPrefKey, true);
         }
-
-        if(getLaunchWpOnceValue(launchWpPrefKey)){
-            setLaunchWpOnceFalse(launchWpPrefKey);
-            return true;
-        }
-
-        return false;
     }
 
 //    private void launchWelcomePageIfNecessary(){

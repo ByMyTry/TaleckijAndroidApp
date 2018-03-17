@@ -13,11 +13,8 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
-import com.taleckij_anton.taleckijapp.LauncherActivity;
-import com.taleckij_anton.taleckijapp.R;
 import com.taleckij_anton.taleckijapp.background_images.ImageLoaderService;
 import com.taleckij_anton.taleckijapp.background_images.ImageSaver;
 import com.taleckij_anton.taleckijapp.metrica_help.MetricaAppEvents;
@@ -30,6 +27,74 @@ import java.util.List;
  */
 
 public class BaseActivity extends AppCompatActivity {
+    private long mCurrentViewPageIndex = -1;
+
+    protected long getCurrentViewPageIndex() {
+        return mCurrentViewPageIndex;
+    }
+
+    protected void setCurrentViewPageIndex(long currentViewPageIndex) {
+        this.mCurrentViewPageIndex = currentViewPageIndex;
+    }
+
+    protected final String CURRENT_VIEW_PAGE_INDEX ="CURRENT_VIEW_PAGE_INDEX";
+
+    private final SharedPreferences.OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener =
+            new SharedPreferences.OnSharedPreferenceChangeListener(){
+                @Override
+                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key){
+                    final String THEME_PREF_KEY = getResources().getString(R.string.theme_preference_key);
+                    final String UPDATE_CACHE_INTERVAL_PREF_KEY = getResources().getString(R.string.update_cache_interval_pref_key);
+                    final String DIFF_BACK_IMAGE_PREF_KEY = getResources().getString(R.string.diff_background_image_pref_key);
+                    final String LAYOUT_TYPE_PREF_KEY = getResources().getString(R.string.compact_layout_preference_key);
+                    final String SORT_TYPE_APPS_KEY = getResources().getString(R.string.sorttype_apps_pref_key);
+                    final String SHOW_WP_NEXT_TIME_PREF_KEY = getResources().getString(R.string.launch_wp_pref_key);
+                    if(THEME_PREF_KEY.equals(key)){
+                        reloadActivity();
+
+                        YandexMetrica.reportEvent(MetricaAppEvents.ChangeTheme);
+                    } else if(UPDATE_CACHE_INTERVAL_PREF_KEY.equals(key)) {
+                        String currentIntervalMin = String.valueOf(ImageLoaderService.getUpdateCacheInterval());
+                        Long interval = Long.valueOf(sharedPreferences.getString(key, currentIntervalMin));
+                        if(interval == 0) {
+                            sharedPreferences.edit()
+                                    .putString(key, currentIntervalMin)
+//                                    .commit();
+                                    .apply();
+                            //replaceFragmentByItemId(mCurrentMenuItemId);
+                            openViewPage(getCurrentViewPageIndex());
+                            sendBroadcast(new Intent(ImageLoaderService.BROADCAST_ACTION_UPDATE_CACHE));
+
+                            YandexMetrica.reportEvent(MetricaAppEvents.UpdateBackImgsCacheNowOptionChanged);
+                        } else {
+                            ImageLoaderService.setUpdateCacheInterval(interval);
+
+                            YandexMetrica.reportEvent(MetricaAppEvents.ChangeUpdateCacheInterval);
+                        }
+
+                    } else if(DIFF_BACK_IMAGE_PREF_KEY.equals(key)){
+                        ImageSaver.getInstance().clear(BaseActivity.this);
+                        reloadActivity();
+
+                        YandexMetrica.reportEvent(MetricaAppEvents.DiffBackImagesOptionChanged);
+                    }else if(LAYOUT_TYPE_PREF_KEY.equals(key)){
+                        YandexMetrica.reportEvent(MetricaAppEvents.ChangeLayoutType);
+                    }else if(SORT_TYPE_APPS_KEY.equals(key)){
+                        YandexMetrica.reportEvent(MetricaAppEvents.ChangeSortType);
+                    }else if(SHOW_WP_NEXT_TIME_PREF_KEY.equals(key)){
+                        YandexMetrica.reportEvent(MetricaAppEvents.ChangeShowWpNextTime);
+                    }
+                }
+
+                private void reloadActivity(){
+                    final Intent intent = BaseActivity.this.getIntent();
+                    BaseActivity.this.finish();
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.putExtra(CURRENT_VIEW_PAGE_INDEX, getCurrentViewPageIndex());
+                    BaseActivity.this.startActivity(intent);
+                }
+            };
+
     private final BroadcastReceiver mUpdateImageBroadcastReceiver = new BroadcastReceiver() {
         private Drawable defaultBackDraw;
 
@@ -92,6 +157,9 @@ public class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
+
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ImageLoaderService.BROADCAST_ACTION_UPDATE_IMAGE);
         intentFilter.addAction(ImageLoaderService.BROADCAST_ACTION_SET_TEMP_IMAGE);
@@ -103,6 +171,10 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
+
         unregisterReceiver(mUpdateImageBroadcastReceiver);
     }
 
@@ -148,5 +220,9 @@ public class BaseActivity extends AppCompatActivity {
     @Nullable
     protected View getBackView(){
         return null;
+    }
+
+    protected void openViewPage(long index){
+
     }
 }

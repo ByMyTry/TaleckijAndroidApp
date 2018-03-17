@@ -22,16 +22,19 @@ public class WelcomePageActivity extends BaseActivity {
         }
     };
 
+    private ViewPager mWpViewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome_page);
 
-        final ViewPager wpViewPager = findViewById(R.id.wp_view_pager);
-        wpViewPager.setAdapter(new WpPageAdapter(getSupportFragmentManager()));
+//        final ViewPager wpViewPager = findViewById(R.id.wp_view_pager);
+        mWpViewPager = findViewById(R.id.wp_view_pager);
+        mWpViewPager.setAdapter(new WpPageAdapter(getSupportFragmentManager()));
 
         final TabLayout wpPageIndicator = findViewById(R.id.wp_pager_indicator);
-        wpPageIndicator.setupWithViewPager(wpViewPager, true);
+        wpPageIndicator.setupWithViewPager(mWpViewPager, true);
 
         YandexMetrica.reportEvent(MetricaAppEvents.WelcomePageOpen);
     }
@@ -42,9 +45,45 @@ public class WelcomePageActivity extends BaseActivity {
         return findViewById(R.id.wp_fragment_place);
     }
 
+    @Override
+    protected long getCurrentViewPageIndex() {
+        return mWpViewPager.getCurrentItem();
+    }
+
+    @Override
+    protected void openViewPage(long index) {
+        mWpViewPager.setCurrentItem((int)index);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        setCurrentViewItemIfNecessary();
+    }
+
+    private void setCurrentViewItemIfNecessary(){
+        final long savedItemPos = getIntent().getLongExtra(CURRENT_VIEW_PAGE_INDEX, -1);
+        if(savedItemPos != -1){
+            openViewPage(savedItemPos);
+        }
+    }
+
     private void openLauncher(final Context context){
         final Intent intent = new Intent();
         intent.setClass(context, LauncherActivity.class);
+        intent.putExtra(NavigatorActivity.LaunchWpIntentKey, false);
+        setLaunchWpFalse();
         startActivity(intent);
+    }
+
+    private void setLaunchWpFalse(){
+        final String launchWpPrefKey = getResources().getString(R.string.launch_wp_pref_key);
+        final SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences
+                .edit()
+                .putBoolean(launchWpPrefKey, false)
+                .apply();
     }
 }
