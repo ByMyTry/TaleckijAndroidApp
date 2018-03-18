@@ -32,8 +32,8 @@ android {
         applicationId "com.taleckij_anton.taleckijapp"
         minSdkVersion 22
         targetSdkVersion 27
-        versionCode 8
-        versionName "5.1"
+        versionCode 9
+        versionName "5.1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [HOCKEYAPP_APP_ID: "701ffe36001345eb94bb5b56aea3211a"]
         multiDexEnabled true
