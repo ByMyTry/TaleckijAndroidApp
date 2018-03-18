@@ -2,9 +2,13 @@ package com.taleckij_anton.taleckijapp;
 
 import android.app.Application;
 
+import com.facebook.stetho.Stetho;
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.yandex.metrica.YandexMetrica;
 import com.yandex.metrica.YandexMetricaConfig;
 import com.yandex.metrica.push.YandexMetricaPush;
+
+import okhttp3.OkHttpClient;
 
 /**
  * Created by Lenovo on 11.02.2018.
@@ -24,5 +28,10 @@ public class App extends Application {
         YandexMetrica.enableActivityAutoTracking(this);
 
         YandexMetricaPush.init(getApplicationContext());
+
+        Stetho.initializeWithDefaults(this);
+        new OkHttpClient.Builder()
+                .addNetworkInterceptor(new StethoInterceptor())
+                .build();
     }
 }

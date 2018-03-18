@@ -52,7 +52,7 @@ public class AppsFragment extends Fragment {
     private final OnAppsChangeListener
             onAppsChangeListener = new OnAppsChangeListener() {
         @Override
-        public void onAppInstalled(int addedAppsUid) {
+        public void onAppInstalled(Context context, int addedAppsUid) {
             final List<LauncherActivityInfo> applicationInfos = getApplicationInfos(mUser);
             final List<AppInfoModel> addedAppModels =
                     getAddedAppsModelsByUid(applicationInfos, addedAppsUid);
@@ -62,10 +62,12 @@ public class AppsFragment extends Fragment {
         }
 
         @Override
-        public void onAppRemoved(int removedAppsUid) {
+        public void onAppRemoved(Context context, int removedAppsUid) {
             final AppsAdapter adapter = ((AppsAdapter)mRecyclerView.getAdapter());
             List<AppInfoModel> removedAppsModels = adapter.updateAfterRemove(removedAppsUid);
             mAppsDbSynchronizer.removeAppsFromDb(mAppsDbHelper, removedAppsModels);
+
+            sendUpdateDesktopBroadcast(context);
         }
     };
 
@@ -285,8 +287,6 @@ public class AppsFragment extends Fragment {
                     final String deletePackageName = appModel.getPackageName();
                     deleteApp(context, deletePackageName);
 
-                    sendUpdateDesktopBroadcast();
-
                     YandexMetrica.reportEvent(MetricaAppEvents.AppPackageDelete,
                             String.format("{\"package_name\":%s}", appModel.getPackageName()));
 
@@ -314,7 +314,7 @@ public class AppsFragment extends Fragment {
                                 .show();
                     }
 
-                    sendUpdateDesktopBroadcast();
+                    sendUpdateDesktopBroadcast(context);
 
                     return true;
                 } else if (item.getItemId() == R.id.popup_remove_from_desk) {
@@ -323,7 +323,7 @@ public class AppsFragment extends Fragment {
                     mAppsDbSynchronizer.removeFromDesktopDb(mAppsDbHelper, deskPos);
                     appModel.setDesktopPosition(null);
 
-                    sendUpdateDesktopBroadcast();
+                    sendUpdateDesktopBroadcast(context);
 
                     return true;
                 }
@@ -332,9 +332,9 @@ public class AppsFragment extends Fragment {
         };
     }
 
-    private  void sendUpdateDesktopBroadcast(){
+    private void sendUpdateDesktopBroadcast(Context context){
         Intent intent = new Intent(DesktopFragment.UPDATE_DESKTOP_BROADCAST_ACTION);
-        mRecyclerView.getContext().sendBroadcast(intent);
+        context.sendBroadcast(intent);
     }
 
     private void deleteApp(Context context, String packageName){

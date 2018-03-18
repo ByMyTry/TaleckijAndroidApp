@@ -1,5 +1,6 @@
 package com.taleckij_anton.taleckijapp.launcher.launcher_apps_fragment;
 
+import android.content.Context;
 import android.support.annotation.Nullable;
 
 /**
@@ -7,7 +8,7 @@ import android.support.annotation.Nullable;
  */
 
 public interface OnAppsChangeListener {
-    void onAppInstalled(int addedAppUid);
-    void onAppRemoved(int removedAppUid);
+    void onAppInstalled(Context context, int addedAppUid);
+    void onAppRemoved(Context context, int removedAppUid);
     //void onAppUpdatePosFromDesk(String appFullName, @Nullable Integer currentPos);
 }

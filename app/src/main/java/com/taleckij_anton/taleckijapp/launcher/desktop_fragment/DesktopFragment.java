@@ -44,7 +44,7 @@ public class DesktopFragment extends Fragment {
 
     private AppInfoModel mCurrentDragApp;
 
-    private final BroadcastReceiver UpdateDesktopBroadkast = new BroadcastReceiver() {
+    private final BroadcastReceiver UpdateDesktopBroadcast = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (UPDATE_DESKTOP_BROADCAST_ACTION.equals(intent.getAction())) {
@@ -140,20 +140,30 @@ public class DesktopFragment extends Fragment {
 
 //        desktopView.setOnDragListener();
 
+        IntentFilter filter = new IntentFilter(UPDATE_DESKTOP_BROADCAST_ACTION);
+        mRecyclerView.getContext().registerReceiver(UpdateDesktopBroadcast, filter);
+
         return desktopView;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        IntentFilter filter = new IntentFilter(UPDATE_DESKTOP_BROADCAST_ACTION);
-        mRecyclerView.getContext().registerReceiver(UpdateDesktopBroadkast, filter);
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        IntentFilter filter = new IntentFilter(UPDATE_DESKTOP_BROADCAST_ACTION);
+//        mRecyclerView.getContext().registerReceiver(UpdateDesktopBroadcast, filter);
+//    }
+//
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        mRecyclerView.getContext().unregisterReceiver(UpdateDesktopBroadcast);
+//    }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        mRecyclerView.getContext().unregisterReceiver(UpdateDesktopBroadkast);
+    public void onDestroyView() {
+        super.onDestroyView();
+        mRecyclerView.getContext().unregisterReceiver(UpdateDesktopBroadcast);
+        mAppsDbHelper.close();
     }
 
     private List<AppInfoModel> getCurrentDeskApps(Context context){

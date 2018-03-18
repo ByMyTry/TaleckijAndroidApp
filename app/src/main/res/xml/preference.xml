@@ -14,7 +14,7 @@
         android:key="@string/launch_wp_pref_key"
         android:title="@string/launch_wp_pref_title"
         android:summary="@string/launch_wp_pref_summ"
-        android:defaultValue="false"/>
+        android:defaultValue="true"/>
     <ListPreference
         android:key="@string/sorttype_apps_pref_key"
         android:title="@string/sorttype_apps_pref_title"
